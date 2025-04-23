@@ -1,0 +1,142 @@
+.input img {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px; /* for spacing between icon and input */
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 100px;
+  width: 600px;
+  padding-bottom: 30px;
+  background-color: #f0f0f0; /* Light background for contrast */
+  border-radius: 16px; /* Adjust the radius as needed */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Optional: add a shadow for depth */
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0px;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.text {
+  color: #00a69b;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.underline {
+  width: 61px;
+  height: 6px;
+  background: #00a69b;
+  border-radius: 9px;
+}
+
+.inputs {
+  margin-top: 55px; /* Add internal left padding */
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.input {
+  display: flex;
+  align-items: center;
+  margin: auto;
+  width: 100%; /* Use full width of the parent container */
+  background: #eaeaea;
+  border-radius: 6px; /* Rounded corners */
+  padding: 0 10px; /* Internal padding for aesthetics */
+}
+
+.input input {
+  height: 50px;
+  width: 400px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #797979;
+  font-size: 19px;
+}
+
+.forgot_password {
+  padding-left: 62px;
+  margin-top: 27px;
+  color: #797979;
+  font-size: 18px;
+}
+
+.forgot-password span {
+  color: #00a69b;
+  cursor: pointer;
+}
+
+.submit-container {
+  display: flex;
+  gap: 40px;
+  margin: 30px auto;
+  width: 100%; /* Set width to 100% */
+  justify-content: center; /* Center the buttons */
+}
+
+.submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 59px;
+  background: #00a69b;
+  border-radius: 50px;
+  color: white;
+  font-size: 19px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gray {
+  background: #EAEAEA;
+  color: #676767;
+}
+
+.input select {
+  width: 100%; /* Make the select element full width */
+  height: 50px; /* Adjust the height */
+  padding: 10px; /* Add padding for better spacing */
+  font-size: 16px; /* Adjust font size for readability */
+  border-radius: 6px; /* Match the overall style */
+  border: 1px solid #ccc; /* Add a border for definition */
+  background: #eaeaea; /* Background color */
+}
+
+.toggle-container {
+  display: flex;
+  justify-content: center; /* Center the buttons */
+  margin-top: 20px; /* Adjust margin as needed */
+}
+
+.toggle-container .submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px; /* Match the width of the submit button */
+  height: 59px; /* Match the height of the submit button */
+  background: #00a69b; /* Background color */
+  border-radius: 50px; /* Match rounded corners */
+  color: white; /* Text color */
+  font-size: 19px; /* Match font size */
+  font-weight: 700; /* Match font weight */
+  cursor: pointer; /* Pointer cursor on hover */
+  margin: 0 10px; /* Space between buttons */
+  transition: background-color 0.3s; /* Smooth transition for hover */
+}
+
+.toggle-container .submit.gray {
+  background: #EAEAEA; /* Inactive button background */
+  color: #676767; /* Inactive button text color */
+}
