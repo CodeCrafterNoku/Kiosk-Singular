@@ -112,7 +112,7 @@ function ProductAdmin() {
   };
 
   const filteredProducts = selectedCategory
-    ? products.filter(product => product.categoryID === selectedCategory)
+    ? products.filter(product => String(product.categoryID) === String(selectedCategory)) // FIXED COMPARISON TYPE
     : products;
 
   return (
