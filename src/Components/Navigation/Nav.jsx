@@ -1,10 +1,21 @@
-import { FiHeart } from 'react-icons/fi';
-import { FaShoppingCart } from 'react-icons/fa'; // Ensure this is correct
-import { AiOutlineUser } from 'react-icons/ai'; // Corrected the import
+import { useState } from 'react';
+import { FiHeart, FiMenu } from 'react-icons/fi';
+import { FaShoppingCart } from 'react-icons/fa';
+import { AiOutlineUser } from 'react-icons/ai';
 import './Nav.css';
 
-
 function Nav() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const handleMenuItemClick = (action) => {
+    console.log(action);
+    setDrawerOpen(false); // Close the drawer after an action
+  };
+
   return (
     <nav>
       <div className="nav-container">
@@ -18,9 +29,22 @@ function Nav() {
           <FaShoppingCart className="nav-icons" />
         </a>
         <a href="#">
-          <AiOutlineUser className="nav-icons" /> {/* Corrected the component name */}
+          <AiOutlineUser className="nav-icons" />
+        </a>
+        <a href="#" className="menu-icon" onClick={toggleDrawer}>
+          <FiMenu className="nav-icons" />
         </a>
       </div>
+
+      {drawerOpen && (
+        <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
+          <ul>
+            <li onClick={() => handleMenuItemClick('View Orders')}>View Orders</li>
+            <li onClick={() => handleMenuItemClick('Account Settings')}>Account Settings</li>
+            <li onClick={() => handleMenuItemClick('Logout')}>Logout</li>
+          </ul>
+        </div>
+      )}
     </nav>
   );
 }

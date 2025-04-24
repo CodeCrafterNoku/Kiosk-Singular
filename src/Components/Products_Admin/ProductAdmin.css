@@ -1,0 +1,90 @@
+.category-buttons-container {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background-color: #f5f5f5; /* Adjust as needed */
+    border-bottom: 1px solid #ddd;
+    flex-wrap: wrap;
+  }
+  
+  .category-buttons-container button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .category-buttons-container button:hover {
+    background-color: #eaeaea;
+  }
+  
+  .category-buttons-container button.active {
+    background-color: #00a69b; /* Active button color */
+    color: white;
+    border-color: #00a69b;
+  }
+  .add-product-button {
+    margin-left: auto; /* Push the button to the right */
+    padding: 0.5rem 1rem;
+    background-color: #007bff; /* Example color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .add-product-button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+  }
+  .add-product-container {
+    margin: 1rem 0; /* Space around the container */
+    padding: 1rem;
+    border: 1px solid #ccc; /* Light border around the form */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #f9f9f9; /* Light background color */
+  }
+  
+  .form-row {
+    display: flex; /* Use Flexbox for row layout */
+    flex-direction: column; /* Column layout for stacked elements */
+    gap: 1rem; /* Space between elements */
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%; /* Full width */
+    padding: 0.5rem; /* Padding inside the input fields */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1rem; /* Font size */
+  }
+  
+  .form-textarea {
+    resize: vertical; /* Allow vertical resizing of the textarea */
+    min-height: 80px; /* Minimum height for the textarea */
+  }
+  
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    border-color: #007bff; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+  }
+  
+  .form-button {
+    padding: 0.5rem 1rem; /* Padding for the button */
+    background-color: #007bff; /* Button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Smooth transition */
+  }
+  
+  .form-button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+  }

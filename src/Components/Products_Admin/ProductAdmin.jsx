@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './ProductAdmin.css';
 
 function ProductAdmin() {
   const [products, setProducts] = useState([]);
@@ -178,34 +179,43 @@ function ProductAdmin() {
       </div>
 
       <div>
-        <h3>Products</h3>
-        <select onChange={handleCategoryChange}>
-          <option value="">All Categories</option>
-          {categories.map(category => (
-            <option key={category.categoryID} value={category.categoryID}>
-              {category.categoryName}
-            </option>
-          ))}
-        </select>
-        <div className="card-container">
-          {filteredProducts.map(product => (
-            <div key={product.productID} className="card">
-              <img
-                src={product.imageURL || "https://via.placeholder.com/150"}
-                alt={product.productName}
-              />
-              <div className="card-details">
-                <h3>{product.productName}</h3>
-                <p>{product.productDescription}</p>
-                <p>Price: R{product.price}</p>
-                <p>Quantity: {product.quantity}</p>
-                <button onClick={() => handleEditProduct(product)}>Edit</button>
-                <button onClick={() => handleDeleteProduct(product.productID)}>Delete</button>
-              </div>
-            </div>
-          ))}
+  <h3>Products</h3>
+  <div className="category-buttons-container">
+    <button 
+      onClick={() => setSelectedCategory('')} 
+      className={selectedCategory === '' ? 'active' : ''}
+    >
+      All Categories
+    </button>
+    {categories.map(category => (
+      <button 
+        key={category.categoryID} 
+        onClick={() => setSelectedCategory(category.categoryID)} 
+        className={selectedCategory === category.categoryID ? 'active' : ''}
+      >
+        {category.categoryName}
+      </button>
+    ))}
+  </div>
+  <div className="card-container">
+    {filteredProducts.map(product => (
+      <div key={product.productID} className="card">
+        <img
+          src={product.imageURL || "https://via.placeholder.com/150"}
+          alt={product.productName}
+        />
+        <div className="card-details">
+          <h3>{product.productName}</h3>
+          <p>{product.productDescription}</p>
+          <p>Price: R{product.price}</p>
+          <p>Quantity: {product.quantity}</p>
+          <button onClick={() => handleEditProduct(product)}>Edit</button>
+          <button onClick={() => handleDeleteProduct(product.productID)}>Delete</button>
         </div>
       </div>
+    ))}
+  </div>
+</div>
 
       {editingProduct && (
         <div>
