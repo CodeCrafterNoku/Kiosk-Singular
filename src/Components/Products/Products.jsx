@@ -7,6 +7,10 @@ function Products() {
   const [selectedCategoryName, setSelectedCategoryName] = useState('');
   const [error, setError] = useState(null);
 
+  const handleCategorySelect = (categoryName) => {
+    setSelectedCategoryName(categoryName);
+};
+
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -60,16 +64,17 @@ function Products() {
   return (
     <>
       {error && <p className="error">Error: {error}</p>}
-      <div>
-        <label>Filter by Category:</label>
-        <select onChange={handleCategoryChange} value={selectedCategoryName}>
-          <option value="">All Categories</option>
-          {categories.map((category) => (
-            <option key={category.categoryID} value={category.categoryName}>
+      <div className="category-buttons-container">
+        <button onClick={() => handleCategorySelect('')}>All Categories</button>
+        {categories.map((category) => (
+            <button
+              key={category.categoryID}
+              onClick={() => handleCategorySelect(category.categoryName)}
+              className={selectedCategoryName === category.categoryName ? 'active' : ''}
+    >
               {category.categoryName}
-            </option>
-          ))}
-        </select>
+         </button>
+        ))}
       </div>
 
       <section className="card-container">
