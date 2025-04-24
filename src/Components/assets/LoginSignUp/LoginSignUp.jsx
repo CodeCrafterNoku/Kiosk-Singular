@@ -7,7 +7,6 @@ import phone_icon from '../phone.svg';
 import role_icon from '../role.svg';
 import { useNavigate } from 'react-router-dom';
 
-
 const LoginSignUp = () => {
     const [action, setAction] = useState('Sign Up');
     const [formData, setFormData] = useState({
@@ -32,7 +31,7 @@ const LoginSignUp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoginError(''); // Reset any previous errors
+        setLoginError('');
 
         try {
             const url = action === 'Sign Up'
@@ -40,7 +39,7 @@ const LoginSignUp = () => {
                 : 'http://localhost:5279/api/User/login';
 
             const response = await fetch(url, {
-                method: 'POST', // Ensure POST method for both actions
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -60,7 +59,7 @@ const LoginSignUp = () => {
 
             if (action === 'Login') {
                 setUserId(data.userId);
-                setFormData({ ...formData, password: '' }); // Clear password after login
+                setFormData({ ...formData, password: '' });
 
                 if (data.role === 7 || data.role === "7") {
                     navigate('/user/products');
@@ -69,7 +68,6 @@ const LoginSignUp = () => {
                 } else {
                     alert("Invalid role");
                 }
-                
             }
 
         } catch (error) {
@@ -124,7 +122,7 @@ const LoginSignUp = () => {
     };
 
     return (
-        <div className='container'>
+        <div className='container login-background'> {/* Add the class here */}
             <div className='header'>
                 <h1 className='text'>{action}</h1>
                 <div className='underline'></div>
