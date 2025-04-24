@@ -13,6 +13,7 @@ function ProductAdmin() {
     imageURL: '',
   });
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [editingProduct, setEditingProduct] = useState(null); // New state for editing
 
   const fetchProducts = async () => {
     try {
@@ -90,18 +91,21 @@ function ProductAdmin() {
     }
   };
 
-  const handleUpdateProduct = async (productId) => {
-    const response = await fetch(`http://localhost:5279/api/Product/${productId}`, {
+  const handleUpdateProduct = async () => {
+    if (!editingProduct) return;
+
+    const response = await fetch(`http://localhost:5279/api/Product/${editingProduct.productID}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newProduct),
+      body: JSON.stringify(editingProduct), // Use editingProduct for update
     });
 
     if (response.ok) {
       alert('Product updated successfully');
       fetchProducts();
+      setEditingProduct(null); // Reset editing state after update
     } else {
       alert('Failed to update product');
     }
@@ -112,8 +116,14 @@ function ProductAdmin() {
   };
 
   const filteredProducts = selectedCategory
-    ? products.filter(product => String(product.categoryID) === String(selectedCategory)) // FIXED COMPARISON TYPE
-    : products;
+  ? products.filter(product => String(product.categoryID) === String(selectedCategory))
+  : products;
+
+  const handleEditProduct = (product) => {
+    setEditingProduct({
+      ...product, // Set the editingProduct state to the product that is being edited
+    });
+  };
 
   return (
     <>
@@ -189,13 +199,62 @@ function ProductAdmin() {
                 <p>{product.productDescription}</p>
                 <p>Price: R{product.price}</p>
                 <p>Quantity: {product.quantity}</p>
-                <button onClick={() => handleUpdateProduct(product.productID)}>Update</button>
+                <button onClick={() => handleEditProduct(product)}>Edit</button>
                 <button onClick={() => handleDeleteProduct(product.productID)}>Delete</button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {editingProduct && (
+        <div>
+          <h3>Update Product</h3>
+          <form onSubmit={(e) => { e.preventDefault(); handleUpdateProduct(); }}>
+            <input
+              type="text"
+              placeholder="Product Name"
+              value={editingProduct.productName}
+              onChange={(e) => setEditingProduct({ ...editingProduct, productName: e.target.value })}
+            />
+            <textarea
+              placeholder="Product Description"
+              value={editingProduct.productDescription}
+              onChange={(e) => setEditingProduct({ ...editingProduct, productDescription: e.target.value })}
+            />
+            <input
+              type="number"
+              placeholder="Price"
+              value={editingProduct.price}
+              onChange={(e) => setEditingProduct({ ...editingProduct, price: e.target.value })}
+            />
+            <input
+              type="number"
+              placeholder="Quantity"
+              value={editingProduct.quantity}
+              onChange={(e) => setEditingProduct({ ...editingProduct, quantity: e.target.value })}
+            />
+            <select
+              value={editingProduct.categoryID}
+              onChange={(e) => setEditingProduct({ ...editingProduct, categoryID: e.target.value })}
+            >
+              <option value="">Select Category</option>
+              {categories.map(category => (
+                <option key={category.categoryID} value={category.categoryID}>
+                  {category.categoryName}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={editingProduct.imageURL}
+              onChange={(e) => setEditingProduct({ ...editingProduct, imageURL: e.target.value })}
+            />
+            <button type="submit">Update Product</button>
+          </form>
+        </div>
+      )}
     </>
   );
 }
