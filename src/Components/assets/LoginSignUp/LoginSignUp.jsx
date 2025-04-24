@@ -5,6 +5,8 @@ import password_icon from '../password.svg';
 import user_icon from '../person.svg';
 import phone_icon from '../phone.svg';
 import role_icon from '../role.svg';
+import { useNavigate } from 'react-router-dom';
+
 
 const LoginSignUp = () => {
     const [action, setAction] = useState('Sign Up');
@@ -17,6 +19,8 @@ const LoginSignUp = () => {
     });
     const [userId, setUserId] = useState(null);
     const [loginError, setLoginError] = useState('');
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -57,6 +61,15 @@ const LoginSignUp = () => {
             if (action === 'Login') {
                 setUserId(data.userId);
                 setFormData({ ...formData, password: '' }); // Clear password after login
+
+                if (data.role === 7 || data.role === "7") {
+                    navigate('/user/products');
+                } else if (data.role === 8 || data.role === "8") {
+                    navigate('/admin/products');
+                } else {
+                    alert("Invalid role");
+                }
+                
             }
 
         } catch (error) {
