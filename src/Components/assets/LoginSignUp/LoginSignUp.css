@@ -1,5 +1,5 @@
-body.login-background {
-  background-color: red; /* Replace with your desired color */
+body {
+  background-color: #00a69b; /* Replace with your desired color */
   background-size: cover; /* Not needed for color, can be removed */
   background-position: center; /* Not needed for color, can be removed */
   background-repeat: no-repeat; /* Not needed for color, can be removed */
