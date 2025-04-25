@@ -35,56 +35,97 @@
     cursor: pointer;
     transition: background-color 0.3s;
   }
-  
-  .add-product-button:hover {
-    background-color: #0056b3; /* Darker shade on hover */
-  }
-  .add-product-container {
-    margin: 1rem 0; /* Space around the container */
-    padding: 1rem;
-    border: 1px solid #ccc; /* Light border around the form */
-    border-radius: 5px; /* Rounded corners */
-    background-color: #f9f9f9; /* Light background color */
-  }
-  
-  .form-row {
-    display: flex; /* Use Flexbox for row layout */
-    flex-direction: column; /* Column layout for stacked elements */
-    gap: 1rem; /* Space between elements */
-  }
-  
-  .form-input,
-  .form-select,
-  .form-textarea {
-    width: 100%; /* Full width */
-    padding: 0.5rem; /* Padding inside the input fields */
-    border: 1px solid #ccc; /* Light border */
-    border-radius: 5px; /* Rounded corners */
-    font-size: 1rem; /* Font size */
-  }
-  
-  .form-textarea {
-    resize: vertical; /* Allow vertical resizing of the textarea */
-    min-height: 80px; /* Minimum height for the textarea */
-  }
-  
-  .form-input:focus,
-  .form-select:focus,
-  .form-textarea:focus {
-    border-color: #007bff; /* Change border color on focus */
-    outline: none; /* Remove default outline */
-  }
-  
-  .form-button {
-    padding: 0.5rem 1rem; /* Padding for the button */
-    background-color: #007bff; /* Button color */
-    color: white; /* Text color */
-    border: none; /* No border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor */
-    transition: background-color 0.3s; /* Smooth transition */
-  }
-  
-  .form-button:hover {
-    background-color: #0056b3; /* Darker shade on hover */
-  }
+/* Add styles for the popup overlay */
+.delete-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Make sure it's on top of other elements */
+}
+
+/* Style for the actual pop-up box */
+.delete-popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 300px;
+  text-align: center;
+}
+
+.delete-popup button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #c82333;
+  color: white;
+}
+
+.delete-popup button:hover {
+  background-color: #c82333;
+}
+
+.delete-popup button:first-of-type {
+  background-color: #00a69b;
+}
+
+.delete-popup button:first-of-type:hover {
+  background-color: #00a69b;
+}
+/* Overlay background for the popup */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Make sure it's on top of other elements */
+}
+
+/* Style for the actual popup box */
+.popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 300px;
+  text-align: center;
+}
+
+.popup button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+}
+
+.popup button:hover {
+  background-color: #00a69b;
+}
+
+.popup button:first-of-type {
+  background-color: #00a69b;
+}
+
+.popup button:first-of-type:hover {
+  background-color: #00a69b;
+}
+
+
+
+

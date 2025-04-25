@@ -14,25 +14,21 @@ function ProductAdmin() {
     imageURL: '',
   });
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [editingProduct, setEditingProduct] = useState(null); // New state for editing
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [deleteProductId, setDeleteProductId] = useState(null);
+  const [popup, setPopup] = useState(null);  // State for controlling popup
 
   const fetchProducts = async () => {
     try {
       const response = await fetch('http://localhost:5279/api/Product', {
         method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: { 'Accept': 'application/json' },
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
+      if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       setProducts(data);
     } catch (error) {
-      console.error('Error fetching products:', error);
       setError(error.message);
     }
   };
@@ -46,15 +42,10 @@ function ProductAdmin() {
     try {
       const response = await fetch('http://localhost:5279/api/Category', {
         method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: { 'Accept': 'application/json' },
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
+      if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       setCategories(data);
     } catch (error) {
@@ -65,17 +56,15 @@ function ProductAdmin() {
   const handleAddProduct = async () => {
     const response = await fetch('http://localhost:5279/api/Product', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newProduct),
     });
 
     if (response.ok) {
-      alert('Product added successfully');
+      setPopup({ message: 'Product added successfully', type: 'success' });
       fetchProducts();
     } else {
-      alert('Failed to add product');
+      setPopup({ message: 'Failed to add product.It did not meet the required specifications.', type: 'error' });
     }
   };
 
@@ -85,10 +74,12 @@ function ProductAdmin() {
     });
 
     if (response.ok) {
-      alert('Product deleted successfully');
       fetchProducts();
+      setDeleteProductId(null);
+      setPopup({ message: 'Product deleted successfully', type: 'success' });
     } else {
-      alert('Failed to delete product');
+      setPopup({ message: 'Failed to delete product', type: 'error' });
+      setDeleteProductId(null);
     }
   };
 
@@ -97,40 +88,47 @@ function ProductAdmin() {
 
     const response = await fetch(`http://localhost:5279/api/Product/${editingProduct.productID}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(editingProduct), // Use editingProduct for update
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editingProduct),
     });
 
     if (response.ok) {
-      alert('Product updated successfully');
+      setPopup({ message: 'Product updated successfully', type: 'success' });
       fetchProducts();
-      setEditingProduct(null); // Reset editing state after update
+      setEditingProduct(null);
     } else {
-      alert('Failed to update product');
+      setPopup({ message: 'Failed to update product', type: 'error' });
     }
   };
 
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-  };
+  const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
 
   const filteredProducts = selectedCategory
-  ? products.filter(product => String(product.categoryID) === String(selectedCategory))
-  : products;
+    ? products.filter((product) => String(product.categoryID) === String(selectedCategory))
+    : products;
 
-  const handleEditProduct = (product) => {
-    setEditingProduct({
-      ...product, // Set the editingProduct state to the product that is being edited
-    });
+  const handleEditProduct = (product) => setEditingProduct({ ...product });
+
+  const handleConfirmDelete = (productId) => setDeleteProductId(productId);
+  const handleCancelDelete = () => setDeleteProductId(null);
+
+  // Popup component
+  const Popup = ({ message, type, onClose }) => {
+    return (
+      <div className={`popup-overlay ${type}`}>
+        <div className="popup">
+          <p>{message}</p>
+          <button onClick={onClose}>Close</button>
+        </div>
+      </div>
+    );
   };
 
   return (
     <>
       <h2>Admin Product Management</h2>
       {error && <p className="error">Error: {error}</p>}
-      
+
       <div>
         <h3>Add Product</h3>
         <form onSubmit={(e) => { e.preventDefault(); handleAddProduct(); }}>
@@ -157,12 +155,9 @@ function ProductAdmin() {
             value={newProduct.quantity}
             onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
           />
-          <select
-            value={newProduct.categoryID}
-            onChange={(e) => setNewProduct({ ...newProduct, categoryID: e.target.value })}
-          >
+          <select value={newProduct.categoryID} onChange={(e) => setNewProduct({ ...newProduct, categoryID: e.target.value })}>
             <option value="">Select Category</option>
-            {categories.map(category => (
+            {categories.map((category) => (
               <option key={category.categoryID} value={category.categoryID}>
                 {category.categoryName}
               </option>
@@ -179,43 +174,34 @@ function ProductAdmin() {
       </div>
 
       <div>
-  <h3>Products</h3>
-  <div className="category-buttons-container">
-    <button 
-      onClick={() => setSelectedCategory('')} 
-      className={selectedCategory === '' ? 'active' : ''}
-    >
-      All Categories
-    </button>
-    {categories.map(category => (
-      <button 
-        key={category.categoryID} 
-        onClick={() => setSelectedCategory(category.categoryID)} 
-        className={selectedCategory === category.categoryID ? 'active' : ''}
-      >
-        {category.categoryName}
-      </button>
-    ))}
-  </div>
-  <div className="card-container">
-    {filteredProducts.map(product => (
-      <div key={product.productID} className="card">
-        <img
-          src={product.imageURL || "https://via.placeholder.com/150"}
-          alt={product.productName}
-        />
-        <div className="card-details">
-          <h3>{product.productName}</h3>
-          <p>{product.productDescription}</p>
-          <p>Price: R{product.price}</p>
-          <p>Quantity: {product.quantity}</p>
-          <button onClick={() => handleEditProduct(product)}>Edit</button>
-          <button onClick={() => handleDeleteProduct(product.productID)}>Delete</button>
+        <h3>Products</h3>
+        <div className="category-buttons-container">
+          <button onClick={() => setSelectedCategory('')} className={selectedCategory === '' ? 'active' : ''}>All Categories</button>
+          {categories.map((category) => (
+            <button key={category.categoryID} onClick={() => setSelectedCategory(category.categoryID)} className={selectedCategory === category.categoryID ? 'active' : ''}>
+              {category.categoryName}
+            </button>
+          ))}
+        </div>
+        <div className="card-container">
+          {filteredProducts.map((product) => (
+            <div key={product.productID} className="card">
+              <img
+                src={product.imageURL || 'https://via.placeholder.com/150'}
+                alt={product.productName}
+              />
+              <div className="card-details">
+                <h3>{product.productName}</h3>
+                <p>{product.productDescription}</p>
+                <p>Price: R{product.price}</p>
+                <p>Quantity: {product.quantity}</p>
+                <button onClick={() => handleEditProduct(product)}>Edit</button>
+                <button onClick={() => handleConfirmDelete(product.productID)}>Delete</button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    ))}
-  </div>
-</div>
 
       {editingProduct && (
         <div>
@@ -249,7 +235,7 @@ function ProductAdmin() {
               onChange={(e) => setEditingProduct({ ...editingProduct, categoryID: e.target.value })}
             >
               <option value="">Select Category</option>
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category.categoryID} value={category.categoryID}>
                   {category.categoryName}
                 </option>
@@ -265,6 +251,18 @@ function ProductAdmin() {
           </form>
         </div>
       )}
+
+      {deleteProductId && (
+        <div className="delete-popup-overlay">
+          <div className="delete-popup">
+            <p>Are you sure you want to delete this product?</p>
+            <button onClick={() => handleDeleteProduct(deleteProductId)}>Yes</button>
+            <button onClick={handleCancelDelete}>No</button>
+          </div>
+        </div>
+      )}
+
+      {popup && <Popup message={popup.message} type={popup.type} onClose={() => setPopup(null)} />}
     </>
   );
 }
