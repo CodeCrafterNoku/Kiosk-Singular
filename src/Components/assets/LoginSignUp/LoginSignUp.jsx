@@ -53,20 +53,26 @@ const LoginSignUp = () => {
             });
     
             if (!response.ok) {
-                // Check if the response is JSON
                 const contentType = response.headers.get('Content-Type');
-                let errorData = '';
-    
+                let errorData;
+            
                 if (contentType && contentType.includes('application/json')) {
-                    // Parse as JSON if it's a JSON response
                     errorData = await response.json();
                 } else {
-                    // Otherwise, parse as text (e.g., plain text or HTML)
                     errorData = await response.text();
                 }
-    
-                throw new Error(errorData.message || errorData || `HTTP error! status: ${response.status}`);
+            
+                // Use response.status to give user-friendly error messages
+                if (response.status === 422) {
+                    throw new Error("This user already exists. Try logging in.");
+                } else if (response.status === 400) {
+                    throw new Error("Registration failed. Please ensure all required fields are filled correctly.");
+                } else {
+                    // Fallback for other errors
+                    throw new Error(errorData.message || errorData || `HTTP error! status: ${response.status}`);
+                }
             }
+            
     
             const data = await response.json();
             console.log(`${action} successful!`);
@@ -84,7 +90,7 @@ const LoginSignUp = () => {
                     alert("Invalid role");
                 }
             } else {
-                alert("Sign Up successful! You can now log in.");
+                // alert("Sign Up successful! You can now log in.");
                 setFormData({
                     name: '',
                     email: '',
@@ -96,12 +102,20 @@ const LoginSignUp = () => {
             }
     
         } catch (error) {
-            console.error('Error:', error.message);
-            setLoginError(error.message);
+            console.error('Error:', error);
+    
+            if (typeof error === 'object' && error.message) {
+                setLoginError(error.message);
+            } else if (typeof error === 'string') {
+                setLoginError(error);
+            } else {
+                setLoginError("Sign-up failed.Some details may not meet the requirements.");
+            }
         } finally {
             setLoading(false);
         }
     };
+    
     
 
     const handleUpdateUser = async () => {
