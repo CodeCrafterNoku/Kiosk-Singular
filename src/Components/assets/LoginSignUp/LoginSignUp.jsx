@@ -175,69 +175,71 @@ const LoginSignUp = () => {
                 <div className='underline'></div>
                 <div className='form-container'>
                     <form onSubmit={handleSubmit}>
-                        {action === "Sign Up" && (
-                            <div className='input'>
-                                <img src={user_icon} alt="user icon" />
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    placeholder="Name"
-                                    required
-                                />
-                            </div>
-                        )}
-                        <div className='input'>
-                            <img src={email_icon} alt="email icon" />
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="Email"
-                                required
-                            />
-                        </div>
-                        <div className='input'>
-                            <img src={password_icon} alt="password icon" />
-                            <input
-                                type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                placeholder="Password"
-                                required
-                            />
-                        </div>
-                        {action === "Sign Up" && (
-                            <div className='input'>
-                                <img src={phone_icon} alt="phone icon" />
-                                <input
-                                    type="tel"
-                                    name="phoneNumber"
-                                    value={formData.phoneNumber}
-                                    onChange={handleChange}
-                                    placeholder="Phone number"
-                                    required
-                                />
-                            </div>
-                        )}
-                        {action === "Sign Up" && (
-                            <div className='input'>
-                                <img src={role_icon} alt="role icon" />
-                                <select
-                                    name="roleID"
-                                    value={formData.roleID}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="">Select Role</option>
-                                    <option value="7">User</option>
-                                    <option value="8">Admin</option>
-                                </select>
-                            </div>
-                        )}
+                    <div className='inputs'>
+    {action === "Sign Up" && (
+        <div className='input'>
+            <img src={user_icon} alt="user icon" />
+            <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Name"
+                required
+            />
+        </div>
+    )}
+    <div className='input'>
+        <img src={email_icon} alt="email icon" />
+        <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+        />
+    </div>
+    <div className='input'>
+        <img src={password_icon} alt="password icon" />
+        <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            required
+        />
+    </div>
+    {action === "Sign Up" && (
+        <div className='input'>
+            <img src={phone_icon} alt="phone icon" />
+            <input
+                type="tel"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                placeholder="Phone number"
+                required
+            />
+        </div>
+    )}
+    {action === "Sign Up" && (
+        <div className='input'>
+            <img src={role_icon} alt="role icon" />
+            <select
+                name="roleID"
+                value={formData.roleID}
+                onChange={handleChange}
+                required
+            >
+                <option value="">Select Role</option>
+                <option value="7">User</option>
+                <option value="8">Admin</option>
+            </select>
+        </div>
+    )}
+</div>
                         <div className='submit-container'>
                             <button type="submit" className="submit" disabled={loading}>
                                 {loading ? 'Loading...' : (action === 'Sign Up' ? 'Sign Up' : 'Login')}
@@ -256,7 +258,7 @@ const LoginSignUp = () => {
                     </form>
                     {action === "Login" && (
                         <div className="forgot-password">
-                            Lost Password? <span>Click here!</span>
+                            Forgot Password? <span>Click here!</span>
                         </div>
                     )}
                     {loginError && (

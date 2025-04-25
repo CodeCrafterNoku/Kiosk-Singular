@@ -1,14 +1,13 @@
 body.login-background {
- /* background-image: url('./Components/assets/background_Image.jpg'); /* Adjust path if necessary */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: red; /* Replace with your desired color */
+  background-size: cover; /* Not needed for color, can be removed */
+  background-position: center; /* Not needed for color, can be removed */
+  background-repeat: no-repeat; /* Not needed for color, can be removed */
 }
 
-
 .input img {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   margin-right: 10px; /* for spacing between icon and input */
 }
 
@@ -16,10 +15,10 @@ body.login-background {
   display: flex;
   flex-direction: column;
   margin: auto;
-  margin-top: 100px;
-  width: 600px;
+  margin-top: 70px;
+  width: 460px;
   padding-bottom: 30px;
-  background-color: #f0f0f0; /* Light background for contrast */
+  background-color: grey; /* Light background for contrast */
   border-radius: 16px; /* Adjust the radius as needed */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Optional: add a shadow for depth */
 }
@@ -30,37 +29,39 @@ body.login-background {
   align-items: center;
   gap: 0px;
   width: 100%;
-  margin-top: 30px;
+  margin-top: 10px;
 }
 
 .text {
   color: #00a69b;
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
 }
 
 .underline {
-  width: 61px;
+  width: 60px;
   height: 6px;
   background: #00a69b;
-  border-radius: 9px;
+  border-radius: 8px;
 }
 
 .inputs {
-  margin-top: 55px; /* Add internal left padding */
+  margin-top: 20px; /* Add internal left padding */
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 10px; /* Space between inputs */
 }
 
 .input {
   display: flex;
   align-items: center;
   margin: auto;
+  max-width: none;
   width: 100%; /* Use full width of the parent container */
   background: #eaeaea;
+  height: 18px;
   border-radius: 6px; /* Rounded corners */
-  padding: 0 10px; /* Internal padding for aesthetics */
+  padding: 0 2px; /* Internal padding for aesthetics */
 }
 
 .input input {
@@ -70,19 +71,24 @@ body.login-background {
   border: none;
   outline: none;
   color: #797979;
-  font-size: 19px;
+  font-size: 17px;
 }
 
-.forgot_password {
-  padding-left: 62px;
-  margin-top: 27px;
-  color: #797979;
-  font-size: 18px;
+.forgot-password {
+  display: flex; /* Use flexbox for alignment */
+  justify-content: center; /* Center align items */
+  margin-top: 27px; /* Space above the text */
+  color: black; /* General text color */
+  font-size: 18px; /* Font size */
+  width: 100%; /* Full width to allow centering */
 }
 
 .forgot-password span {
-  color: #00a69b;
-  cursor: pointer;
+  color: #00a69b; /* Highlight color */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-weight: bold; /* Make the clickable text bold */
+  text-decoration: underline; /* Underline to indicate it's clickable */
+  margin-left: 8px;
 }
 
 .submit-container {
@@ -97,14 +103,17 @@ body.login-background {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100px;
-  height: 59px;
+  width: 270px;
+  height: 48px;
   background: #00a69b;
-  border-radius: 50px;
+  border-radius: 10px;
   color: white;
   font-size: 19px;
   font-weight: 700;
   cursor: pointer;
+  margin-right: 9px; /* Adjust this value to move it left */
+  margin-top: 0px;
+  
 }
 
 .gray {
@@ -113,13 +122,14 @@ body.login-background {
 }
 
 .input select {
-  width: 100%; /* Make the select element full width */
-  height: 50px; /* Adjust the height */
-  padding: 10px; /* Add padding for better spacing */
-  font-size: 16px; /* Adjust font size for readability */
-  border-radius: 6px; /* Match the overall style */
-  border: 1px solid #ccc; /* Add a border for definition */
-  background: #eaeaea; /* Background color */
+    width: 100%; /* Make the select element full width */
+    height: 42px; /* Adjust the height */
+    padding: 10px; /* Add padding for better spacing */
+    font-size: 16px; /* Adjust font size for readability */
+    border-radius: 6px; /* Match the overall style */
+    /* border: 1px solid #eaeaea; /* Remove border for a cleaner look */
+    background: #eaeaea; /* Background color */
+    appearance: none; /* Remove default styling (optional) */
 }
 
 .toggle-container {
@@ -132,22 +142,25 @@ body.login-background {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100px; /* Match the width of the submit button */
-  height: 59px; /* Match the height of the submit button */
+  width: 124px; /* Match the width of the submit button */
+  height: 46px; /* Match the height of the submit button */
   background: #00a69b; /* Background color */
-  border-radius: 50px; /* Match rounded corners */
+  border-radius: 10px; /* Match rounded corners */
   color: white; /* Text color */
   font-size: 19px; /* Match font size */
   font-weight: 700; /* Match font weight */
   cursor: pointer; /* Pointer cursor on hover */
   margin: 0 10px; /* Space between buttons */
   transition: background-color 0.3s; /* Smooth transition for hover */
+  margin-right: 14px;
+  
 }
 
 .toggle-container .submit.gray {
   background: #EAEAEA; /* Inactive button background */
   color: #676767; /* Inactive button text color */
 }
+
 .loading-overlay {
   position: absolute;
   top: 0;
