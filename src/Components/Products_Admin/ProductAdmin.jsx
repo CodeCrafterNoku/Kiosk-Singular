@@ -97,7 +97,7 @@ function ProductAdmin() {
       fetchProducts();
       setEditingProduct(null);
     } else {
-      setPopup({ message: 'Failed to update product', type: 'error' });
+      setPopup({ message: 'Failed to update product.It did not meet the required specifications.', type: 'error' });
     }
   };
 
