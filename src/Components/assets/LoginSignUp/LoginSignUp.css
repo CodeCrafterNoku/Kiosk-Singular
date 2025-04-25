@@ -1,5 +1,5 @@
 body.login-background {
-  background-image: url('../background_Image.jpg');
+ /* background-image: url('./Components/assets/background_Image.jpg'); /* Adjust path if necessary */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -147,4 +147,37 @@ body.login-background {
 .toggle-container .submit.gray {
   background: #EAEAEA; /* Inactive button background */
   color: #676767; /* Inactive button text color */
+}
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #4caf50;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-weight: 500;
+  text-align: center;
 }

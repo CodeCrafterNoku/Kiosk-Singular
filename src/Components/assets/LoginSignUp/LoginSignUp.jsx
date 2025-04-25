@@ -18,6 +18,7 @@ const LoginSignUp = () => {
     });
     const [userId, setUserId] = useState(null);
     const [loginError, setLoginError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -32,35 +33,49 @@ const LoginSignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoginError('');
-
+        setLoading(true);
+    
         try {
             const url = action === 'Sign Up'
                 ? 'http://localhost:5279/api/User'
                 : 'http://localhost:5279/api/User/login';
-
+    
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(action === 'Sign Up'
-                    ? formData
-                    : { email: formData.email, password: formData.password })
+                body: JSON.stringify(
+                    action === 'Sign Up'
+                        ? formData
+                        : { email: formData.email, password: formData.password }
+                )
             });
-
+    
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                // Check if the response is JSON
+                const contentType = response.headers.get('Content-Type');
+                let errorData = '';
+    
+                if (contentType && contentType.includes('application/json')) {
+                    // Parse as JSON if it's a JSON response
+                    errorData = await response.json();
+                } else {
+                    // Otherwise, parse as text (e.g., plain text or HTML)
+                    errorData = await response.text();
+                }
+    
+                throw new Error(errorData.message || errorData || `HTTP error! status: ${response.status}`);
             }
-
+    
             const data = await response.json();
-            alert(`${action} successful!`);
+            console.log(`${action} successful!`);
             console.log('Server response:', data);
-
+    
             if (action === 'Login') {
                 setUserId(data.userId);
                 setFormData({ ...formData, password: '' });
-
+    
                 if (data.role === 7 || data.role === "7") {
                     navigate('/user/products');
                 } else if (data.role === 8 || data.role === "8") {
@@ -68,13 +83,26 @@ const LoginSignUp = () => {
                 } else {
                     alert("Invalid role");
                 }
+            } else {
+                alert("Sign Up successful! You can now log in.");
+                setFormData({
+                    name: '',
+                    email: '',
+                    password: '',
+                    phoneNumber: '',
+                    roleID: ''
+                });
+                setAction("Login");
             }
-
+    
         } catch (error) {
             console.error('Error:', error.message);
             setLoginError(error.message);
+        } finally {
+            setLoading(false);
         }
     };
+    
 
     const handleUpdateUser = async () => {
         if (!userId) return;
@@ -122,7 +150,12 @@ const LoginSignUp = () => {
     };
 
     return (
-        <div className='container login-background'> {/* Add the class here */}
+        <div className='container login-background'>
+            {loading && (
+                <div className="loading-overlay">
+                    <div className="spinner"></div>
+                </div>
+            )}
             <div className='header'>
                 <h1 className='text'>{action}</h1>
                 <div className='underline'></div>
@@ -192,8 +225,8 @@ const LoginSignUp = () => {
                             </div>
                         )}
                         <div className='submit-container'>
-                            <button type="submit" className="submit">
-                                {action === 'Sign Up' ? 'Sign Up' : 'Login'}
+                            <button type="submit" className="submit" disabled={loading}>
+                                {loading ? 'Loading...' : (action === 'Sign Up' ? 'Sign Up' : 'Login')}
                             </button>
                             {action === "Login" && userId && (
                                 <>
