@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import "./Products.css";
+import { MdAddBox } from "react-icons/md";
+
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -84,13 +86,16 @@ function Products() {
               src={product.imageURL || "https://via.placeholder.com/150"}
               alt={product.productName}
             />
-            <div className="card-details">
-              <h3 className="card-title">{product.productName}</h3>
-              <section className="card-description">
-                <h4>{product.productDescription}</h4>
-              </section>
-              <p className="card-price">R{product.price?.toFixed(2)}</p>
-            </div>
+<div className="card-details">
+  <h3 className="card-title">{product.productName}</h3>
+  <section className="card-description">
+    <h4>{product.productDescription}</h4>
+  </section>
+  <div className="card-price-row">
+    <p className="card-price">R{product.price?.toFixed(2)}</p>
+    <MdAddBox className="add-icon" />
+  </div>
+</div>
           </section>
         ))}
       </section>

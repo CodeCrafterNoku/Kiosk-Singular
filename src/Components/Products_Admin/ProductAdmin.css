@@ -106,6 +106,7 @@
   flex-wrap: wrap; /* Allow cards to wrap to the next line */
   padding: 1rem; /* Container padding */
 }
+
 /* Overlay background for the popup */
 .popup-overlay {
   position: fixed;
