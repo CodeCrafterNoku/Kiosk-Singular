@@ -152,3 +152,44 @@
 .popup button:first-of-type:hover {
   background-color: #008b7a; /* Darker on hover */
 }
+.card {
+  position: relative;
+  overflow: hidden;
+}
+
+.card img {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Apply the overlay only over the image height */
+.out-of-stock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* Use aspect-ratio matching or set fixed height */
+  height: auto;
+  background: rgba(164, 225, 230, 0.6);
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  z-index: 1;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* Match the height of the image using this trick */
+.card .out-of-stock-overlay {
+  height: 100%;
+  max-height: 200px; /* Adjust this to match your image height */
+}
+
+/* Image styling when out of stock */
+.out-of-stock-image {
+  filter: grayscale(100%) blur(1px);
+}

@@ -82,21 +82,28 @@ function Products() {
       <section className="card-container">
         {filteredProducts.map((product) => (
           <section className="card" key={product.productID}>
-            <img
-              src={product.imageURL || "https://via.placeholder.com/150"}
-              alt={product.productName}
-            />
-<div className="card-details">
-  <h3 className="card-title">{product.productName}</h3>
-  <section className="card-description">
-    <h4>{product.productDescription}</h4>
-  </section>
-  <div className="card-price-row">
-    <p className="card-price">R{product.price?.toFixed(2)}</p>
-    <MdAddBox className="add-icon" />
+  <img
+    src={product.imageURL || "https://via.placeholder.com/150"}
+    alt={product.productName}
+    className={product.quantity === 0 ? "out-of-stock-image" : ""}
+  />
+  {product.quantity === 0 && (
+    <div className="out-of-stock-overlay">
+      <span>Out of Stock</span>
+    </div>
+  )}
+  <div className="card-details">
+    <h3 className="card-title">{product.productName}</h3>
+    <section className="card-description">
+      <h4>{product.productDescription}</h4>
+    </section>
+    <div className="card-price-row">
+      <p className="card-price">R{product.price?.toFixed(2)}</p>
+      <MdAddBox className="add-icon" />
+    </div>
   </div>
-</div>
-          </section>
+</section>
+
         ))}
       </section>
     </>

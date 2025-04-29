@@ -3,6 +3,10 @@
   justify-content: flex-start;
   flex-wrap: wrap;
   padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+
+
 }
 
 .card {
@@ -17,7 +21,7 @@
   flex-direction: column;
 }
 .card:hover {
-  transform: scale(1.07);/* Increases the size by 5% */
+  transform: scale(1.05);/* Increases the size by 5% */
   transition: transform 0.3s ease-in-out; /* Smooth transition effect */
 }
 

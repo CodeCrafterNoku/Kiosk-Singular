@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FiHeart, FiMenu } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { AiOutlineUser } from 'react-icons/ai';
+import { MdLightMode } from "react-icons/md";
 import './Nav.css';
 
 function Nav() {
@@ -22,6 +23,9 @@ function Nav() {
       <img src="/singular logo.jpg" alt="Company Logo" className="logo" />
     </div>
       <div className="profile-container">
+      <a href="#">
+          <MdLightMode className="nav-icons" />
+        </a>
         <a href="#">
           <FiHeart className="nav-icons" />
         </a>
@@ -34,6 +38,7 @@ function Nav() {
         <a href="#" className="menu-icon" onClick={toggleDrawer}>
           <FiMenu className="nav-icons" />
         </a>
+
       </div>
 
       {drawerOpen && (

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './ProductAdmin.css';
+import { MdAddBox } from "react-icons/md";
 
 function ProductAdmin() {
   const [products, setProducts] = useState([]);
@@ -259,20 +260,27 @@ function ProductAdmin() {
         
         <div className="card-container">
           {filteredProducts.map((product) => (
-            <div key={product.productID} className="card">
-              <img
-                src={product.imageURL || 'https://via.placeholder.com/150'}
-                alt={product.productName}
-              />
-              <div className="card-details">
-                <h3>{product.productName}</h3>
-                <p>{product.productDescription}</p>
-                <p>Price: R{product.price}</p>
-                <p>Quantity: {product.quantity}</p>
-                <button onClick={() => handleEditProduct(product)}>Edit</button>
-                <button onClick={() => handleConfirmDelete(product.productID)}>Delete</button>
-              </div>
-            </div>
+<div key={product.productID} className="card">
+  <img
+    src={product.imageURL || 'https://via.placeholder.com/150'}
+    alt={product.productName}
+    className={product.quantity === 0 ? 'out-of-stock-image' : ''}
+  />
+  {product.quantity === 0 && (
+    <div className="out-of-stock-overlay">
+      <span>Not Available</span>
+    </div>
+  )}
+  <div className="card-details">
+    <h3 className="product-name">{product.productName}</h3>
+    <p className="product-description">{product.productDescription}</p>
+    <p>Price: R{product.price}</p>
+    <p>Quantity: {product.quantity}</p>
+    <button onClick={() => handleEditProduct(product)}>Edit</button>
+    <button onClick={() => handleConfirmDelete(product.productID)}>Delete</button>
+  </div>
+</div>
+
           ))}
         </div>
       </div>
