@@ -86,7 +86,26 @@
 .delete-popup button:first-of-type:hover {
   background-color: #008b7a; /* Darker on hover */
 }
-
+.card img {
+  width: 100%; /* Ensure the image fills the card width */
+  height: 200px; /* Set a fixed height for uniformity */
+  object-fit: cover; /* Ensures the image covers the area without distortion */
+}
+.card {
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+  width: calc(20% - 1rem); /* Adjust for the desired number of cards per row */
+  min-width: 150px; /* Minimum width */
+  max-width: 200px; /* Maximum width */
+  margin: 0.5rem; /* Space around each card */
+}
+.card-container {
+  display: flex;
+  flex-wrap: wrap; /* Allow cards to wrap to the next line */
+  padding: 1rem; /* Container padding */
+}
 /* Overlay background for the popup */
 .popup-overlay {
   position: fixed;
