@@ -18,9 +18,9 @@ function Nav() {
 
   return (
     <nav>
-      <div className="nav-container">
-        <input type="text" className="search-input" placeholder="Search for food" />
-      </div>
+    <div className="logo-container">
+      <img src="/singular logo.jpg" alt="Company Logo" className="logo" />
+    </div>
       <div className="profile-container">
         <a href="#">
           <FiHeart className="nav-icons" />

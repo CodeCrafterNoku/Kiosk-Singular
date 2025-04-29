@@ -59,13 +59,15 @@
   
 }
 
-.category-buttons-container button {
-  padding: 0.5rem 1rem;
+.card {
+  position: relative;
   border: 1px solid #ccc;
-  background-color: #00a69b;
   border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+  width: calc(33.33% - 1rem); /* Adjust for gaps */
+  min-width: 250px; /* Set a minimum width to prevent them from being too small */
+  max-width: 300px; /* Optional: set a maximum width */
+  margin: 0; /* Remove any default margins */
 }
 
 .category-buttons-container button:hover {
