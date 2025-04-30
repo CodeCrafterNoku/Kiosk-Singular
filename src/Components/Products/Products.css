@@ -1,7 +1,7 @@
 /* .page-container {
-  padding: 0 4rem !important;
-  box-sizing: border-box;
+  position: relative;
 } */
+
 
 .card-container {
   display: flex;
@@ -139,4 +139,31 @@
 
 .out-of-stock-image {
   filter: grayscale(100%) blur(1px);
+}
+/*loading spinner*/
+.loading-overlay {
+  position: fixed; /* Changed from absolute to fixed */
+  top: 0;
+  left: 0;
+  width: 100vw;  /* Full screen width */
+  height: 100vh; /* Full screen height */
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensure it's on top */
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #00a69b;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

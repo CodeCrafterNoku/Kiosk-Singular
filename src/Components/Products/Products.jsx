@@ -8,6 +8,9 @@ function Products() {
   const [categories, setCategories] = useState([]);
   const [selectedCategoryName, setSelectedCategoryName] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);  // Track loading state
+
+  
 
   const handleCategorySelect = (categoryName) => {
     setSelectedCategoryName(categoryName);
@@ -24,30 +27,35 @@ function Products() {
         method: 'GET',
         headers: { 'Accept': 'application/json' },
       });
-
+  
       if (!response.ok) throw new Error('Failed to fetch products');
       const data = await response.json();
       setProducts(data);
     } catch (error) {
       console.error('Error fetching products:', error);
       setError(error.message);
+    } finally {
+      setLoading(false);  // Stop loading indicator after fetch completes
     }
   };
-
+  
   const fetchCategories = async () => {
     try {
       const response = await fetch('http://localhost:5279/api/Category', {
         method: 'GET',
         headers: { 'Accept': 'application/json' },
       });
-
+  
       if (!response.ok) throw new Error('Failed to fetch categories');
       const data = await response.json();
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
+    } finally {
+      setLoading(false);  // Stop loading indicator after fetch completes
     }
   };
+  
 
   const handleCategoryChange = (e) => {
     setSelectedCategoryName(e.target.value);
@@ -65,7 +73,15 @@ function Products() {
 
   return (
     <>
+    <div className="page-container">
       {error && <p className="error">Error: {error}</p>}
+              {/* Added loader while fetching data */}
+              {loading ? (
+          <div className="loading-overlay">
+            <div className="spinner"></div>
+          </div>
+        ) : (
+          <>
       <div className="category-buttons-container">
         <button onClick={() => handleCategorySelect('')}>All Categories</button>
         {categories.map((category) => (
@@ -106,6 +122,9 @@ function Products() {
 
         ))}
       </section>
+      </>
+        )}
+      </div>
     </>
   );
 }
