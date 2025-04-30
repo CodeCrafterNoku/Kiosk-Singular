@@ -57,6 +57,12 @@ function ProductAdmin() {
   };
 
   const handleAddProduct = async () => {
+    const productExists = products.some((product) => product.productName.toLowerCase() === newProduct.productName.toLowerCase());
+
+    if (productExists) {
+      setPopup({ message: 'Product already exists. Please try a different name.', type: 'error' });
+      return;
+    }
     const response = await fetch('http://localhost:5279/api/Product', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -69,7 +75,7 @@ function ProductAdmin() {
       setShowAddProductPopup(false);
       setNewProduct({ productName: '', productDescription: '', price: '', quantity: '', categoryID: '', imageURL: '' });
     } else {
-      setPopup({ message: 'Failed to add product. It did not meet the required specifications.', type: 'error' });
+      setPopup({ message: 'Failed to add product. It did not meet the required specifications', type: 'error' });
     }
   };
 
@@ -179,8 +185,10 @@ function ProductAdmin() {
                 value={newProduct.imageURL}
                 onChange={(e) => setNewProduct({ ...newProduct, imageURL: e.target.value })}
               />
-              <button type="submit">Add Product</button>
-              <button type="button" onClick={() => setShowAddProductPopup(false)}>Cancel</button>
+<div className="form-buttons">
+  <button type="submit">Add Product</button>
+  <button type="button" onClick={() => setShowAddProductPopup(false)}>Cancel</button>
+</div>
             </form>
           </div>
         </div>
@@ -232,8 +240,11 @@ function ProductAdmin() {
                 value={editingProduct.imageURL}
                 onChange={(e) => setEditingProduct({ ...editingProduct, imageURL: e.target.value })}
               />
-              <button type="submit">Update Product</button>
-              <button type="button" onClick={() => setShowUpdateProductPopup(false)}>Cancel</button>
+<div className="form-buttons">
+  <button type="submit">Update Product</button>
+  <button type="button" onClick={() => setShowUpdateProductPopup(false)}>Cancel</button>
+</div>
+
             </form>
           </div>
         </div>
@@ -276,8 +287,10 @@ function ProductAdmin() {
     <p className="product-description">{product.productDescription}</p>
     <p>Price: R{product.price}</p>
     <p>Quantity: {product.quantity}</p>
-    <button onClick={() => handleEditProduct(product)}>Edit</button>
-    <button onClick={() => handleConfirmDelete(product.productID)}>Delete</button>
+    <div className="card-buttons">
+  <button onClick={() => handleEditProduct(product)}>Edit</button>
+  <button onClick={() => handleConfirmDelete(product.productID)}>Delete</button>
+</div>
   </div>
 </div>
 

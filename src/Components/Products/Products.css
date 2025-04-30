@@ -1,3 +1,8 @@
+/* .page-container {
+  padding: 0 4rem !important;
+  box-sizing: border-box;
+} */
+
 .card-container {
   display: flex;
   justify-content: flex-start;
@@ -5,6 +10,7 @@
   padding: 16px;
   width: 100%;
   box-sizing: border-box;
+  margin-left: 1.5rem;
 
 
 }
@@ -14,8 +20,8 @@
   border-radius: 8px;
   margin: 16px;
   overflow: hidden;
-  width: 200px;
-  /* height: 200; */
+  width: 350px !important;
+  height: 100;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -45,27 +51,26 @@
 
 .card-description {
   font-size: 0.6em;
-  color: #555;
+  color: #555555d7;
   margin-bottom: 12px;
-  font-weight: 200; /* Lighter weight */
+  font-weight: 50 !important;
 }
 
-/* 
-.card-price {
-  font-size: 0.9em;
-  color: #28a745;
-  margin-top: 0;
-} */
+
 /*new chnages*/
 .category-buttons-container {
   display: flex;
   gap: 1rem;
   padding: 1rem 2rem;
-  background-color: #00a69b; /* Change to your desired color */
+  background-color: transparent !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
   border-bottom: 1px solid #00a69b;
   flex-wrap: wrap;
   justify-content: flex-start;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  margin-left: 1.5rem;
   
 }
 
@@ -82,6 +87,7 @@
 
 .category-buttons-container button:hover {
   background-color: #eaeaea;
+  padding: 0.5rem 1.2rem;
 }
 
 .category-buttons-container button.active {
@@ -109,4 +115,28 @@
   cursor: pointer; /* Show pointer cursor on hover */
   margin-left: 8px;  /* Add some space between the price and icon */
 }
+.out-of-stock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 0, 0, 0.6);
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  z-index: 1;
+  border-radius: 8px;
+}
 
+.card {
+  position: relative;
+  overflow: hidden;
+}
+
+.out-of-stock-image {
+  filter: grayscale(100%) blur(1px);
+}

@@ -5,6 +5,8 @@
   background-color: #f5f5f5; /* Adjust as needed */
   border-bottom: 1px solid #ddd;
   flex-wrap: wrap;
+  
+  
 }
 
 .category-buttons-container button {
@@ -27,10 +29,10 @@
 }
 
 .add-product-button {
-  margin-left: auto; /* Push the button to the right */
+  margin-left: auto;
   padding: 0.5rem 1rem;
-  background-color: #007bff; /* Example color */
-  color: black;
+  background-color: #00a69b !important;
+  color: white !important;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -38,7 +40,7 @@
 }
 
 .add-product-button:hover {
-  background-color: #0056b3; /* Darker on hover */
+  background-color: #007e76; /* Slightly darker teal on hover */
 }
 
 /* Add styles for the popup overlay */
@@ -81,6 +83,7 @@
 
 .delete-popup button:first-of-type {
   background-color: #00a69b;
+  margin-right: 16px;
 }
 
 .delete-popup button:first-of-type:hover {
@@ -100,11 +103,13 @@
   min-width: 150px; /* Minimum width */
   max-width: 200px; /* Maximum width */
   margin: 0.5rem; /* Space around each card */
+  
 }
 .card-container {
   display: flex;
   flex-wrap: wrap; /* Allow cards to wrap to the next line */
   padding: 1rem; /* Container padding */
+  
 }
 
 /* Overlay background for the popup */
@@ -142,7 +147,7 @@
 }
 
 .popup button:hover {
-  background-color: #00a69b;
+  background-color: red;
 }
 
 .popup button:first-of-type {
@@ -193,3 +198,48 @@
 .out-of-stock-image {
   filter: grayscale(100%) blur(1px);
 }
+.popup form input,
+.popup form textarea,
+.popup form select {
+  width: 100%;            /* Makes all inputs take full width of the container */
+  padding: 10px;          /* Adds inner spacing */
+  margin-bottom: 2px;    /* Adds space between fields */
+  box-sizing: border-box; /* Ensures padding doesn't increase total width */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+.form-buttons {
+  display: flex;
+  gap: 112px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* Container for card buttons */
+.card-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start; /* Align buttons horizontally */
+}
+
+/* Button styles */
+.card-buttons button {
+  background-color: #9ae2dd; /* Initial background color */
+  color: white;              /* Text color */
+  padding: 10px 20px;        /* Add some padding for size */
+  border: none;              /* Remove the border */
+  border-radius: 5px;        /* Rounded corners */
+  cursor: pointer;          /* Pointer cursor for interaction */
+  transition: transform 0.3s ease, background-color 0.3s ease; /* Smooth transition for hover */
+  flex-grow: 1;              /* Make buttons the same size */
+}
+
+/* Hover effect */
+.card-buttons button:hover {
+  background-color: #008b7a; /* Change background color on hover */
+  transform: scale(1.05);     /* Slightly expand the button */
+}
+
+
+
