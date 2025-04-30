@@ -135,6 +135,15 @@
   -webkit-line-clamp: 3;    /* Limit description to 3 lines */
   -webkit-box-orient: vertical;
 }
+.product-price {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.product-quantity {
+  font-size: 0.9rem;
+}
+
 
 
 /* Overlay background for the popup */

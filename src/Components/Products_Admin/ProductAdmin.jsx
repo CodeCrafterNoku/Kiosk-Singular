@@ -285,8 +285,8 @@ function ProductAdmin() {
   <div className="card-details">
     <h3 className="product-name">{product.productName}</h3>
     <p className="product-description">{product.productDescription}</p>
-    <p>Price: R{product.price}</p>
-    <p>Quantity: {product.quantity}</p>
+    <p className="product-price">Price: R{parseFloat(product.price).toFixed(2)}</p>
+    <p className="product-quantity">Quantity: {product.quantity}</p>
     <div className="card-buttons">
   <button onClick={() => handleEditProduct(product)}>Edit</button>
   <button onClick={() => handleConfirmDelete(product.productID)}>Delete</button>

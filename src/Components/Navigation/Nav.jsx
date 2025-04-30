@@ -3,10 +3,12 @@ import { FiHeart, FiMenu } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { AiOutlineUser } from 'react-icons/ai';
 import { MdLightMode } from "react-icons/md";
+import { useNavigate } from 'react-router-dom';
 import './Nav.css';
 
 function Nav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -15,7 +17,13 @@ function Nav() {
   const handleMenuItemClick = (action) => {
     console.log(action);
     setDrawerOpen(false); // Close the drawer after an action
+    if (action === 'Logout') {
+      // ✅ Navigate to login
+      navigate('/');
+    }
   };
+
+
 
   return (
     <nav>
