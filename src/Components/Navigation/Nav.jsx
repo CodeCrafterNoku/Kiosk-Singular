@@ -20,7 +20,7 @@ function Nav() {
   return (
     <nav>
     <div className="logo-container">
-      <img src="/singular logo.jpg" alt="Company Logo" className="logo" />
+      <img src="/singular.png" alt="Company Logo" className="logo" />
     </div>
       <div className="profile-container">
       <a href="#">
