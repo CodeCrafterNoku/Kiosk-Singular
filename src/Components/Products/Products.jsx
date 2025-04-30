@@ -9,8 +9,7 @@ function Products() {
   const [selectedCategoryName, setSelectedCategoryName] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);  // Track loading state
-
-  
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleCategorySelect = (categoryName) => {
     setSelectedCategoryName(categoryName);
@@ -65,11 +64,18 @@ function Products() {
     (cat) => cat.categoryName === selectedCategoryName
   );
 
-  const filteredProducts = selectedCategory
-    ? products.filter(
-        (product) => String(product.categoryID) === String(selectedCategory.categoryID)
-      )
-    : products;
+  const filteredProducts = products.filter((product) => {
+    const matchesCategory = selectedCategory
+      ? String(product.categoryID) === String(selectedCategory.categoryID)
+      : true;
+  
+    const matchesSearch = product.productName
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+  
+    return matchesCategory && matchesSearch;
+  });
+  
 
   return (
     <>
@@ -93,6 +99,15 @@ function Products() {
               {category.categoryName}
          </button>
         ))}
+              <div className="search-container">
+  <input
+    type="text"
+    placeholder="Search by product name..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    className="search-input"
+  />
+</div>
       </div>
 
       <section className="card-container">

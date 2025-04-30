@@ -167,3 +167,21 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Pushes the search input to the far right */
+}
+
+.search-input {
+  padding: 0.5rem 1rem;
+  border: 1px solid #00a69b;
+  border-radius: 5px;
+  width: 250px; /* Adjust as needed */
+  font-size: 1rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #00a69b;
+}
