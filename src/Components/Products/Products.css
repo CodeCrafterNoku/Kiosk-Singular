@@ -110,7 +110,7 @@
 }
 
 .add-icon {
-  font-size: 24px;  /* Size of the icon */
+  font-size: 28px;  /* Size of the icon */
   color: #00a69b;  /* Correct icon color */
   cursor: pointer; /* Show pointer cursor on hover */
   margin-left: 8px;  /* Add some space between the price and icon */

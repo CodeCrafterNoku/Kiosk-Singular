@@ -1,5 +1,5 @@
 body {
-  background-color: white; /* Replace with your desired color */
+  background-color: white;
   background-size: cover; /* Not needed for color, can be removed */
   background-position: center; /* Not needed for color, can be removed */
   background-repeat: no-repeat; /* Not needed for color, can be removed */
@@ -18,9 +18,9 @@ body {
   margin-top: 70px;
   width: 460px;
   padding-bottom: 30px;
-  background-color: grey; /* Light background for contrast */
+  background-color: rgba(26, 96, 114, 0); /* Light background for contrast */
   border-radius: 16px; /* Adjust the radius as needed */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Optional: add a shadow for depth */
+  box-shadow: 0 4px 20px rgba(21, 240, 211, 0.336); /* Optional: add a shadow for depth */
 }
 
 .header {
@@ -51,17 +51,15 @@ body {
   flex-direction: column;
   gap: 10px; /* Space between inputs */
 }
-
 .input {
   display: flex;
   align-items: center;
-  margin: auto;
-  max-width: none;
-  width: 100%; /* Use full width of the parent container */
   background: #eaeaea;
-  height: 18px;
-  border-radius: 6px; /* Rounded corners */
-  padding: 0 2px; /* Internal padding for aesthetics */
+  border-radius: 10px;
+  margin: 2px auto;
+  width: 260px;
+  height: 48px;
+  padding: 0 10px;
 }
 
 .input input {
@@ -73,7 +71,16 @@ body {
   color: #797979;
   font-size: 17px;
 }
-
+.input input,
+.input select {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  color: #333;
+}
 .forgot-password {
   display: flex; /* Use flexbox for alignment */
   justify-content: center; /* Center align items */
@@ -189,7 +196,7 @@ body {
 }
 
 .error-message {
-  color: red;
+  color: rgb(240, 16, 16);
   margin-top: 10px;
   font-weight: 500;
   text-align: center;
