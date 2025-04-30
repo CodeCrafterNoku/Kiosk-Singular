@@ -111,6 +111,31 @@
   padding: 1rem; /* Container padding */
   
 }
+/* Product Name */
+.card .product-name {
+  font-size: 1.0em;         /* Slightly larger font size */
+  font-weight: bold;        /* Bold text for product name */
+  color: #333;              /* Dark color for readability */
+  margin: 0.5rem 0;         /* Margin for spacing */
+  overflow: hidden;         /* Prevent text overflow */
+  text-overflow: ellipsis;  /* Ellipsis for overflow text */
+  white-space: nowrap;      /* Prevent wrapping of the product name */
+}
+
+/* Product Description */
+.card .product-description {
+  font-size: 0.8em;         /* Smaller font size for the description */
+  color: #666;              /* Lighter color for description */
+  margin: 0.5rem 0;         /* Margin for spacing */
+  line-height: 1.4;         /* Line height for readability */
+  text-overflow: ellipsis;  /* Ellipsis for overflow text */
+  overflow: hidden;         /* Prevent text overflow */
+  height: 50px;             /* Set a height limit for the description */
+  display: -webkit-box;     /* Create a box to limit the description */
+  -webkit-line-clamp: 3;    /* Limit description to 3 lines */
+  -webkit-box-orient: vertical;
+}
+
 
 /* Overlay background for the popup */
 .popup-overlay {
