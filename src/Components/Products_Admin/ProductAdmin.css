@@ -102,7 +102,7 @@
   width: calc(20% - 1rem); /* Adjust for the desired number of cards per row */
   min-width: 150px; /* Minimum width */
   max-width: 200px; /* Maximum width */
-  margin: 0.5rem; /* Space around each card */
+  margin: 0.4rem; /* Space around each card */
   
 }
 .card-container {
