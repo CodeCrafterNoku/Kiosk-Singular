@@ -26,6 +26,7 @@ function ProductAdmin() {
   
 
   const fetchProducts = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch('http://localhost:5279/api/Product', {
         method: 'GET',
@@ -37,6 +38,8 @@ function ProductAdmin() {
       setProducts(data);
     } catch (error) {
       setError(error.message);
+    }finally {
+      setIsLoading(false); // Reset loading state
     }
   };
 
@@ -240,6 +243,7 @@ function ProductAdmin() {
   return (
     <>
       {error && <p className="error">Error: {error}</p>}
+      {isLoading && <div className="spinner">Loading...</div>}
 
       {/* Add Product Popup */}
       {showAddProductPopup && (
