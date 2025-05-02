@@ -20,6 +20,10 @@ function ProductAdmin() {
   const [popup, setPopup] = useState(null);
   const [showAddProductPopup, setShowAddProductPopup] = useState(false);
   const [showUpdateProductPopup, setShowUpdateProductPopup] = useState(false); // New state for update popup
+  const [isImageUploaded, setIsImageUploaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdateLoading, setIsUpdateLoading] = useState(false); 
+  
 
   const fetchProducts = async () => {
     try {
@@ -57,25 +61,44 @@ function ProductAdmin() {
   };
 
   const handleAddProduct = async () => {
+    // Validate required fields
+    const productData = {
+      ...newProduct,
+    };
+    
+    if (
+      !productData.productName.trim() ||
+      !productData.productDescription.trim() ||
+      !productData.categoryID ||
+      !productData.imageURL.trim()  ||
+      !isImageUploaded
+    ) {
+      setPopup({ message: 'Please fill in all required fields.', type: 'error' });
+      return;
+    }
+    
+  
     const productExists = products.some((product) => product.productName.toLowerCase() === newProduct.productName.toLowerCase());
-
+  
     if (productExists) {
       setPopup({ message: 'Product already exists. Please try a different name.', type: 'error' });
       return;
     }
+  
     const response = await fetch('http://localhost:5279/api/Product', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newProduct),
     });
-
+  
     if (response.ok) {
       setPopup({ message: 'Product added successfully', type: 'success' });
       fetchProducts();
       setShowAddProductPopup(false);
       setNewProduct({ productName: '', productDescription: '', price: '', quantity: '', categoryID: '', imageURL: '' });
     } else {
-      setPopup({ message: 'Failed to add product. It did not meet the required specifications', type: 'error' });
+      const errorMessage = await response.text(); // Inspect error response
+      setPopup({ message: `Failed to add product: ${errorMessage}`, type: 'error' });
     }
   };
 
@@ -96,6 +119,8 @@ function ProductAdmin() {
 
   const handleUpdateProduct = async () => {
     if (!editingProduct) return;
+    setIsUpdateLoading(true); 
+    console.log("Updating Product:", editingProduct); 
 
     const response = await fetch(`http://localhost:5279/api/Product/${editingProduct.productID}`, {
       method: 'PUT',
@@ -111,6 +136,7 @@ function ProductAdmin() {
     } else {
       setPopup({ message: 'Failed to update product. It did not meet the required specifications.', type: 'error' });
     }
+    setIsUpdateLoading(false); // Re-enable the button
   };
 
   const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
@@ -136,6 +162,79 @@ function ProductAdmin() {
         </div>
       </div>
     );
+  };
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "kiosk_system"); // Make sure this matches your Cloudinary preset
+
+    setIsLoading(true); // Set loading state to true
+    fetch("https://api.cloudinary.com/v1_1/diet4t4b9/image/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Upload failed: ' + response.statusText);
+        }
+        return response.json();
+      })
+      .then(data => {
+        const imageUrl = data.secure_url;
+        console.log('Image uploaded successfully:', imageUrl);
+  
+        // Safely update newProduct with the image URL
+        setNewProduct(prevProduct => ({
+          ...prevProduct,
+          imageURL: imageUrl,
+        }));
+        setIsImageUploaded(true); // Set the flag to true after successful upload
+      })
+      .catch(error => {
+        console.error("Error uploading image:", error);
+      })
+      .finally(() => {
+        setIsLoading(false); // ✅ Set loading state to false after the upload is complete
+      });
+  
+  };
+  const handleImageUploadForUpdate = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "kiosk_system");
+  
+    setIsUpdateLoading(true); // Set loading state to true
+    fetch("https://api.cloudinary.com/v1_1/diet4t4b9/image/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Upload failed: ' + response.statusText);
+        }
+        return response.json();
+      })
+      .then(data => {
+        const imageUrl = data.secure_url;
+        console.log('Image uploaded successfully:', imageUrl);
+        setEditingProduct(prevProduct => ({
+          ...prevProduct,
+          imageURL: imageUrl, // Ensure this is correctly set
+        }));
+        setIsImageUploaded(true);
+      })
+      .catch(error => {
+        console.error("Error uploading image:", error);
+      })
+      .finally(() => {
+        setIsUpdateLoading(false); // Set loading state to false
+      });
   };
 
   return (
@@ -180,15 +279,17 @@ function ProductAdmin() {
                 ))}
               </select>
               <input
-                type="text"
-                placeholder="Image URL"
-                value={newProduct.imageURL}
-                onChange={(e) => setNewProduct({ ...newProduct, imageURL: e.target.value })}
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e)} // ✅ Handling image file input
               />
+
 <div className="form-buttons">
-  <button type="submit">Add Product</button>
-  <button type="button" onClick={() => setShowAddProductPopup(false)}>Cancel</button>
-</div>
+                <button type="submit" disabled={isLoading}> {/* ✅ Disable button while loading */}
+                  {isLoading ? 'Uploading...' : 'Add Product'} {/* ✅ Display loading text */}
+                </button>
+                <button type="button" onClick={() => setShowAddProductPopup(false)}>Cancel</button>
+              </div>
             </form>
           </div>
         </div>
@@ -235,15 +336,16 @@ function ProductAdmin() {
                 ))}
               </select>
               <input
-                type="text"
-                placeholder="Image URL"
-                value={editingProduct.imageURL}
-                onChange={(e) => setEditingProduct({ ...editingProduct, imageURL: e.target.value })}
-              />
-<div className="form-buttons">
-  <button type="submit">Update Product</button>
-  <button type="button" onClick={() => setShowUpdateProductPopup(false)}>Cancel</button>
-</div>
+  type="file"
+  accept="image/*"
+  onChange={(e) => handleImageUploadForUpdate(e)} // Use the correct upload handler
+/>
+ <div className="form-buttons">
+                <button type="submit" disabled={isUpdateLoading}> {/* Disable while loading */}
+                  {isUpdateLoading ? 'Uploading...' : 'Update Product'} {/* Show loading text */}
+                </button>
+                <button type="button" onClick={() => setShowUpdateProductPopup(false)}>Cancel</button>
+              </div>
 
             </form>
           </div>
