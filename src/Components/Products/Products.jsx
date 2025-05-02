@@ -89,7 +89,12 @@ function Products() {
         ) : (
           <>
       <div className="category-buttons-container">
-        <button onClick={() => handleCategorySelect('')}>All Categories</button>
+      <button
+  onClick={() => handleCategorySelect('')}
+  className={selectedCategoryName === '' ? 'active' : ''}
+>
+  All Categories
+</button>
         {categories.map((category) => (
             <button
               key={category.categoryID}
