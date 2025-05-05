@@ -23,6 +23,7 @@ function ProductAdmin() {
   const [isImageUploaded, setIsImageUploaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdateLoading, setIsUpdateLoading] = useState(false); 
+  const [searchTerm, setSearchTerm] = useState('');
   
 
   const fetchProducts = async () => {
@@ -144,9 +145,13 @@ function ProductAdmin() {
 
   const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
 
-  const filteredProducts = selectedCategory
-    ? products.filter((product) => String(product.categoryID) === String(selectedCategory))
-    : products;
+  const filteredProducts = products.filter((product) => {
+    const matchesCategory = !selectedCategory || 
+        String(product.categoryID) === String(selectedCategory);
+    const matchesSearch = !searchTerm || 
+        product.productName.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+});
 
   const handleEditProduct = (product) => {
     setEditingProduct({ ...product });
@@ -373,6 +378,15 @@ function ProductAdmin() {
           <button className="add-product-button" onClick={() => setShowAddProductPopup(true)}>
             Add New Product
           </button>
+          <div className="search-container">
+                        <input
+                            type="text"
+                            placeholder="Search products by name..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
+                    </div>
         </div>
         
         <div className="card-container">
