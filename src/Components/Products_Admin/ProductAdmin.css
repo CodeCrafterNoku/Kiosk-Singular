@@ -128,9 +128,9 @@
 
 /* Product Description */
 .card .product-description {
-  font-size: 0.8em;         /* Smaller font size for the description */
+  font-size: 0.7em;         /* Smaller font size for the description */
   color: #666;              /* Lighter color for description */
-  margin: 0.5rem 0;         /* Margin for spacing */
+  margin: 0.2rem 0;        /* Margin for spacing */
   line-height: 1.4;         /* Line height for readability */
   text-overflow: ellipsis;  /* Ellipsis for overflow text */
   overflow: hidden;         /* Prevent text overflow */
@@ -145,12 +145,14 @@
 
 }
 .product-price {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
+  margin: 0.2rem 0;  
 }
 
 .product-quantity {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  margin: 0.4rem 0;  
 }
 
 
