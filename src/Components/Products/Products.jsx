@@ -2,18 +2,17 @@ import React, { useEffect, useState } from 'react';
 import "./Products.css";
 import { MdAddBox } from "react-icons/md";
 
-
 function Products() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategoryName, setSelectedCategoryName] = useState('');
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);  // Track loading state
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleCategorySelect = (categoryName) => {
     setSelectedCategoryName(categoryName);
-};
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -34,7 +33,7 @@ function Products() {
       console.error('Error fetching products:', error);
       setError(error.message);
     } finally {
-      setLoading(false);  // Stop loading indicator after fetch completes
+      setLoading(false);
     }
   };
   
@@ -51,10 +50,9 @@ function Products() {
     } catch (error) {
       console.error('Error fetching categories:', error);
     } finally {
-      setLoading(false);  // Stop loading indicator after fetch completes
+      setLoading(false);
     }
   };
-  
 
   const handleCategoryChange = (e) => {
     setSelectedCategoryName(e.target.value);
@@ -68,81 +66,74 @@ function Products() {
     const matchesCategory = selectedCategory
       ? String(product.categoryID) === String(selectedCategory.categoryID)
       : true;
-  
+
     const matchesSearch = product.productName
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-  
-    return matchesCategory && matchesSearch;
+
+    const isInStock = product.quantity > 0; // Check if the product is in stock
+
+    return matchesCategory && matchesSearch && isInStock; // Include the in-stock condition
   });
-  
 
   return (
     <>
-    <div className="page-container">
-      {error && <p className="error">Error: {error}</p>}
-              {/* Added loader while fetching data */}
-              {loading ? (
+      <div className="page-container">
+        {error && <p className="error">Error: {error}</p>}
+        {loading ? (
           <div className="loading-overlay">
             <div className="spinner"></div>
           </div>
         ) : (
           <>
-      <div className="category-buttons-container">
-      <button
-  onClick={() => handleCategorySelect('')}
-  className={selectedCategoryName === '' ? 'active' : ''}
->
-  All Categories
-</button>
-        {categories.map((category) => (
-            <button
-              key={category.categoryID}
-              onClick={() => handleCategorySelect(category.categoryName)}
-              className={selectedCategoryName === category.categoryName ? 'active' : ''}
-    >
-              {category.categoryName}
-         </button>
-        ))}
+            <div className="category-buttons-container">
+              <button
+                onClick={() => handleCategorySelect('')}
+                className={selectedCategoryName === '' ? 'active' : ''}
+              >
+                All Categories
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category.categoryID}
+                  onClick={() => handleCategorySelect(category.categoryName)}
+                  className={selectedCategoryName === category.categoryName ? 'active' : ''}
+                >
+                  {category.categoryName}
+                </button>
+              ))}
               <div className="search-container">
-  <input
-    type="text"
-    placeholder="Search by product name..."
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    className="search-input"
-  />
-</div>
-      </div>
+                <input
+                  type="text"
+                  placeholder="Search by product name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+            </div>
 
-      <section className="card-container">
-        {filteredProducts.map((product) => (
-          <section className="card" key={product.productID}>
-  <img
-    src={product.imageURL || "https://via.placeholder.com/150"}
-    alt={product.productName}
-    className={product.quantity === 0 ? "out-of-stock-image" : ""}
-  />
-  {product.quantity === 0 && (
-    <div className="out-of-stock-overlay">
-      <span>Out of Stock</span>
-    </div>
-  )}
-  <div className="card-details">
-    <h3 className="card-title">{product.productName}</h3>
-    <section className="card-description">
-      <h4>{product.productDescription}</h4>
-    </section>
-    <div className="card-price-row">
-      <p className="card-price">R{product.price?.toFixed(2)}</p>
-      <MdAddBox className="add-icon" />
-    </div>
-  </div>
-</section>
-
-        ))}
-      </section>
-      </>
+            <section className="card-container">
+              {filteredProducts.map((product) => (
+                <section className="card" key={product.productID}>
+                  <img
+                    src={product.imageURL || "https://via.placeholder.com/150"}
+                    alt={product.productName}
+                  />
+                  <div className="card-details">
+                    <h3 className="card-title">{product.productName}</h3>
+                    <section className="card-description">
+                      <h4>{product.productDescription}</h4>
+                    </section>
+                    <div className="card-price-row">
+                      <p className="card-price">R{product.price?.toFixed(2)}</p>
+                      <MdAddBox className="add-icon" />
+                    </div>
+                  </div>
+                </section>
+              ))}
+            </section>
+          </>
         )}
       </div>
     </>

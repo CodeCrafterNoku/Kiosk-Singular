@@ -19,12 +19,11 @@ function ProductAdmin() {
   const [deleteProductId, setDeleteProductId] = useState(null);
   const [popup, setPopup] = useState(null);
   const [showAddProductPopup, setShowAddProductPopup] = useState(false);
-  const [showUpdateProductPopup, setShowUpdateProductPopup] = useState(false); // New state for update popup
+  const [showUpdateProductPopup, setShowUpdateProductPopup] = useState(false);
   const [isImageUploaded, setIsImageUploaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdateLoading, setIsUpdateLoading] = useState(false); 
   const [searchTerm, setSearchTerm] = useState('');
-  
 
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -39,8 +38,8 @@ function ProductAdmin() {
       setProducts(data);
     } catch (error) {
       setError(error.message);
-    }finally {
-      setIsLoading(false); // Reset loading state
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,43 +64,39 @@ function ProductAdmin() {
   };
 
   const handleAddProduct = async () => {
-    // Validate required fields
-    const productData = {
-      ...newProduct,
-    };
+    const productData = { ...newProduct };
     
     if (
       !productData.productName.trim() ||
       !productData.productDescription.trim() ||
       !productData.categoryID ||
-      !productData.imageURL.trim()  ||
+      !productData.imageURL.trim() ||
       !isImageUploaded
     ) {
       setPopup({ message: 'Please fill in all required fields.', type: 'error' });
       return;
     }
-    
-  
+
     const productExists = products.some((product) => product.productName.toLowerCase() === newProduct.productName.toLowerCase());
-  
+
     if (productExists) {
       setPopup({ message: 'Product already exists. Please try a different name.', type: 'error' });
       return;
     }
-  
+
     const response = await fetch('http://localhost:5279/api/Product', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newProduct),
     });
-  
+
     if (response.ok) {
       setPopup({ message: 'Product added successfully', type: 'success' });
       fetchProducts();
       setShowAddProductPopup(false);
       setNewProduct({ productName: '', productDescription: '', price: '', quantity: '', categoryID: '', imageURL: '' });
     } else {
-      const errorMessage = await response.text(); // Inspect error response
+      const errorMessage = await response.text();
       setPopup({ message: `Failed to add product: ${errorMessage}`, type: 'error' });
     }
   };
@@ -124,7 +119,6 @@ function ProductAdmin() {
   const handleUpdateProduct = async () => {
     if (!editingProduct) return;
     setIsUpdateLoading(true); 
-    console.log("Updating Product:", editingProduct); 
 
     const response = await fetch(`http://localhost:5279/api/Product/${editingProduct.productID}`, {
       method: 'PUT',
@@ -136,11 +130,11 @@ function ProductAdmin() {
       setPopup({ message: 'Product updated successfully', type: 'success' });
       fetchProducts();
       setEditingProduct(null);
-      setShowUpdateProductPopup(false); // Close the update popup
+      setShowUpdateProductPopup(false);
     } else {
       setPopup({ message: 'Failed to update product. It did not meet the required specifications.', type: 'error' });
     }
-    setIsUpdateLoading(false); // Re-enable the button
+    setIsUpdateLoading(false);
   };
 
   const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
@@ -151,11 +145,11 @@ function ProductAdmin() {
     const matchesSearch = !searchTerm || 
         product.productName.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
-});
+  });
 
   const handleEditProduct = (product) => {
     setEditingProduct({ ...product });
-    setShowUpdateProductPopup(true); // Open the update popup
+    setShowUpdateProductPopup(true);
   };
 
   const handleConfirmDelete = (productId) => setDeleteProductId(productId);
@@ -171,15 +165,16 @@ function ProductAdmin() {
       </div>
     );
   };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
   
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "kiosk_system"); // Make sure this matches your Cloudinary preset
+    formData.append("upload_preset", "kiosk_system");
 
-    setIsLoading(true); // Set loading state to true
+    setIsLoading(true);
     fetch("https://api.cloudinary.com/v1_1/diet4t4b9/image/upload", {
       method: "POST",
       body: formData,
@@ -192,23 +187,20 @@ function ProductAdmin() {
       })
       .then(data => {
         const imageUrl = data.secure_url;
-        console.log('Image uploaded successfully:', imageUrl);
-  
-        // Safely update newProduct with the image URL
         setNewProduct(prevProduct => ({
           ...prevProduct,
           imageURL: imageUrl,
         }));
-        setIsImageUploaded(true); // Set the flag to true after successful upload
+        setIsImageUploaded(true);
       })
       .catch(error => {
         console.error("Error uploading image:", error);
       })
       .finally(() => {
-        setIsLoading(false); // ✅ Set loading state to false after the upload is complete
+        setIsLoading(false);
       });
-  
   };
+
   const handleImageUploadForUpdate = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -217,7 +209,7 @@ function ProductAdmin() {
     formData.append("file", file);
     formData.append("upload_preset", "kiosk_system");
   
-    setIsUpdateLoading(true); // Set loading state to true
+    setIsUpdateLoading(true);
     fetch("https://api.cloudinary.com/v1_1/diet4t4b9/image/upload", {
       method: "POST",
       body: formData,
@@ -230,10 +222,9 @@ function ProductAdmin() {
       })
       .then(data => {
         const imageUrl = data.secure_url;
-        console.log('Image uploaded successfully:', imageUrl);
         setEditingProduct(prevProduct => ({
           ...prevProduct,
-          imageURL: imageUrl, // Ensure this is correctly set
+          imageURL: imageUrl,
         }));
         setIsImageUploaded(true);
       })
@@ -241,7 +232,7 @@ function ProductAdmin() {
         console.error("Error uploading image:", error);
       })
       .finally(() => {
-        setIsUpdateLoading(false); // Set loading state to false
+        setIsUpdateLoading(false);
       });
   };
 
@@ -290,12 +281,11 @@ function ProductAdmin() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleImageUpload(e)} // ✅ Handling image file input
+                onChange={(e) => handleImageUpload(e)}
               />
-
-<div className="form-buttons">
-                <button type="submit" disabled={isLoading}> {/* ✅ Disable button while loading */}
-                  {isLoading ? 'Uploading...' : 'Add Product'} {/* ✅ Display loading text */}
+              <div className="form-buttons">
+                <button type="submit" disabled={isLoading}>
+                  {isLoading ? 'Uploading...' : 'Add Product'}
                 </button>
                 <button type="button" onClick={() => setShowAddProductPopup(false)}>Cancel</button>
               </div>
@@ -304,131 +294,131 @@ function ProductAdmin() {
         </div>
       )}
 
-      {/* Update Product Popup */}
-      {showUpdateProductPopup && (
-        <div className="popup-overlay">
-          <div className="popup">
-            <h3>Update Product</h3>
-            <form onSubmit={(e) => { e.preventDefault(); handleUpdateProduct(); }}>
-              <input
-                type="text"
-                placeholder="Product Name"
-                value={editingProduct.productName}
-                onChange={(e) => setEditingProduct({ ...editingProduct, productName: e.target.value })}
-              />
-              <textarea
-                placeholder="Product Description"
-                value={editingProduct.productDescription}
-                onChange={(e) => setEditingProduct({ ...editingProduct, productDescription: e.target.value })}
-              />
-              <input
-                type="number"
-                placeholder="Price"
-                value={editingProduct.price}
-                onChange={(e) => setEditingProduct({ ...editingProduct, price: e.target.value })}
-              />
-              <input
-                type="number"
-                placeholder="Quantity"
-                value={editingProduct.quantity}
-                onChange={(e) => setEditingProduct({ ...editingProduct, quantity: e.target.value })}
-              />
-              <select
-                value={editingProduct.categoryID}
-                onChange={(e) => setEditingProduct({ ...editingProduct, categoryID: e.target.value })}
-              >
-                <option value="">Select Category</option>
-                {categories.map((category) => (
-                  <option key={category.categoryID} value={category.categoryID}>
-                    {category.categoryName}
-                  </option>
-                ))}
-              </select>
-              <input
-  type="file"
-  accept="image/*"
-  onChange={(e) => handleImageUploadForUpdate(e)} // Use the correct upload handler
-/>
- <div className="form-buttons">
-                <button type="submit" disabled={isUpdateLoading}> {/* Disable while loading */}
-                  {isUpdateLoading ? 'Uploading...' : 'Update Product'} {/* Show loading text */}
-                </button>
-                <button type="button" onClick={() => setShowUpdateProductPopup(false)}>Cancel</button>
-              </div>
-
-            </form>
-          </div>
-        </div>
-      )}
-
-      <div>
-        <div className="category-buttons-container">
-          <button onClick={() => setSelectedCategory('')} className={selectedCategory === '' ? 'active' : ''}>
-            All Categories
-          </button>
+   {/* Update Product Popup */}
+{showUpdateProductPopup && (
+  <div className="popup-overlay">
+    <div className="popup">
+      <h3>Update Product</h3>
+      <form onSubmit={(e) => { e.preventDefault(); handleUpdateProduct(); }}>
+        <input
+          type="text"
+          placeholder="Product Name"
+          value={editingProduct.productName}
+          onChange={(e) => setEditingProduct({ ...editingProduct, productName: e.target.value })}
+        />
+        <textarea
+          placeholder="Product Description"
+          value={editingProduct.productDescription}
+          onChange={(e) => setEditingProduct({ ...editingProduct, productDescription: e.target.value })}
+        />
+        <input
+          type="number"
+          placeholder="Price"
+          value={editingProduct.price}
+          onChange={(e) => setEditingProduct({ ...editingProduct, price: e.target.value })}
+        />
+        <input
+          type="number"
+          placeholder="Quantity"
+          value={editingProduct.quantity}
+          onChange={(e) => setEditingProduct({ ...editingProduct, quantity: e.target.value })}
+        />
+        <select
+          value={editingProduct.categoryID}
+          onChange={(e) => setEditingProduct({ ...editingProduct, categoryID: e.target.value })}
+        >
+          <option value="">Select Category</option>
           {categories.map((category) => (
-            <button
-              key={category.categoryID}
-              onClick={() => setSelectedCategory(category.categoryID)}
-              className={selectedCategory === category.categoryID ? 'active' : ''}
-            >
+            <option key={category.categoryID} value={category.categoryID}>
               {category.categoryName}
-            </button>
+            </option>
           ))}
-          <button className="add-product-button" onClick={() => setShowAddProductPopup(true)}>
-            Add New Product
+        </select>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleImageUploadForUpdate(e)}
+        />
+        <div className="form-buttons">
+          <button type="submit" disabled={isUpdateLoading}>
+            {isUpdateLoading ? 'Uploading...' : 'Update Product'}
           </button>
-          <div className="search-container">
-                        <input
-                            type="text"
-                            placeholder="Search products by name..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="search-input"
-                        />
-                    </div>
+          <button type="button" onClick={() => setShowUpdateProductPopup(false)}>Cancel</button>
         </div>
-        
-        <div className="card-container">
-          {filteredProducts.map((product) => (
-<div key={product.productID} className="card">
-  <img
-    src={product.imageURL || 'https://via.placeholder.com/150'}
-    alt={product.productName}
-    className={product.quantity === 0 ? 'out-of-stock-image' : ''}
-  />
-  {product.quantity === 0 && (
-    <div className="out-of-stock-overlay">
-      <span>Not Available</span>
+      </form>
     </div>
-  )}
-  <div className="card-details">
-    <h3 className="product-name">{product.productName}</h3>
-    <p className="product-description">{product.productDescription}</p>
-    <p className="product-price">Price: R{parseFloat(product.price).toFixed(2)}</p>
-    <p className="product-quantity">Quantity: {product.quantity}</p>
-    <div className="card-buttons">
-  <button onClick={() => handleEditProduct(product)}>Edit</button>
-  <button onClick={() => handleConfirmDelete(product.productID)}>Delete</button>
-</div>
   </div>
+)}
+
+<div>
+  <div className="category-buttons-container">
+    <button onClick={() => setSelectedCategory('')} className={selectedCategory === '' ? 'active' : ''}>
+      All Categories
+    </button>
+    {categories.map((category) => (
+      <button
+        key={category.categoryID}
+        onClick={() => setSelectedCategory(category.categoryID)}
+        className={selectedCategory === category.categoryID ? 'active' : ''}
+      >
+        {category.categoryName}
+      </button>
+    ))}
+    <button className="add-product-button" onClick={() => setShowAddProductPopup(true)}>
+      Add New Product
+    </button>
+    <div className="search-container">
+      <input
+        type="text"
+        placeholder="Search products by name..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="search-input"
+      />
+    </div>
+  </div>
+
+  <div className="table-container">  {/* Updated: Added a container for the table */}
+    <table className="product-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredProducts.map((product) => (
+          <tr key={product.productID}>
+            <td><img src={product.imageURL || 'https://via.placeholder.com/50'} alt={product.productName} width="50" /></td>
+            <td>{product.productName}</td>
+            <td>{product.productDescription}</td>
+            <td>R{parseFloat(product.price).toFixed(2)}</td>
+            <td>{product.quantity}</td>
+            <td><button className="button" onClick={() => handleEditProduct(product)}>Edit</button></td>
+            <td><button className="button delete" onClick={() => handleConfirmDelete(product.productID)}>Delete</button></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div> {/* End of table container */}
 </div>
 
-          ))}
-        </div>
-      </div>
+{deleteProductId && (
+  <div className="delete-popup-overlay">
+    <div className="delete-popup">
+      <p>Are you sure you want to delete this product?</p>
+      <button onClick={() => handleDeleteProduct(deleteProductId)}>Yes</button>
+      <button onClick={handleCancelDelete}>No</button>
+    </div>
+  </div>
+)}
 
-      {deleteProductId && (
-        <div className="delete-popup-overlay">
-          <div className="delete-popup">
-            <p>Are you sure you want to delete this product?</p>
-            <button onClick={() => handleDeleteProduct(deleteProductId)}>Yes</button>
-            <button onClick={handleCancelDelete}>No</button>
-          </div>
-        </div>
-      )}
-
-      {popup && <Popup message={popup.message} type={popup.type} onClose={() => setPopup(null)} />}
+{popup && <Popup message={popup.message} type={popup.type} onClose={() => setPopup(null)} />}
     </>
   );
 }

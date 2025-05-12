@@ -295,3 +295,86 @@
   color: #008b7a;
 }
 
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.product-table th, .product-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.product-table th {
+  background-color: #f4f4f4;
+}
+
+.product-table img {
+  width: 50px; /* Adjust image width */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.button {
+  padding: 5px 10px;
+  background-color: #00a69b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #007e76;
+}
+
+.button.delete {
+  background-color: #dc3545;
+}
+
+.button.delete:hover {
+  background-color: #b21f28; /* Darker on hover */
+}
+.product-table-container {
+  max-width: 1200px; /* Set a maximum width for the container */
+  margin: 20px auto; /* Center the container horizontally */
+  padding: 20px; /* Add padding inside the container */
+  background-color: #f9f9f9; /* Light background color */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+
+.product-table {
+  width: 93%; /* Set a specific width for the table */
+  margin: 0 auto; /* Center the table within the container */
+  border-collapse: collapse; /* Remove space between cells */
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.product-table th, .product-table td {
+  border: 1px solid #777c833a; /* Light border for cells */
+  padding: 6px; /* Padding inside cells */
+  text-align: left; /* Align text to the left */
+  font-size: 12px; /* Font size */
+  color: #797f88;
+  font-weight: bold;
+
+}
+
+.product-table th {
+  background-color: #00a69b; /* Header background color */
+  color: white; /* Text color for header */
+}
+
+.product-table tr:hover {
+  background-color: #f1f1f1; /* Highlight row on hover */
+}
+
+.product-table img {
+  width: 40px; /* Adjust image size */
+  height: auto; /* Maintain aspect ratio */
+}

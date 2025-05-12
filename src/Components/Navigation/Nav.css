@@ -36,6 +36,12 @@ nav {
   height: 70px;
   width: 150px;
 }
+.welcome-text {
+  margin-left: 10px; /* Space between logo and text */
+  margin-top: -10px; /* Increase this value to move the text up */
+  font-size: 16px; /* Font size for welcome text */
+  color: #333; /* Color for the welcome text */
+}
 
 .drawer {
   position: absolute;

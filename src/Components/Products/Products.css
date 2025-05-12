@@ -110,10 +110,10 @@
 }
 
 .card-price {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   margin: 0;
-  color: black;
+  color: rgb(44, 114, 102);
 }
 
 .add-icon {

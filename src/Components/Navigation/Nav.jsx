@@ -6,7 +6,7 @@ import { MdLightMode } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import './Nav.css';
 
-function Nav() {
+function Nav({ name }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -29,6 +29,7 @@ function Nav() {
     <nav>
     <div className="logo-container">
       <img src="/singular.png" alt="Company Logo" className="logo" />
+     
     </div>
       <div className="profile-container">
       <a href="#">
