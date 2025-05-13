@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FiHeart, FiMenu } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { AiOutlineUser } from 'react-icons/ai';
+import { BsFillWalletFill } from "react-icons/bs";
 import { MdLightMode } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import './Nav.css';
@@ -41,8 +42,9 @@ function Nav({ name }) {
         <a href="#">
           <FaShoppingCart className="nav-icons" />
         </a>
-        <a href="#">
-          <AiOutlineUser className="nav-icons" />
+        <a href="#" className="wallet-container">
+         <BsFillWalletFill className="nav-icons" />
+        <span className="wallet-balance">BALANCE R0.00</span>
         </a>
         <a href="#" className="menu-icon" onClick={toggleDrawer}>
           <FiMenu className="nav-icons" />
