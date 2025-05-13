@@ -378,3 +378,8 @@
   width: 40px; /* Adjust image size */
   height: auto; /* Maintain aspect ratio */
 }
+.popup .button-container {
+  display: flex;
+  justify-content: center; /* Center the buttons */
+  gap: 20px; /* Space between buttons */
+}
