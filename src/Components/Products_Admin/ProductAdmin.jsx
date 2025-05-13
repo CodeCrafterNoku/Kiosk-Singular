@@ -13,6 +13,7 @@ function ProductAdmin() {
     quantity: '',
     categoryID: '',
     imageURL: '',
+    isAvailable: true
   });
   const [selectedCategory, setSelectedCategory] = useState('');
   const [editingProduct, setEditingProduct] = useState(null);
@@ -24,6 +25,63 @@ function ProductAdmin() {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdateLoading, setIsUpdateLoading] = useState(false); 
   const [searchTerm, setSearchTerm] = useState('');
+
+
+
+  const handleAvailabilityToggle = async (productId, currentAvailability) => {
+    if (!productId) return;
+
+    setIsUpdateLoading(true); // Set loading state
+
+    try {
+        const product = products.find(p => p.productID === productId);
+
+        if (!product) {
+            console.error(`Product with ID ${productId} not found.`);
+            return;
+        }
+
+        console.log(`Toggling availability for product:`, product);
+
+        // Confirm if the product has quantity available and is currently available
+        if (product.quantity > 0 && currentAvailability) {
+            const confirm = window.confirm(
+                "This product still has quantity available. Are you sure you want to make it unavailable?"
+            );
+            if (!confirm) return;
+        }
+
+        // Prepare the updated product object
+        const updatedProduct = {
+            ...product,
+            isAvailable: !currentAvailability // Toggle availability
+        };
+
+        // Make the API call to update the product
+        const response = await fetch(`http://localhost:5279/api/Product/${productId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedProduct),
+        });
+
+        if (response.ok) {
+            setPopup({ message: 'Product availability updated successfully', type: 'success' });
+            fetchProducts(); // Refresh product list
+        } else {
+            const errorData = await response.json();
+            console.error("Failed to update availability:", errorData);
+            setPopup({ message: `Error: ${errorData.message || 'Failed to update availability'}`, type: 'error' });
+        }
+    } catch (error) {
+        console.error("Error toggling availability:", error);
+        setPopup({ message: `Error: ${error.message}`, type: 'error' });
+    } finally {
+        setIsUpdateLoading(false); // Reset loading state
+    }
+};
+
 
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -323,6 +381,7 @@ function ProductAdmin() {
           value={editingProduct.quantity}
           onChange={(e) => setEditingProduct({ ...editingProduct, quantity: e.target.value })}
         />
+
         <select
           value={editingProduct.categoryID}
           onChange={(e) => setEditingProduct({ ...editingProduct, categoryID: e.target.value })}
@@ -387,6 +446,7 @@ function ProductAdmin() {
           <th>Description</th>
           <th>Price</th>
           <th>Quantity</th>
+          <th>Available</th>
           <th>Edit</th>
           <th>Delete</th>
         </tr>
@@ -399,6 +459,19 @@ function ProductAdmin() {
             <td>{product.productDescription}</td>
             <td>R{parseFloat(product.price).toFixed(2)}</td>
             <td>{product.quantity}</td>
+<td>
+  <label className={`availability-label ${product.quantity > 0 && !product.isAvailable ? 'forced-unavailable' : ''}`}>
+    <input
+      type="checkbox"
+      checked={product.isAvailable}
+      onChange={() => handleAvailabilityToggle(product.productID, product.isAvailable)}
+    />
+    {product.isAvailable ? "Available" : "Not Available"}
+    {product.quantity > 0 && !product.isAvailable && (
+      <span className="availability-note"> (Admin override)</span>
+    )}
+  </label>
+</td>
             <td><button className="button" onClick={() => handleEditProduct(product)}>Edit</button></td>
             <td><button className="button delete" onClick={() => handleConfirmDelete(product.productID)}>Delete</button></td>
           </tr>

@@ -71,9 +71,10 @@ function Products() {
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
 
-    const isInStock = product.quantity > 0; // Check if the product is in stock
+    const isOutOfStock = product.quantity === 0; // Check if the product is out of stock
+    const isUnavailableWithStock = !product.isAvailable && product.quantity > 0; // Check if unavailable but has stock
 
-    return matchesCategory && matchesSearch && isInStock; // Include the in-stock condition
+    return matchesCategory && matchesSearch && (isOutOfStock || (!isUnavailableWithStock)); // Include the conditions
   });
 
   return (
@@ -116,10 +117,18 @@ function Products() {
             <section className="card-container">
               {filteredProducts.map((product) => (
                 <section className="card" key={product.productID}>
-                  <img
-                    src={product.imageURL || "https://via.placeholder.com/150"}
-                    alt={product.productName}
-                  />
+                  <div className="image-container">
+                    <img
+                      src={product.imageURL || "https://via.placeholder.com/150"}
+                      alt={product.productName}
+                    />
+                    {/* Overlay for out of stock */}
+                    {product.quantity === 0 && (
+                      <div className="overlay">
+                        <span>Out of Stock</span>
+                      </div>
+                    )}
+                  </div>
                   <div className="card-details">
                     <h3 className="card-title">{product.productName}</h3>
                     <section className="card-description">
