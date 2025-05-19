@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react';
 import { FiHeart, FiMenu } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { BsFillWalletFill } from "react-icons/bs";
-import { MdLightMode } from "react-icons/md";
+import { MdLightMode } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import './Nav.css';
 
 function Nav({ name }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0.00);
+  const [cartItems, setCartItems] = useState([]); // State for cart items
+  const [totalAmount, setTotalAmount] = useState(0); // State for total amount
+  const [showCart, setShowCart] = useState(false); // State to toggle cart visibility
   const navigate = useNavigate();
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
   const [fundAmount, setFundAmount] = useState('');
@@ -26,72 +29,89 @@ function Nav({ name }) {
         return response.json();
       })
       .then(data => {
-        console.log("Fetched wallet data:", data);
         setWalletBalance(Number(data.balance).toFixed(2));
       })
       .catch(error => {
         console.error("Wallet fetch error:", error);
       });
+    
+    // Fetch the cart details for the user
+    fetchCartByUser(userId);
   }, []);
+
+  const fetchCartByUser = async (userId) => {
+    try {
+        const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
+        if (!cartResponse.ok) throw new Error("Failed to fetch cart");
+
+        const cartData = await cartResponse.json();
+        setTotalAmount(cartData.totalAmount); // Set total amount
+        setCartItems(cartData.cartItems); // Set cart items
+    } catch (error) {
+        console.error("Error fetching cart:", error);
+    }
+  };
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
 
   const handleMenuItemClick = (action) => {
-    console.log(action);
     setDrawerOpen(false);
     if (action === 'Logout') {
       navigate('/');
     }
   };
 
-const addFunds = async () => {
-  const userId = localStorage.getItem("userId");
-  const amountToAdd = Number(fundAmount);
+  const addFunds = async () => {
+    const userId = localStorage.getItem("userId");
+    const amountToAdd = Number(fundAmount);
 
-  if (!fundAmount || isNaN(amountToAdd) || amountToAdd <= 0) {
-    alert("Please enter a valid amount greater than zero");
-    return;
-  }
-
-  if (!userId) {
-    alert("User not logged in");
-    return;
-  }
-
-  const requestBody = {
-    userID: Number(userId),
-    balance: amountToAdd,
-    walletID: 0, // Adjust if needed
-    lastUpdated: new Date().toISOString(),
-    userName: "string" // Replace with actual user name if needed
-  };
-
-  try {
-    const response = await fetch('http://localhost:5279/api/wallet/addfunds', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      alert(`Failed to add funds: ${errorData.message || response.statusText}`);
+    if (!fundAmount || isNaN(amountToAdd) || amountToAdd <= 0) {
+      alert("Please enter a valid amount greater than zero");
       return;
     }
 
-    const result = await response.json();
-    // Update the wallet balance using the new balance immediately
-    setWalletBalance(prevBalance => (Number(prevBalance) + amountToAdd).toFixed(2));
-    setFundAmount('');
-    setShowWalletDropdown(false);
-    alert(`Successfully funded wallet with R${amountToAdd}`);
-  } catch (error) {
-    console.error('Error adding funds:', error);
-    alert('An error occurred while adding funds.');
-  }
-};
+    if (!userId) {
+      alert("User not logged in");
+      return;
+    }
+
+    const requestBody = {
+      userID: Number(userId),
+      balance: amountToAdd,
+      walletID: 0, // Adjust if needed
+      lastUpdated: new Date().toISOString(),
+      userName: "string" // Replace with actual user name if needed
+    };
+
+    try {
+      const response = await fetch('http://localhost:5279/api/wallet/addfunds', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Failed to add funds: ${errorData.message || response.statusText}`);
+        return;
+      }
+
+      setWalletBalance(prevBalance => (Number(prevBalance) + amountToAdd).toFixed(2));
+      setFundAmount('');
+      setShowWalletDropdown(false);
+      alert(`Successfully funded wallet with R${amountToAdd}`);
+    } catch (error) {
+      console.error('Error adding funds:', error);
+      alert('An error occurred while adding funds.');
+    }
+  };
+
+  const toggleCart = () => {
+    setShowCart(!showCart);
+  };
+
   return (
     <nav>
       <div className="logo-container">
@@ -101,7 +121,7 @@ const addFunds = async () => {
       <div className="profile-container">
         <a href="#"><MdLightMode className="nav-icons" /></a>
         <a href="#"><FiHeart className="nav-icons" /></a>
-        <a href="#"><FaShoppingCart className="nav-icons" /></a>
+        <a href="#" onClick={toggleCart}><FaShoppingCart className="nav-icons" /></a>
         <a href="#" className="wallet-container" onClick={() => setShowWalletDropdown(prev => !prev)}>
           <BsFillWalletFill className="nav-icons" />
           <span className="wallet-balance">BALANCE R{walletBalance}</span>
@@ -126,6 +146,22 @@ const addFunds = async () => {
           <FiMenu className="nav-icons" />
         </a>
       </div>
+
+      {/* Pop-up for cart items */}
+      {showCart && (
+        <div className="cart-popup">
+          <h3>Cart Items</h3>
+          <ul>
+            {cartItems.map(item => (
+              <li key={item.cartItemID}>
+                {item.productName} - Quantity: {item.quantity} - Price: R{item.unitPrice}
+              </li>
+            ))}
+          </ul>
+          <h4>Total Amount: R{totalAmount}</h4>
+          <button onClick={toggleCart} className="close-cart">Close</button>
+        </div>
+      )}
 
       {drawerOpen && (
         <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
