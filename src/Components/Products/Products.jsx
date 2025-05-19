@@ -76,10 +76,10 @@ function Products() {
 
     return matchesCategory && matchesSearch && (isOutOfStock || (!isUnavailableWithStock)); // Include the conditions
   });
-  const createCart = async (userId) => {
+ const createCart = async (userId) => {
     const requestBody = {
-        userID: Number(userId), // Associate the cart with the user
-        walletID: 0, // Set as needed
+        userID: Number(userId),
+        walletID: 0,
         lastModified: new Date().toISOString(),
     };
 
@@ -96,7 +96,7 @@ function Products() {
             throw new Error(errorText);
         }
 
-        console.log("Cart created successfully");
+        return await response.json(); // Return the created cart
     } catch (error) {
         console.error("Error creating cart:", error);
     }
@@ -115,22 +115,19 @@ const addToCart = async (productId) => {
 
         if (cartResponse.status === 404) {
             // Create a new cart if it doesn't exist
-            await createCart(userId);
-            // Fetch the newly created cart
-            const newCartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
-            cartData = await newCartResponse.json();
+            cartData = await createCart(userId);
         } else {
             cartData = await cartResponse.json();
         }
 
         // Prepare the request body to add the cart item
         const requestBody = {
-            cartItemID: 0, // Typically auto-generated
-            cartID: cartData.cartID, // Use the fetched or newly created cart ID
+            cartItemID: 0,
+            cartID: cartData.cartID,
             productID: productId,
-            quantity: 1, // Default quantity
+            quantity: 1,
             unitPrice: 0, // Fetch the product price based on productId if needed
-            productName: "Product Name" // You can fetch or set the product name dynamically
+            productName: "Product Name" // Fetch or set dynamically
         };
 
         const response = await fetch(`http://localhost:5279/api/cart/${requestBody.cartID}/items`, {

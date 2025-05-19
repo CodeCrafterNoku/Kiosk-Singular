@@ -32,100 +32,150 @@ const LoginSignUp = () => {
         });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoginError('');
-        setLoading(true);
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    setLoading(true);
 
-        try {
-            const url = action === 'Sign Up'
-                ? 'http://localhost:5279/api/User'
-                : 'http://localhost:5279/api/User/login';
+    try {
+        const url = action === 'Sign Up'
+            ? 'http://localhost:5279/api/User'
+            : 'http://localhost:5279/api/User/login';
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    action === 'Sign Up'
-                        ? formData
-                        : { email: formData.email, password: formData.password }
-                )
-            });
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                action === 'Sign Up'
+                    ? formData
+                    : { email: formData.email, password: formData.password }
+            )
+        });
 
-            if (!response.ok) {
-                const contentType = response.headers.get('Content-Type');
-                let errorData;
+        if (!response.ok) {
+            const contentType = response.headers.get('Content-Type');
+            let errorData;
 
-                if (contentType && contentType.includes('application/json')) {
-                    errorData = await response.json();
-                } else {
-                    errorData = await response.text();
-                }
-
-                if (response.status === 422) {
-                    throw new Error("This user already exists. Try logging in.");
-                } else if (response.status === 400) {
-                    throw new Error("Registration failed. Please ensure all required fields are filled correctly.");
-                } else {
-                    throw new Error(errorData.message || errorData || `HTTP error! status: ${response.status}`);
-                }
-            }
-
-            const data = await response.json();
-            console.log(`${action} successful!`);
-            console.log('Server response:', data);
-
-            if (action === 'Login') {
-                setUserId(data.userId);
-                localStorage.setItem('userId', data.userId);
-                localStorage.setItem('roleID', data.role);
-
-                setFormData({ ...formData, password: '' });
-
-                // ✅ Check for existing wallet
-                const walletResponse = await fetch(`http://localhost:5279/api/wallet/user/${data.userId}`);
-                if (walletResponse.status === 404) {
-                    // ✅ Create wallet if it doesn't exist
-                    await createWallet(data.userId, data.name);
-                }
-
-                if (data.role === 7 || data.role === "7") {
-                    navigate('/user/products');
-                } else if (data.role === 8 || data.role === "8") {
-                    navigate('/admin/products');
-                } else {
-                    alert("Invalid role");
-                }
-            }  else {
-                // ✅ Call createWallet immediately after successful Sign Up
-                await createWallet(data.userId, formData.name);
-
-                setFormData({
-                    name: '',
-                    email: '',
-                    password: '',
-                    phoneNumber: '',
-                    roleID: ''
-                });
-                setAction("Login");
-            }
-
-        } catch (error) {
-            console.error('Error:', error);
-
-            if (typeof error === 'object' && error.message) {
-                setLoginError(error.message);
-            } else if (typeof error === 'string') {
-                setLoginError(error);
+            if (contentType && contentType.includes('application/json')) {
+                errorData = await response.json();
             } else {
-                setLoginError("Sign-up failed. Some details may not meet the requirements.");
+                errorData = await response.text();
             }
-        } finally {
-            setLoading(false);
+
+            if (response.status === 422) {
+                throw new Error("This user already exists. Try logging in.");
+            } else if (response.status === 400) {
+                throw new Error("Registration failed. Please ensure all required fields are filled correctly.");
+            } else {
+                throw new Error(errorData.message || errorData || `HTTP error! status: ${response.status}`);
+            }
         }
-    };
+
+        const data = await response.json();
+        console.log(`${action} successful!`);
+        console.log('Server response:', data);
+
+        if (action === 'Login') {
+            setUserId(data.userId);
+            localStorage.setItem('userId', data.userId);
+            localStorage.setItem('roleID', data.role);
+
+            setFormData({ ...formData, password: '' });
+
+            // ✅ Check for existing wallet
+            const walletResponse = await fetch(`http://localhost:5279/api/wallet/user/${data.userId}`);
+            let walletID = 0;
+
+            if (walletResponse.status === 404) {
+                // ✅ Create wallet if it doesn't exist
+                const walletData = {
+                    userID: data.userId,
+                    balance: 5,
+                    lastUpdated: new Date().toISOString(),
+                    userName: data.name || "New User"
+                };
+
+                const createWalletResponse = await fetch('http://localhost:5279/api/wallet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(walletData),
+                });
+
+                if (!createWalletResponse.ok) {
+                    const error = await createWalletResponse.text();
+                    console.error("Wallet creation failed:", error);
+                    throw new Error("Failed to create a new wallet.");
+                }
+
+                // Get the newly created wallet's ID
+                const newWallet = await createWalletResponse.json();
+                walletID = newWallet.walletID; // Use the correct property for wallet ID
+            } else {
+                const walletData = await walletResponse.json();
+                walletID = walletData.walletID; // Use existing wallet ID
+            }
+
+            // ✅ Check for existing cart
+            const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${data.userId}`);
+            if (cartResponse.status === 404) {
+                // ✅ Create a new cart if it doesn't exist
+                const createCartResponse = await fetch('http://localhost:5279/api/cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userID: data.userId,
+                        walletID: walletID, // Use the valid wallet ID
+                        lastModified: new Date().toISOString(),
+                        cartItems: [] // Include an empty array for CartItems
+                    }),
+                });
+
+                if (!createCartResponse.ok) {
+                    const error = await createCartResponse.text();
+                    console.error("Cart creation failed:", error);
+                    throw new Error("Failed to create a new cart.");
+                }
+
+                console.log("Cart created successfully.");
+            }
+
+            if (data.role === 7 || data.role === "7") {
+                navigate('/user/products');
+            } else if (data.role === 8 || data.role === "8") {
+                navigate('/admin/products');
+            } else {
+                alert("Invalid role");
+            }
+        } else {
+            // ✅ Call createWallet immediately after successful Sign Up
+            await createWallet(data.userId, formData.name);
+
+            setFormData({
+                name: '',
+                email: '',
+                password: '',
+                phoneNumber: '',
+                roleID: ''
+            });
+            setAction("Login");
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+
+        if (typeof error === 'object' && error.message) {
+            setLoginError(error.message);
+        } else if (typeof error === 'string') {
+            setLoginError(error);
+        } else {
+            setLoginError("Sign-up failed. Some details may not meet the requirements.");
+        }
+    } finally {
+        setLoading(false);
+    }
+};
 
     // ** Create Wallet Function **
   const createWallet = async (userId, name) => {
