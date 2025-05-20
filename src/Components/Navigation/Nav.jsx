@@ -17,6 +17,9 @@ function Nav({ name }) {
   const navigate = useNavigate();
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
   const [fundAmount, setFundAmount] = useState('');
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -113,19 +116,56 @@ function Nav({ name }) {
     setShowCart(!showCart);
   };
 
-const deleteCartItem = async (cartItemId) => {
-  const userId = localStorage.getItem("userId");
+const fetchProducts = async () => {
   try {
-    const response = await fetch(`http://localhost:5279/api/cartitem/${cartItemId}`, {
-      method: 'DELETE'
-    });
-    if (response.ok) {
-      fetchCartByUser(userId); // Refresh the cart items
-    } else {
-      console.error('Error deleting item');
+    const response = await fetch('http://localhost:5279/api/Product'); // Note: Changed to singular "Product"
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    const data = await response.json();
+    setProducts(data); // Save to state
+    return data; // Return the data for optional chaining
   } catch (error) {
-    console.error('Error deleting item:', error);
+    console.error('Error fetching products:', error);
+    setError(error.message);
+    throw error; // Re-throw if you want to handle in calling function
+  }
+};
+
+// 3. Enhanced deleteCartItem function
+const deleteCartItem = async (cartItemId) => {
+  setIsLoading(true);
+  setError(null);
+  const userId = localStorage.getItem("userId");
+  
+  try {
+    const response = await fetch(`http://localhost:5279/api/Cart/cartitem/${cartItemId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to delete item');
+    }
+
+    // Refresh both cart and products
+    await Promise.all([
+      fetchCartByUser(userId),
+      fetchProducts()
+    ]);
+    
+    // Optional: Show success message
+    alert('Item deleted successfully!');
+    
+  } catch (error) {
+    console.error('Delete error:', error);
+    setError(error.message);
+    alert(`Error: ${error.message}`);
+  } finally {
+    setIsLoading(false);
   }
 };
 
