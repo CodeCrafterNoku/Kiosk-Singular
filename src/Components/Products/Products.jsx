@@ -9,6 +9,7 @@ function Products() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [cartItems, setCartItems] = useState([]);
 
   const handleCategorySelect = (categoryName) => {
     setSelectedCategoryName(categoryName);

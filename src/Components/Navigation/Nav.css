@@ -207,3 +207,18 @@ body.dark-mode .drawer li:hover {
 .close-cart:hover {
   background-color: #009b8a;
 }
+.cart-icon {
+  position: relative; /* Position relative for absolute positioning of the badge */
+}
+
+.cart-item-count {
+  position: absolute;
+  top: -5px; /* Adjust as needed */
+  right: -10px; /* Adjust as needed */
+  background-color: #00a69b; /* Red background */
+  color: white; /* White text */
+  border-radius: 50%; /* Circular badge */
+  padding: 2px 6px; /* Padding for the badge */
+  font-size: 0.75rem; /* Smaller font size */
+  font-weight: bold; /* Bold text */
+}

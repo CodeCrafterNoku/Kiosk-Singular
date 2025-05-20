@@ -121,7 +121,12 @@ function Nav({ name }) {
       <div className="profile-container">
         <a href="#"><MdLightMode className="nav-icons" /></a>
         <a href="#"><FiHeart className="nav-icons" /></a>
-        <a href="#" onClick={toggleCart}><FaShoppingCart className="nav-icons" /></a>
+        <a href="#" onClick={toggleCart} className="cart-icon">
+          <FaShoppingCart className="nav-icons" />
+          {cartItems.length > 0 && (
+            <span className="cart-item-count">{cartItems.length}</span>
+          )}
+        </a>
         <a href="#" className="wallet-container" onClick={() => setShowWalletDropdown(prev => !prev)}>
           <BsFillWalletFill className="nav-icons" />
           <span className="wallet-balance">BALANCE R{walletBalance}</span>
