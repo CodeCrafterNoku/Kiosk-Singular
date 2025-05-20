@@ -25,6 +25,78 @@ function ProductAdmin() {
     const [isLoading, setIsLoading] = useState(false);
     const [isUpdateLoading, setIsUpdateLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+        const addToCart = async (productId) => { // **Added this function**
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            alert("You must be logged in to add items to your cart.");
+            return;
+        }
+
+        try {
+            // Check for existing cart
+            const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
+            let cartData;
+
+            if (cartResponse.status === 404) {
+                // Create a new cart if it doesn't exist
+                cartData = await createCart(userId);
+            } else {
+                cartData = await cartResponse.json();
+            }
+
+            // Prepare the request body to add the cart item
+            const requestBody = {
+                cartItemID: 0,
+                cartID: cartData.cartID,
+                productID: productId,
+                quantity: 1,
+                unitPrice: 0, // Fetch the product price based on productId if needed
+                productName: products.find(product => product.productID === productId)?.productName // Fetch dynamically
+            };
+
+            const response = await fetch(`http://localhost:5279/api/cart/${requestBody.cartID}/items`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(`Failed to add item to cart: ${errorData.message || response.statusText}`);
+                return;
+            }
+
+            alert("Item added to cart successfully!");
+        } catch (error) {
+            console.error("Error adding item to cart:", error);
+            alert("An error occurred while adding the item to the cart.");
+        }
+    };
+        const createCart = async (userId) => {
+        const requestBody = {
+            userID: Number(userId),
+            walletID: 0,
+            lastModified: new Date().toISOString(),
+        };
+
+        try {
+            const response = await fetch('http://localhost:5279/api/cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Cart creation failed:", errorText);
+                throw new Error(errorText);
+            }
+
+            return await response.json(); // Return the created cart
+        } catch (error) {
+            console.error("Error creating cart:", error);
+        }
+    };
 
     // New state for confirmation dialog
     const [confirmToggle, setConfirmToggle] = useState(null); // `tick`
@@ -464,6 +536,7 @@ function ProductAdmin() {
                                 <th>Price</th>
                                 <th>Quantity</th>
                                 <th>Available</th>
+                                <th>Add to Cart</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
                             </tr>
@@ -489,6 +562,9 @@ function ProductAdmin() {
                                             )}
                                         </label>
                                     </td>
+                                     <td>
+                                    <MdAddBox className="add-icon" onClick={() => addToCart(product.productID)} /> {/* Add to Cart Icon */}
+                                </td>
                                     <td><button className="button" onClick={() => handleEditProduct(product)}>Edit</button></td>
                                     <td><button className="button delete" onClick={() => handleConfirmDelete(product.productID)}>Delete</button></td>
                                 </tr>

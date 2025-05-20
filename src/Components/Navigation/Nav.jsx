@@ -3,15 +3,17 @@ import { FiHeart, FiMenu } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { BsFillWalletFill } from "react-icons/bs";
 import { MdLightMode } from 'react-icons/md';
+import { MdOutlineShoppingCartCheckout } from "react-icons/md";
+import { RiDeleteBinLine } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
 import './Nav.css';
 
 function Nav({ name }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0.00);
-  const [cartItems, setCartItems] = useState([]); // State for cart items
-  const [totalAmount, setTotalAmount] = useState(0); // State for total amount
-  const [showCart, setShowCart] = useState(false); // State to toggle cart visibility
+  const [cartItems, setCartItems] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [showCart, setShowCart] = useState(false);
   const navigate = useNavigate();
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
   const [fundAmount, setFundAmount] = useState('');
@@ -35,20 +37,19 @@ function Nav({ name }) {
         console.error("Wallet fetch error:", error);
       });
     
-    // Fetch the cart details for the user
     fetchCartByUser(userId);
   }, []);
 
   const fetchCartByUser = async (userId) => {
     try {
-        const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
-        if (!cartResponse.ok) throw new Error("Failed to fetch cart");
+      const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
+      if (!cartResponse.ok) throw new Error("Failed to fetch cart");
 
-        const cartData = await cartResponse.json();
-        setTotalAmount(cartData.totalAmount); // Set total amount
-        setCartItems(cartData.cartItems); // Set cart items
+      const cartData = await cartResponse.json();
+      setTotalAmount(cartData.totalAmount);
+      setCartItems(cartData.cartItems);
     } catch (error) {
-        console.error("Error fetching cart:", error);
+      console.error("Error fetching cart:", error);
     }
   };
 
@@ -80,7 +81,7 @@ function Nav({ name }) {
     const requestBody = {
       userID: Number(userId),
       balance: amountToAdd,
-      walletID: 0, // Adjust if needed
+      walletID: 0,
       lastUpdated: new Date().toISOString(),
       userName: "string" // Replace with actual user name if needed
     };
@@ -110,6 +111,28 @@ function Nav({ name }) {
 
   const toggleCart = () => {
     setShowCart(!showCart);
+  };
+
+const deleteCartItem = async (cartItemId) => {
+  const userId = localStorage.getItem("userId");
+  try {
+    const response = await fetch(`http://localhost:5279/api/cartitem/${cartItemId}`, {
+      method: 'DELETE'
+    });
+    if (response.ok) {
+      fetchCartByUser(userId); // Refresh the cart items
+    } else {
+      console.error('Error deleting item');
+    }
+  } catch (error) {
+    console.error('Error deleting item:', error);
+  }
+};
+
+
+  const handleCheckout = () => {
+    // Implement checkout logic here
+    alert('Proceeding to Checkout');
   };
 
   return (
@@ -153,20 +176,28 @@ function Nav({ name }) {
       </div>
 
       {/* Pop-up for cart items */}
-      {showCart && (
-        <div className="cart-popup">
-          <h3>Cart Items</h3>
-          <ul>
-            {cartItems.map(item => (
-              <li key={item.cartItemID}>
-                {item.productName} - Quantity: {item.quantity} - Price: R{item.unitPrice}
-              </li>
-            ))}
-          </ul>
-          <h4>Total Amount: R{totalAmount}</h4>
-          <button onClick={toggleCart} className="close-cart">Close</button>
-        </div>
-      )}
+          {showCart && (
+            <div className="cart-popup">
+              <h3>Cart Items</h3>
+              <ul>
+                {cartItems.map(item => (
+                  <li key={item.cartItemID}>
+                    <span>
+                      {item.productName} - Qty: {item.quantity} - R{item.unitPrice}
+                    </span>
+                    <RiDeleteBinLine className="delete-icon" onClick={() => deleteCartItem(item.cartItemID)} />
+                  </li>
+                ))}
+              </ul>
+              <h4>Total: R{totalAmount}</h4>
+              <button onClick={handleCheckout}>
+                <MdOutlineShoppingCartCheckout /> Checkout
+              </button>
+              <button onClick={toggleCart} className="close-cart">
+                Close
+              </button>
+            </div>
+          )}
 
       {drawerOpen && (
         <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
