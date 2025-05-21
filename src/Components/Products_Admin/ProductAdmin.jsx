@@ -101,36 +101,33 @@ function ProductAdmin() {
     // New state for confirmation dialog
     const [confirmToggle, setConfirmToggle] = useState(null); // `tick`
 
-    const handleAvailabilityToggle = (productId, currentAvailability) => {
-        if (!productId) return;
+const handleAvailabilityToggle = (productId, currentAvailability) => {
+    if (!productId) return;
 
-        setIsUpdateLoading(true); // Set loading state
+    setIsUpdateLoading(true);
 
-        try {
-            const product = products.find(p => p.productID === productId);
+    try {
+        const product = products.find(p => p.productID === productId);
 
-            if (!product) {
-                console.error(`Product with ID ${productId} not found.`);
-                return;
-            }
-
-            console.log(`Toggling availability for product:`, product);
-
-            // Confirm if the product has quantity available and is currently available
-            if (product.quantity > 0 && currentAvailability) {
-                setConfirmToggle({ productId, currentAvailability }); // `tick`
-                return; // Exit the function to wait for confirmation
-            }
-
-            // Proceed to toggle the availability
-            toggleProductAvailability(productId, currentAvailability); // `tick`
-        } catch (error) {
-            console.error("Error toggling availability:", error);
-            setPopup({ message: `Error: ${error.message}`, type: 'error' });
-        } finally {
-            setIsUpdateLoading(false); // Reset loading state
+        if (!product) {
+            console.error(`Product with ID ${productId} not found.`);
+            return;
         }
-    };
+
+        if (product.quantity > 0 && currentAvailability) {
+            setConfirmToggle({ productId, currentAvailability }); // show confirm popup
+            return;
+        }
+
+        toggleProductAvailability(productId, currentAvailability);
+    } catch (error) {
+        console.error("Error toggling availability:", error);
+        setPopup({ message: `Error: ${error.message}`, type: 'error' });
+    } finally {
+        setIsUpdateLoading(false);
+    }
+};
+
 
     const toggleProductAvailability = async (productId, currentAvailability) => { // `tick`
         // Prepare the updated product object
@@ -249,26 +246,30 @@ function ProductAdmin() {
         }
     };
 
-    const handleUpdateProduct = async () => {
-        if (!editingProduct) return;
-        setIsUpdateLoading(true);
+const handleUpdateProduct = async () => {
+    if (!editingProduct) return;
+    setIsUpdateLoading(true);
 
-        const response = await fetch(`http://localhost:5279/api/Product/${editingProduct.productID}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(editingProduct),
-        });
+    // Automatically set availability based on quantity
+    const updatedAvailability = editingProduct.quantity > 0;
+    const updatedProduct = { ...editingProduct, isAvailable: updatedAvailability };
 
-        if (response.ok) {
-            setPopup({ message: 'Product updated successfully', type: 'success' });
-            fetchProducts();
-            setEditingProduct(null);
-            setShowUpdateProductPopup(false);
-        } else {
-            setPopup({ message: 'Failed to update product. It did not meet the required specifications.', type: 'error' });
-        }
-        setIsUpdateLoading(false);
-    };
+    const response = await fetch(`http://localhost:5279/api/Product/${updatedProduct.productID}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedProduct),
+    });
+
+    if (response.ok) {
+        setPopup({ message: 'Product updated successfully', type: 'success' });
+        fetchProducts();
+        setEditingProduct(null);
+        setShowUpdateProductPopup(false);
+    } else {
+        setPopup({ message: 'Failed to update product. It did not meet the required specifications.', type: 'error' });
+    }
+    setIsUpdateLoading(false);
+};
 
     const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
 
