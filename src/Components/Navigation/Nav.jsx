@@ -8,7 +8,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
 import './Nav.css';
 
-function Nav({ name }) {
+function Nav({  }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0.00);
   const [cartItems, setCartItems] = useState([]);

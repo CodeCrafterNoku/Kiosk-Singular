@@ -541,35 +541,45 @@ function ProductAdmin() {
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {filteredProducts.map((product) => (
-                                <tr key={product.productID}>
-                                    <td><img src={product.imageURL || 'https://via.placeholder.com/50'} alt={product.productName} width="50" /></td>
-                                    <td>{product.productName}</td>
-                                    <td>{product.productDescription}</td>
-                                    <td>R{parseFloat(product.price).toFixed(2)}</td>
-                                    <td>{product.quantity}</td>
-                                    <td>
-                                        <label className={`availability-label ${product.quantity > 0 && !product.isAvailable ? 'forced-unavailable' : ''}`}>
-                                            <input
-                                                type="checkbox"
-                                                checked={product.isAvailable}
-                                                onChange={() => handleAvailabilityToggle(product.productID, product.isAvailable)} // `tick`
-                                            />
-                                            {product.isAvailable ? "Available" : "Not Available"}
-                                            {product.quantity > 0 && !product.isAvailable && (
-                                                <span className="availability-note"> (Admin override)</span>
-                                            )}
-                                        </label>
-                                    </td>
-                                     <td>
-                                    <MdAddBox className="add-icon" onClick={() => addToCart(product.productID)} /> {/* Add to Cart Icon */}
-                                </td>
-                                    <td><button className="button" onClick={() => handleEditProduct(product)}>Edit</button></td>
-                                    <td><button className="button delete" onClick={() => handleConfirmDelete(product.productID)}>Delete</button></td>
-                                </tr>
-                            ))}
-                        </tbody>
+<tbody>
+  {filteredProducts.map((product) => (
+    <tr key={product.productID}>
+      <td>
+        <img src={product.imageURL || 'https://via.placeholder.com/50'} alt={product.productName} width="50" />
+      </td>
+      <td>{product.productName}</td>
+      <td>{product.productDescription}</td>
+      <td>R{parseFloat(product.price).toFixed(2)}</td>
+      <td>{product.quantity}</td>
+      <td>
+        <label className={`availability-label ${product.quantity > 0 && !product.isAvailable ? 'forced-unavailable' : ''}`}>
+          <input
+            type="checkbox"
+            checked={product.isAvailable}
+            onChange={() => handleAvailabilityToggle(product.productID, product.isAvailable)}
+          />
+          {product.isAvailable ? "Available" : "Not Available"}
+          {product.quantity > 0 && !product.isAvailable && (
+            <span className="availability-note"> (Admin override)</span>
+          )}
+        </label>
+      </td>
+      <td>
+        <MdAddBox
+          className="add-icon"
+          onClick={() => product.quantity > 0 && addToCart(product.productID)} // Only add if in stock
+          style={{ cursor: product.quantity === 0 ? 'not-allowed' : 'pointer', opacity: product.quantity === 0 ? 0.5 : 1 }}
+        />
+      </td>
+      <td>
+        <button className="button" onClick={() => handleEditProduct(product)}>Edit</button>
+      </td>
+      <td>
+        <button className="button delete" onClick={() => handleConfirmDelete(product.productID)}>Delete</button>
+      </td>
+    </tr>
+  ))}
+</tbody>
                     </table>
                 </div>
             </div>

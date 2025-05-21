@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import "./Products.css";
 import { MdAddBox } from "react-icons/md";
 
+
 function Products() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -9,7 +10,7 @@ function Products() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  
+
 
   const handleCategorySelect = (categoryName) => {
     setSelectedCategoryName(categoryName);
@@ -187,34 +188,38 @@ const addToCart = async (productId) => {
               </div>
             </div>
 
-            <section className="card-container">
-    {filteredProducts.map((product) => (
-        <section className="card" key={product.productID}>
-            <div className="image-container">
-                <img
-                    src={product.imageURL || "https://via.placeholder.com/150"}
-                    alt={product.productName}
-                />
-                {product.quantity === 0 && (
-                    <div className="overlay">
-                        <span>Out of Stock</span>
-                    </div>
-                )}
-            </div>
-            <div className="card-details">
-                <h3 className="card-title">{product.productName}</h3>
-                <section className="card-description">
-                    <h4>{product.productDescription}</h4>
-                </section>
-                <p className="card-quantity">Quantity: {product.quantity}</p>
-                <div className="card-price-row">
-                    <p className="card-price">R{product.price?.toFixed(2)}</p>
-                    <MdAddBox className="add-icon" onClick={() => addToCart(product.productID)} />
-                </div>
-            </div>
-                </section>
-              ))}
-            </section>
+<section className="card-container">
+  {filteredProducts.map((product) => (
+    <section className="card" key={product.productID}>
+      <div className="image-container">
+        <img
+          src={product.imageURL || "https://via.placeholder.com/150"}
+          alt={product.productName}
+        />
+        {product.quantity === 0 && (
+          <div className="overlay">
+            <span>Out of Stock</span>
+          </div>
+        )}
+      </div>
+      <div className="card-details">
+        <h3 className="card-title">{product.productName}</h3>
+        <section className="card-description">
+          <h4>{product.productDescription}</h4>
+        </section>
+        <p className="card-quantity">Quantity: {product.quantity}</p>
+        <div className="card-price-row">
+          <p className="card-price">R{product.price?.toFixed(2)}</p>
+          <MdAddBox
+            className="add-icon"
+            onClick={() => product.quantity > 0 && addToCart(product.productID)}
+            style={{ cursor: product.quantity === 0 ? 'not-allowed' : 'pointer', opacity: product.quantity === 0 ? 0.5 : 1 }}
+          />
+        </div>
+      </div>
+    </section>
+  ))}
+</section>
           </>
         )}
       </div>
