@@ -62,6 +62,14 @@
   align-items: center;
   text-align: center;
 }
+.card-quantity {
+  font-size: 0.7em;
+  color: #333;
+  text-align: center;
+  margin: 4px 0 8px 0;
+  font-size: bold;
+}
+
 
 
 /*new chnages*/

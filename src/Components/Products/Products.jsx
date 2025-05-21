@@ -9,7 +9,7 @@ function Products() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [cartItems, setCartItems] = useState([]);
+  
 
   const handleCategorySelect = (categoryName) => {
     setSelectedCategoryName(categoryName);
@@ -206,6 +206,7 @@ const addToCart = async (productId) => {
                 <section className="card-description">
                     <h4>{product.productDescription}</h4>
                 </section>
+                <p className="card-quantity">Quantity: {product.quantity}</p>
                 <div className="card-price-row">
                     <p className="card-price">R{product.price?.toFixed(2)}</p>
                     <MdAddBox className="add-icon" onClick={() => addToCart(product.productID)} />
