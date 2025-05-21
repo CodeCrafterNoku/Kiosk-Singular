@@ -118,28 +118,27 @@ const handleSubmit = async (e) => {
             }
 
             // ✅ Check for existing cart
-            const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${data.userId}`);
-            if (cartResponse.status === 404) {
-                // ✅ Create a new cart if it doesn't exist
-                const createCartResponse = await fetch('http://localhost:5279/api/cart', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userID: data.userId,
-                        walletID: walletID, // Use the valid wallet ID
-                        lastModified: new Date().toISOString(),
-                        cartItems: [] // Include an empty array for CartItems
-                    }),
-                });
+const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${data.userId}`);
+if (cartResponse.status === 404) {
+    // ✅ Create a new cart if it doesn't exist
+    const createCartResponse = await fetch('http://localhost:5279/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            userID: data.userId,
+            walletID: walletID // Send only required fields
+        }),
+    });
 
-                if (!createCartResponse.ok) {
-                    const error = await createCartResponse.text();
-                    console.error("Cart creation failed:", error);
-                    throw new Error("Failed to create a new cart.");
-                }
+    if (!createCartResponse.ok) {
+        const error = await createCartResponse.text();
+        console.error("Cart creation failed:", error);
+        throw new Error("Failed to create a new cart.");
+    }
 
-                console.log("Cart created successfully.");
-            }
+    const createdCart = await createCartResponse.json();
+    console.log("Cart created successfully:", createdCart);
+}
 
             if (data.role === 7 || data.role === "7") {
                 navigate('/user/products');
@@ -182,7 +181,7 @@ const handleSubmit = async (e) => {
         const walletData = {
             walletID: 0,
             userID: Number(userId),
-            balance: 5,
+            balance: 0.00,
             lastUpdated: new Date().toISOString(),
             userName: name || "New User" // ✅ fallback if name is not provided
         };

@@ -20,6 +20,7 @@ function Nav({  }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const isBalanceExceeded = parseFloat(totalAmount) > parseFloat(walletBalance);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -170,6 +171,7 @@ const deleteCartItem = async (cartItemId) => {
 };
 
 
+
   const handleCheckout = () => {
     // Implement checkout logic here
     alert('Proceeding to Checkout');
@@ -215,29 +217,48 @@ const deleteCartItem = async (cartItemId) => {
         </a>
       </div>
 
-      {/* Pop-up for cart items */}
-          {showCart && (
-            <div className="cart-popup">
-              <h3>Cart Items</h3>
-              <ul>
-                {cartItems.map(item => (
-                  <li key={item.cartItemID}>
-                    <span>
-                      {item.productName} - Qty: {item.quantity} - R{item.unitPrice}
-                    </span>
-                    <RiDeleteBinLine className="delete-icon" onClick={() => deleteCartItem(item.cartItemID)} />
-                  </li>
-                ))}
-              </ul>
-              <h4>Total: R{totalAmount}</h4>
-              <button onClick={handleCheckout}>
-                <MdOutlineShoppingCartCheckout /> Checkout
-              </button>
-              <button onClick={toggleCart} className="close-cart">
-                Close
-              </button>
-            </div>
+     {/* ✅ Cart Pop-up with validation logic */}
+      {showCart && (
+        <div className="cart-popup">
+          <h3>Cart Items</h3>
+          <ul>
+            {cartItems.map(item => (
+              <li key={item.cartItemID}>
+                <span>
+                  {item.productName} - Qty: {item.quantity} - R{item.unitPrice}
+                </span>
+                <RiDeleteBinLine className="delete-icon" onClick={() => deleteCartItem(item.cartItemID)} />
+              </li>
+            ))}
+          </ul>
+          <h4>Total: R{totalAmount}</h4>
+
+          {/* ✅ Show message if balance is exceeded */}
+          {isBalanceExceeded && (
+            <p style={{ color: 'red', fontWeight: 'bold' }}>
+              You have exceeded your wallet balance.
+            </p>
           )}
+
+          {/* ✅ Conditionally disable the button */}
+          <button
+            onClick={handleCheckout}
+            disabled={isBalanceExceeded}
+            style={{
+              backgroundColor: isBalanceExceeded ? '#ccc' : '#4CAF50',
+              cursor: isBalanceExceeded ? 'not-allowed' : 'pointer',
+              color: isBalanceExceeded ? '#666' : '#fff'
+            }}
+          >
+            <MdOutlineShoppingCartCheckout /> Checkout
+          </button>
+
+          <button onClick={toggleCart} className="close-cart">
+            Close
+          </button>
+        </div>
+      )}
+
 
       {drawerOpen && (
         <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
