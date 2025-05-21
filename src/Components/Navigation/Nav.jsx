@@ -6,7 +6,7 @@ import { MdLightMode } from 'react-icons/md';
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
-import FundUser from './fundUser'; // Ensure the correct import
+import FundUser from './fundUser';
 import './Nav.css';
 
 function Nav() {
@@ -42,7 +42,7 @@ function Nav() {
       .catch(error => {
         console.error("Wallet fetch error:", error);
       });
-    
+
     fetchCartByUser(userId);
   }, []);
 
@@ -177,6 +177,9 @@ function Nav() {
     setShowFundUserModal(!showFundUserModal);
   };
 
+  // Check if the user is an Admin
+  const userRole = localStorage.getItem("roleID");
+
   return (
     <nav>
       <div className="logo-container">
@@ -207,7 +210,11 @@ function Nav() {
               onChange={(e) => setFundAmount(e.target.value)}
             />
             <button onClick={addFunds}>Fund</button>
-            <button onClick={toggleFundUserModal}>Fund User</button>
+
+            {/* Conditionally render the Fund User button */}
+            {userRole === '8' && ( // Check if the user is an Admin
+              <button onClick={toggleFundUserModal}>Fund User</button>
+            )}
           </div>
         )}
 
