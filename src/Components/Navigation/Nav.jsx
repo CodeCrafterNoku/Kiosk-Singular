@@ -180,6 +180,36 @@ function Nav() {
   // Check if the user is an Admin
   const userRole = localStorage.getItem("roleID");
 
+  const updateCartItemQuantity = async (cartItemId, newQuantity) => {
+    const userId = localStorage.getItem("userId");
+    
+    // Prepare request body for updating the cart item
+    const requestBody = {
+        quantity: newQuantity,
+    };
+
+    try {
+        const response = await fetch(`http://localhost:5279/api/cart/cartitem/${cartItemId}`, {
+            method: 'PUT', // Use PUT or PATCH depending on your API design
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert(`Failed to update item quantity: ${errorData.message || response.statusText}`);
+            return;
+        }
+
+        // Refresh cart items after update
+        fetchCartByUser(userId);
+    } catch (error) {
+        console.error('Error updating cart item quantity:', error);
+        alert('An error occurred while updating the item quantity.');
+    }
+};
   return (
     <nav>
       <div className="logo-container">
@@ -223,44 +253,50 @@ function Nav() {
         </a>
       </div>
 
-      {showCart && (
-        <div className="cart-popup">
-          <h3>Cart Items</h3>
-          <ul>
+     {showCart && (
+    <div className="cart-popup">
+        <h3>Cart Items</h3>
+        <ul>
             {cartItems.map(item => (
-              <li key={item.cartItemID}>
-                <span>
-                  {item.productName} - Qty: {item.quantity} - R{item.unitPrice}
-                </span>
-                <RiDeleteBinLine className="delete-icon" onClick={() => deleteCartItem(item.cartItemID)} />
-              </li>
+                <li key={item.cartItemID}>
+                    <span>
+                        {item.productName} - Qty: {item.quantity} - R{item.unitPrice}
+                    </span>
+                    <button onClick={() => updateCartItemQuantity(item.cartItemID, item.quantity + 1)}>+</button>
+                    <button 
+                        onClick={() => item.quantity > 1 ? updateCartItemQuantity(item.cartItemID, item.quantity - 1) : deleteCartItem(item.cartItemID)}
+                    >
+                        -
+                    </button>
+                    <RiDeleteBinLine className="delete-icon" onClick={() => deleteCartItem(item.cartItemID)} />
+                </li>
             ))}
-          </ul>
-          <h4>Total: R{totalAmount}</h4>
+        </ul>
+        <h4>Total: R{totalAmount}</h4>
 
-          {isBalanceExceeded && (
+        {isBalanceExceeded && (
             <p style={{ color: 'red', fontWeight: 'bold' }}>
-              You have exceeded your wallet balance.
+                You have exceeded your wallet balance.
             </p>
-          )}
+        )}
 
-          <button
+        <button
             onClick={handleCheckout}
             disabled={isBalanceExceeded}
             style={{
-              backgroundColor: isBalanceExceeded ? '#ccc' : '#4CAF50',
-              cursor: isBalanceExceeded ? 'not-allowed' : 'pointer',
-              color: isBalanceExceeded ? '#666' : '#fff'
+                backgroundColor: isBalanceExceeded ? '#ccc' : '#4CAF50',
+                cursor: isBalanceExceeded ? 'not-allowed' : 'pointer',
+                color: isBalanceExceeded ? '#666' : '#fff'
             }}
-          >
+        >
             <MdOutlineShoppingCartCheckout /> Checkout
-          </button>
+        </button>
 
-          <button onClick={toggleCart} className="close-cart">
+        <button onClick={toggleCart} className="close-cart">
             Close
-          </button>
-        </div>
-      )}
+        </button>
+    </div>
+)}
 
       {drawerOpen && (
         <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
