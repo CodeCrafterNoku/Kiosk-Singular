@@ -6,9 +6,10 @@ import { MdLightMode } from 'react-icons/md';
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
+import FundUser from './fundUser'; // Ensure the correct import
 import './Nav.css';
 
-function Nav({  }) {
+function Nav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0.00);
   const [cartItems, setCartItems] = useState([]);
@@ -20,6 +21,7 @@ function Nav({  }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showFundUserModal, setShowFundUserModal] = useState(false);
   const isBalanceExceeded = parseFloat(totalAmount) > parseFloat(walletBalance);
 
   useEffect(() => {
@@ -117,64 +119,62 @@ function Nav({  }) {
     setShowCart(!showCart);
   };
 
-const fetchProducts = async () => {
-  try {
-    const response = await fetch('http://localhost:5279/api/Product'); // Note: Changed to singular "Product"
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('http://localhost:5279/api/Product');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setProducts(data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setError(error.message);
+      throw error;
     }
-    const data = await response.json();
-    setProducts(data); // Save to state
-    return data; // Return the data for optional chaining
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    setError(error.message);
-    throw error; // Re-throw if you want to handle in calling function
-  }
-};
+  };
 
-// 3. Enhanced deleteCartItem function
-const deleteCartItem = async (cartItemId) => {
-  setIsLoading(true);
-  setError(null);
-  const userId = localStorage.getItem("userId");
-  
-  try {
-    const response = await fetch(`http://localhost:5279/api/Cart/cartitem/${cartItemId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+  const deleteCartItem = async (cartItemId) => {
+    setIsLoading(true);
+    setError(null);
+    const userId = localStorage.getItem("userId");
     
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to delete item');
+    try {
+      const response = await fetch(`http://localhost:5279/api/Cart/cartitem/${cartItemId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete item');
+      }
+
+      await Promise.all([
+        fetchCartByUser(userId),
+        fetchProducts()
+      ]);
+      
+      alert('Item deleted successfully!');
+      
+    } catch (error) {
+      console.error('Delete error:', error);
+      setError(error.message);
+      alert(`Error: ${error.message}`);
+    } finally {
+      setIsLoading(false);
     }
-
-    // Refresh both cart and products
-    await Promise.all([
-      fetchCartByUser(userId),
-      fetchProducts()
-    ]);
-    
-    // Optional: Show success message
-    alert('Item deleted successfully!');
-    
-  } catch (error) {
-    console.error('Delete error:', error);
-    setError(error.message);
-    alert(`Error: ${error.message}`);
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-
+  };
 
   const handleCheckout = () => {
-    // Implement checkout logic here
     alert('Proceeding to Checkout');
+  };
+
+  const toggleFundUserModal = () => {
+    setShowFundUserModal(!showFundUserModal);
   };
 
   return (
@@ -206,9 +206,8 @@ const deleteCartItem = async (cartItemId) => {
               value={fundAmount}
               onChange={(e) => setFundAmount(e.target.value)}
             />
-            <button onClick={addFunds}>
-              Fund
-            </button>
+            <button onClick={addFunds}>Fund</button>
+            <button onClick={toggleFundUserModal}>Fund User</button>
           </div>
         )}
 
@@ -217,7 +216,6 @@ const deleteCartItem = async (cartItemId) => {
         </a>
       </div>
 
-     {/* ✅ Cart Pop-up with validation logic */}
       {showCart && (
         <div className="cart-popup">
           <h3>Cart Items</h3>
@@ -233,14 +231,12 @@ const deleteCartItem = async (cartItemId) => {
           </ul>
           <h4>Total: R{totalAmount}</h4>
 
-          {/* ✅ Show message if balance is exceeded */}
           {isBalanceExceeded && (
             <p style={{ color: 'red', fontWeight: 'bold' }}>
               You have exceeded your wallet balance.
             </p>
           )}
 
-          {/* ✅ Conditionally disable the button */}
           <button
             onClick={handleCheckout}
             disabled={isBalanceExceeded}
@@ -259,7 +255,6 @@ const deleteCartItem = async (cartItemId) => {
         </div>
       )}
 
-
       {drawerOpen && (
         <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
           <ul>
@@ -267,6 +262,12 @@ const deleteCartItem = async (cartItemId) => {
             <li onClick={() => handleMenuItemClick('Account Settings')}>Account Settings</li>
             <li onClick={() => handleMenuItemClick('Logout')}>Logout</li>
           </ul>
+        </div>
+      )}
+
+      {showFundUserModal && (
+        <div className="modal-overlay">
+          <FundUser onClose={toggleFundUserModal} />
         </div>
       )}
     </nav>
