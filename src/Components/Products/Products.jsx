@@ -207,7 +207,7 @@ const addToCart = async (productId) => {
         <section className="card-description">
           <h4>{product.productDescription}</h4>
         </section>
-        <p className="card-quantity">Quantity: {product.quantity}</p>
+        <p className="card-quantity">Qty: {product.quantity}</p>
         <div className="card-price-row">
           <p className="card-price">R{product.price?.toFixed(2)}</p>
           <MdAddBox

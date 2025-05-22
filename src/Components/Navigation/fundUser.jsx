@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 
 const FundUser = ({ onClose }) => {
     const [users, setUsers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [selectedUserId, setSelectedUserId] = useState('');
+    const [selectedUserName, setSelectedUserName] = useState('');
     const [fundAmount, setFundAmount] = useState('');
 
     useEffect(() => {
@@ -20,23 +22,26 @@ const FundUser = ({ onClose }) => {
         }
     };
 
+    const handleUserSelect = (user) => {
+        setSelectedUserId(user.userID);
+        setSelectedUserName(user.name);
+        setSearchTerm(user.name); // show name in search bar
+    };
+
     const fundUserWallet = async () => {
         const amountToAdd = Number(fundAmount);
-
         if (!selectedUserId || !fundAmount || isNaN(amountToAdd) || amountToAdd <= 0) {
             alert("Please select a user and enter a valid amount.");
             return;
         }
 
         const requestBody = {
-            userID: Number(selectedUserId), // Use selected user ID
+            userID: Number(selectedUserId),
             balance: amountToAdd,
-            walletID: 0, // Assuming this is a placeholder, adjust if necessary
+            walletID: 0,
             lastUpdated: new Date().toISOString(),
-            userName: "string" // Replace with actual user name if needed
+            userName: selectedUserName || "string",
         };
-
-        console.log("Request Body:", requestBody); // Log the request body for debugging
 
         try {
             const response = await fetch('http://localhost:5279/api/wallet/addfunds', {
@@ -47,34 +52,95 @@ const FundUser = ({ onClose }) => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error("Error response:", errorData); // Log the error response
                 alert(`Failed to fund user wallet: ${errorData.message || response.statusText}`);
                 return;
             }
 
             alert(`Successfully funded user wallet with R${amountToAdd}`);
-            onClose(); // Close the modal after funding
+            onClose();
         } catch (error) {
             console.error('Error funding user wallet:', error);
             alert('An error occurred while funding the user wallet.');
         }
     };
 
+    const filteredUsers = users.filter(user =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="fund-user-modal">
             <h3>Fund User Wallet</h3>
-            <select value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value)}>
+
+            {/* Search Bar */}
+            <input
+                type="text"
+                placeholder="Search user by name"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+                <ul style={{
+                    maxHeight: '100px',
+                    overflowY: 'auto',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    padding: '5px',
+                    marginTop: '4px',
+                    backgroundColor: '#fff',
+                    zIndex: 10,
+                    position: 'relative'
+                }}>
+                    {filteredUsers.length > 0 ? (
+                        filteredUsers.map(user => (
+                            <li
+                                key={user.userID}
+                                onClick={() => handleUserSelect(user)}
+                                style={{
+                                    padding: '4px',
+                                    cursor: 'pointer',
+                                    backgroundColor: user.userID === selectedUserId ? '#00a69b' : 'white',
+                                    color: user.userID === selectedUserId ? 'white' : '#333',
+                                    borderBottom: '1px solid #eee'
+                                }}
+                            >
+                                {user.name}
+                            </li>
+                        ))
+                    ) : (
+                        <li>No users found</li>
+                    )}
+                </ul>
+            )}
+
+            {/* Dropdown */}
+            <select
+                value={selectedUserId}
+                onChange={(e) => {
+                    const userID = e.target.value;
+                    const user = users.find(u => u.userID.toString() === userID);
+                    setSelectedUserId(userID);
+                    setSelectedUserName(user?.name || '');
+                    setSearchTerm(user?.name || '');
+                }}
+            >
                 <option value="">Select User</option>
                 {users.map(user => (
-                    <option key={user.userID} value={user.userID}>{user.name}</option>
+                    <option key={user.userID} value={user.userID}>
+                        {user.name}
+                    </option>
                 ))}
             </select>
+
+            {/* Amount input */}
             <input
                 type="number"
                 placeholder="Enter amount to fund"
                 value={fundAmount}
                 onChange={(e) => setFundAmount(e.target.value)}
             />
+
+            {/* Action buttons */}
             <button onClick={fundUserWallet}>Fund Wallet</button>
             <button onClick={onClose}>Close</button>
         </div>

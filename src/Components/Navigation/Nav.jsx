@@ -134,6 +134,7 @@ function Nav() {
       throw error;
     }
   };
+  
 
   const deleteCartItem = async (cartItemId) => {
     setIsLoading(true);
@@ -169,19 +170,61 @@ function Nav() {
     }
   };
 
-  const handleCheckout = () => {
-    alert('Proceeding to Checkout');
-  };
+const handleCheckout = async () => {
+    const userId = localStorage.getItem("userId");
+    const walletID = localStorage.getItem("walletID"); // Ensure walletID is stored
+    const deliveryMethod = "Standard"; // Modify if needed
+    console.log('Cart items before checkout:', cartItems);
+
+    const checkoutData = {
+        userId: Number(userId),
+        deliveryMethod: deliveryMethod,
+        walletID: Number(walletID), // Ensure this is correct
+        cartItems: cartItems.map(item => ({
+            productID: item.productID, // Ensure this matches your backend DTO
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+        }))
+    };
+
+    try {
+        const response = await fetch('http://localhost:5279/api/order/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(checkoutData),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); // Get raw response text
+            console.error('Error response:', errorText); // Log it for debugging
+            alert(`Checkout failed: ${errorText}`);
+            return;
+        }
+
+        alert('Checkout successful!');
+        // Clear cart or update UI accordingly
+        setCartItems([]);
+        setTotalAmount(0);
+        setWalletBalance(prevBalance => (Number(prevBalance) - totalAmount).toFixed(2)); // Adjust balance
+    } catch (error) {
+        console.error('Checkout error:', error);
+        alert('An error occurred during checkout.');
+    }
+};
 
   const toggleFundUserModal = () => {
     setShowFundUserModal(!showFundUserModal);
   };
+  
 
   // Check if the user is an Admin
   const userRole = localStorage.getItem("roleID");
 
   const updateCartItemQuantity = async (cartItemId, newQuantity) => {
     const userId = localStorage.getItem("userId");
+  
     
     // Prepare request body for updating the cart item
     const requestBody = {
