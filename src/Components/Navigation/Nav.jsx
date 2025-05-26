@@ -23,6 +23,14 @@ function Nav() {
   const [error, setError] = useState(null);
   const [showFundUserModal, setShowFundUserModal] = useState(false);
   const isBalanceExceeded = parseFloat(totalAmount) > parseFloat(walletBalance);
+  const [showOrderSummary, setShowOrderSummary] = useState(false); // New state for order summary
+  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState("Pickup");
+  const [orderSummaryData, setOrderSummaryData] = useState({});
+  const [orders, setOrders] = useState([]); 
+  const userId = localStorage.getItem("userId");
+  
+  
+  
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -63,12 +71,12 @@ function Nav() {
     setDrawerOpen(!drawerOpen);
   };
 
-  const handleMenuItemClick = (action) => {
-    setDrawerOpen(false);
-    if (action === 'Logout') {
-      navigate('/');
-    }
-  };
+  // const handleMenuItemClick = (action) => {
+  //   setDrawerOpen(false);
+  //   if (action === 'Logout') {
+  //     navigate('/');
+  //   }
+  // };
 
   const addFunds = async () => {
     const userId = localStorage.getItem("userId");
@@ -170,49 +178,78 @@ function Nav() {
     }
   };
 
-const handleCheckout = async () => {
-    const userId = localStorage.getItem("userId");
-    const walletID = localStorage.getItem("walletID"); // Ensure walletID is stored
-    const deliveryMethod = "Standard"; // Modify if needed
-    console.log('Cart items before checkout:', cartItems);
+  const cartID = localStorage.getItem("cartID");
+  const walletID = localStorage.getItem("walletID");
 
+
+ const handleCheckout = async () => {
+    const userId = localStorage.getItem("userId");
+
+    if (cartItems.length === 0) {
+      alert("Cart is empty.");
+      return;
+    }
+
+    const subtotal = cartItems.reduce((total, item) => total + (item.unitPrice * item.quantity), 0);
+    const deliveryFee = selectedDeliveryMethod === "Delivery" ? 10 : 0; // Adjust based on delivery method
+    const totalAmount = subtotal + deliveryFee;
+
+    // Prepare order data
     const checkoutData = {
-        userId: Number(userId),
-        deliveryMethod: deliveryMethod,
-        walletID: Number(walletID), // Ensure this is correct
-        cartItems: cartItems.map(item => ({
-            productID: item.productID, // Ensure this matches your backend DTO
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-        }))
+      UserID: Number(userId),
+      DeliveryMethod: selectedDeliveryMethod,
+      Subtotal: subtotal,
+      DeliveryFee: deliveryFee,
+      TotalAmount: totalAmount,
+      OrderStatus: "Pending",
+      OrderDateTime: new Date(),
+      CartItems: cartItems.map(item => ({
+        ProductID: item.productID,
+        Quantity: item.quantity,
+        UnitPrice: item.unitPrice,
+      })),
     };
 
     try {
-        const response = await fetch('http://localhost:5279/api/order/checkout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(checkoutData),
-        });
+      const response = await fetch('http://localhost:5279/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(checkoutData),
+      });
 
-        if (!response.ok) {
-            const errorText = await response.text(); // Get raw response text
-            console.error('Error response:', errorText); // Log it for debugging
-            alert(`Checkout failed: ${errorText}`);
-            return;
-        }
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        alert(`Checkout failed: ${errorText}`);
+        return;
+      }
 
-        alert('Checkout successful!');
-        // Clear cart or update UI accordingly
-        setCartItems([]);
-        setTotalAmount(0);
-        setWalletBalance(prevBalance => (Number(prevBalance) - totalAmount).toFixed(2)); // Adjust balance
+      alert('Checkout successful!');
+      setCartItems([]); // Clear the cart after successful order creation
+      setTotalAmount(0);
+      setWalletBalance(prevBalance => (Number(prevBalance) - totalAmount).toFixed(2));
+      fetchOrdersByUser(userId); // Refresh orders after checkout
     } catch (error) {
-        console.error('Checkout error:', error);
-        alert('An error occurred during checkout.');
+      console.error('Checkout error:', error);
+      alert('An error occurred during checkout.');
     }
+  };
+
+const handleMenuItemClick = (action) => {
+  setDrawerOpen(false);
+  if (action === 'View Orders') {
+    const userId = localStorage.getItem("userId");
+    fetchOrdersByUser(userId); // Fetch user orders
+    setShowOrderSummary(true); // Show the order modal
+  } else if (action === 'Logout') {
+    navigate('/');
+  }
 };
+
+
+
 
   const toggleFundUserModal = () => {
     setShowFundUserModal(!showFundUserModal);
@@ -253,6 +290,70 @@ const handleCheckout = async () => {
         alert('An error occurred while updating the item quantity.');
     }
 };
+const fetchOrdersByUser = async (userId) => {
+  try {
+    const response = await fetch(`http://localhost:5279/api/order/user/${userId}`);
+    if (!response.ok) throw new Error("Failed to fetch orders");
+
+    const ordersData = await response.json();
+    setOrders(ordersData);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+  }
+};
+
+const confirmOrder = async () => {
+    const userId = localStorage.getItem("userId");
+    const walletID = localStorage.getItem("walletID");
+
+    const { subtotal, deliveryFee, totalAmount, deliveryMethod } = orderSummaryData;
+
+    const checkoutData = {
+        UserID: Number(userId),
+        DeliveryMethod: deliveryMethod,
+        PaymentMethod: "Wallet",
+        WalletID: Number(walletID),
+        CartID: cartItems?.cartID || 0,
+        Subtotal: subtotal,
+        DeliveryFee: deliveryFee,
+        TotalAmount: totalAmount,
+        OrderStatus: "Pending",
+        OrderDateTime: new Date(),
+        CartItems: cartItems.map(item => ({
+            ProductID: item.productID,
+            ProductName: item.productName,
+            Quantity: item.quantity,
+            UnitPrice: item.unitPrice,
+        })),
+    };
+
+    try {
+        const response = await fetch('http://localhost:5279/api/order/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(checkoutData),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            alert(`Checkout failed: ${errorText}`);
+            return;
+        }
+
+        alert('Checkout successful!');
+        setCartItems([]); // Clear the cart after successful order creation
+        setTotalAmount(0);
+        setWalletBalance(prevBalance => (Number(prevBalance) - totalAmount).toFixed(2));
+    } catch (error) {
+        console.error('Checkout error:', error);
+        alert('An error occurred during checkout.');
+    }
+};
+
+
   return (
     <nav>
       <div className="logo-container">
@@ -339,6 +440,29 @@ const handleCheckout = async () => {
             Close
         </button>
     </div>
+)}
+{showOrderSummary && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <button onClick={() => setShowOrderSummary(false)}>Close</button>
+      <h2>Your Orders</h2>
+      {orders.length === 0 ? (
+        <p>No orders found.</p>
+      ) : (
+        <ul>
+          {orders.map((order, index) => (
+            <li key={index}>
+              <p><strong>Order #{order.orderID}</strong></p>
+              <p>Status: {order.orderStatus}</p>
+              <p>Total: R{order.totalAmount}</p>
+              <p>Date: {new Date(order.orderDateTime).toLocaleString()}</p>
+              <hr />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
 )}
 
       {drawerOpen && (

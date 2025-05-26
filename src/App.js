@@ -6,6 +6,7 @@ import ProductAdmin from './Components/Products_Admin/ProductAdmin';
 import Navigation from './Components/Navigation/Nav';
 
 
+
 function Layout({ children }) {
   const location = useLocation();
   const isLoginPage = location.pathname === '/';
@@ -26,6 +27,7 @@ function App() {
           <Route path="/" element={<LoginSignUp />} />
           <Route path="/user/products" element={<Product />} />
           <Route path="/admin/products" element={<ProductAdmin />} />
+          
         </Routes>
       </Layout>
     </Router>
