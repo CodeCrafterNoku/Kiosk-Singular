@@ -182,12 +182,12 @@ function Nav() {
   const walletID = localStorage.getItem("walletID");
 
 
- const handleCheckout = async () => {
+const handleCheckout = async () => {
     const userId = localStorage.getItem("userId");
 
     if (cartItems.length === 0) {
-      alert("Cart is empty.");
-      return;
+        alert("Cart is empty.");
+        return;
     }
 
     const subtotal = cartItems.reduce((total, item) => total + (item.unitPrice * item.quantity), 0);
@@ -196,47 +196,128 @@ function Nav() {
 
     // Prepare order data
     const checkoutData = {
-      UserID: Number(userId),
-      DeliveryMethod: selectedDeliveryMethod,
-      Subtotal: subtotal,
-      DeliveryFee: deliveryFee,
-      TotalAmount: totalAmount,
-      OrderStatus: "Pending",
-      OrderDateTime: new Date(),
-      CartItems: cartItems.map(item => ({
-        ProductID: item.productID,
-        Quantity: item.quantity,
-        UnitPrice: item.unitPrice,
-      })),
+        UserID: Number(userId),
+        DeliveryMethod: selectedDeliveryMethod,
+        Subtotal: subtotal,
+        DeliveryFee: deliveryFee,
+        TotalAmount: totalAmount,
+        OrderStatus: "Pending",
+        OrderDateTime: new Date(),
+        CartItems: cartItems.map(item => ({
+            ProductID: item.productID,
+            Quantity: item.quantity,
+            UnitPrice: item.unitPrice,
+        })),
     };
 
     try {
-      const response = await fetch('http://localhost:5279/api/order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(checkoutData),
-      });
+        const response = await fetch('http://localhost:5279/api/order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(checkoutData),
+        });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        alert(`Checkout failed: ${errorText}`);
-        return;
-      }
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            alert(`Checkout failed: ${errorText}`);
+            return;
+        }
 
-      alert('Checkout successful!');
-      setCartItems([]); // Clear the cart after successful order creation
-      setTotalAmount(0);
-      setWalletBalance(prevBalance => (Number(prevBalance) - totalAmount).toFixed(2));
-      fetchOrdersByUser(userId); // Refresh orders after checkout
+        const orderResponse = await response.json(); // Get the order response
+        localStorage.setItem("orderID", orderResponse.orderID); // Store the order ID
+        alert('Checkout successful!');
+        
+        setCartItems([]); // Clear the cart after successful order creation
+        setTotalAmount(0);
+        setWalletBalance(prevBalance => (Number(prevBalance) - totalAmount).toFixed(2));
+
+        // Call createTransaction after successful checkout
+        await createTransaction(totalAmount);
     } catch (error) {
-      console.error('Checkout error:', error);
-      alert('An error occurred during checkout.');
+        console.error('Checkout error:', error);
+        alert('An error occurred during checkout.');
     }
-  };
+};
+// Example of setting walletID when fetching the wallet
+const fetchWallet = async (userId) => {
+    try {
+        const response = await fetch(`http://localhost:5279/api/wallet/user/${userId}`);
+        if (!response.ok) throw new Error("Failed to fetch wallet");
+        const data = await response.json();
+        setWalletBalance(Number(data.balance).toFixed(2));
+        localStorage.setItem("walletID", data.walletID); // Ensure this is set
+        console.log('Fetched Wallet ID:', data.walletID); // Debug log
+    } catch (error) {
+        console.error("Wallet fetch error:", error);
+    }
+};
+useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+        console.warn("No userId in localStorage");
+        return;
+    }
+    fetchWallet(userId); // Call to fetch wallet here
+    fetchCartByUser(userId);
+}, []);
+const createTransaction = async (totalAmount) => {
+    const userId = localStorage.getItem("userId");
+    const walletID = localStorage.getItem("walletID");
+    const orderID = localStorage.getItem("orderID"); // Ensure orderID is set correctly
 
+    // Log wallet ID to check its value
+    console.log('Retrieved Wallet ID:', walletID);
+
+    // Validate walletID and orderID
+    if (!walletID || walletID === "0") {
+        alert("Invalid Wallet ID.");
+        return;
+    }
+    
+    if (!orderID || orderID === "0") {
+        alert("Invalid Order ID.");
+        return;
+    }
+
+    const transactionData = {
+        transactionID: 0, // Assuming this is auto-generated on the server
+        walletID: Number(walletID),
+        amount: totalAmount,
+        orderID: Number(orderID),
+        paymentMethod: 'EFT',
+        paymentDateTime: new Date().toISOString(), // Ensure this is in ISO format
+        paymentStatus: 'Completed' // Set payment status if required
+    };
+
+    console.log('Transaction Data:', transactionData); // Log the data for debugging
+
+    try {
+        const response = await fetch('http://localhost:5279/api/Transaction/withdraw', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'text/plain'
+            },
+            body: JSON.stringify(transactionData),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Transaction created successfully:", data);
+            alert('Transaction successful!');
+            // Optionally, update wallet balance or navigate to another page
+        } else {
+            const errorData = await response.json();
+            alert(`Transaction failed: ${errorData.message || response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Transaction error:', error);
+        alert('An error occurred during the transaction.');
+    }
+};
 const handleMenuItemClick = (action) => {
   setDrawerOpen(false);
   if (action === 'View Orders') {
@@ -444,7 +525,7 @@ const confirmOrder = async () => {
 {showOrderSummary && (
   <div className="modal-overlay">
     <div className="modal-content">
-      <button onClick={() => setShowOrderSummary(false)}>Close</button>
+      <button className="close-btn" onClick={() => setShowOrderSummary(false)}>×</button>
       <h2>Your Orders</h2>
       {orders.length === 0 ? (
         <p>No orders found.</p>
@@ -464,6 +545,7 @@ const confirmOrder = async () => {
     </div>
   </div>
 )}
+
 
       {drawerOpen && (
         <div className={`drawer ${drawerOpen ? 'open' : ''}`}>

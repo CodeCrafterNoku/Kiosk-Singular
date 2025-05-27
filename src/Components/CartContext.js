@@ -25,7 +25,6 @@ export const CartProvider = ({ children }) => {
 
     const deleteCartItem = (cartItemId) => {
         setCartItems((prevItems) => prevItems.filter(item => item.cartItemID !== cartItemId));
-        // Optionally update totalAmount here
     };
 
     return (
