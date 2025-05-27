@@ -25,7 +25,7 @@ const FundUser = ({ onClose }) => {
     const handleUserSelect = (user) => {
         setSelectedUserId(user.userID);
         setSelectedUserName(user.name);
-        setSearchTerm(user.name); // show name in search bar
+        setSearchTerm(user.name); // Show name in search bar
     };
 
     const fundUserWallet = async () => {
@@ -112,25 +112,6 @@ const FundUser = ({ onClose }) => {
                     )}
                 </ul>
             )}
-
-            {/* Dropdown */}
-            <select
-                value={selectedUserId}
-                onChange={(e) => {
-                    const userID = e.target.value;
-                    const user = users.find(u => u.userID.toString() === userID);
-                    setSelectedUserId(userID);
-                    setSelectedUserName(user?.name || '');
-                    setSearchTerm(user?.name || '');
-                }}
-            >
-                <option value="">Select User</option>
-                {users.map(user => (
-                    <option key={user.userID} value={user.userID}>
-                        {user.name}
-                    </option>
-                ))}
-            </select>
 
             {/* Amount input */}
             <input

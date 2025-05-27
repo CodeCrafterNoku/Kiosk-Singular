@@ -365,3 +365,58 @@ body.dark-mode .drawer li:hover {
   font-size: 20px;
   cursor: pointer;
 }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #f9f9f9; /* Light background color */
+  border-radius: 8px; /* Rounded corners */
+  padding: 20px; /* Padding inside modal */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  max-width: 600px; /* Max width for modal */
+  width: 90%; /* Responsive width */
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #333;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #dc3545; /* Change color on hover */
+}
+
+.modal-content h2 {
+  color: #00a69b; /* Header color */
+  margin-bottom: 20px; /* Space below header */
+}
+
+.modal-content ul {
+  list-style-type: none; /* Remove default list styles */
+  padding: 0; /* Remove padding */
+}
+
+.modal-content li {
+  border-bottom: 1px solid #ccc; /* Border for each order item */
+  padding: 10px 0; /* Padding inside the item */
+}
+
+.modal-content p {
+  margin: 5px 0; /* Margin for paragraphs */
+  color: #797f88; /* Text color */
+}

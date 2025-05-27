@@ -8,6 +8,7 @@ import { HiBellAlert } from "react-icons/hi2";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
 import FundUser from './fundUser';
+import { AiFillHome } from "react-icons/ai";
 import { Link } from 'react-router-dom';
 import './Nav.css';
 
@@ -75,50 +76,47 @@ function Nav() {
 
 
 
-  const addFunds = async () => {
+ const addFunds = async () => {
     const userId = localStorage.getItem("userId");
     const amountToAdd = Number(fundAmount);
 
     if (!fundAmount || isNaN(amountToAdd) || amountToAdd <= 0) {
-      alert("Please enter a valid amount greater than zero");
-      return;
-    }
-
-    if (!userId) {
-      alert("User not logged in");
-      return;
+        alert("Please enter a valid amount greater than zero");
+        return;
     }
 
     const requestBody = {
-      userID: Number(userId),
-      balance: amountToAdd,
-      walletID: 0,
-      lastUpdated: new Date().toISOString(),
-      userName: "string" // Replace with actual user name if needed
+        walletID: walletID, // Use the wallet ID if available
+        userID: userId,
+        balance: amountToAdd,
+        lastUpdated: new Date().toISOString(),
+        userName: "Sinethemba" // Replace with actual user name if needed
     };
 
     try {
-      const response = await fetch('http://localhost:5279/api/wallet/addfunds', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-      });
+        const response = await fetch('http://localhost:5279/api/wallet/addfunds', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        alert(`Failed to add funds: ${errorData.message || response.statusText}`);
-        return;
-      }
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert(`Failed to add funds: ${errorData.message || response.statusText}`);
+            return;
+        }
 
-      setWalletBalance(prevBalance => (Number(prevBalance) + amountToAdd).toFixed(2));
-      setFundAmount('');
-      setShowWalletDropdown(false);
-      alert(`Successfully funded wallet with R${amountToAdd}`);
+        const data = await response.json();
+        setWalletBalance(prevBalance => (Number(data.newBalance)).toFixed(2));
+        setFundAmount('');
+        setShowWalletDropdown(false);
+        alert(`Successfully funded wallet with R${amountToAdd}`);
     } catch (error) {
-      console.error('Error adding funds:', error);
-      alert('An error occurred while adding funds.');
+        console.error('Error adding funds:', error);
+        alert('An error occurred while adding funds.');
     }
-  };
+};
+
 
   const toggleCart = () => {
     setShowCart(!showCart);
@@ -329,6 +327,7 @@ const handleMenuItemClick = (action) => {
 
 
 
+
   const toggleFundUserModal = () => {
     setShowFundUserModal(!showFundUserModal);
   };
@@ -439,7 +438,7 @@ const confirmOrder = async () => {
       </div>
 
       <div className="profile-container">
-        <a href="#"><MdLightMode className="nav-icons" /></a>
+        <a href="#"><AiFillHome className="nav-icons" /></a>
         <Link to="/orders" className="notification-icon">
           <HiBellAlert className="nav-icons" />
         </Link>
@@ -536,7 +535,6 @@ const confirmOrder = async () => {
               <p>Status: {order.orderStatus}</p>
               <p>Total: R{order.totalAmount}</p>
               <p>Date: {new Date(order.orderDateTime).toLocaleString()}</p>
-              <hr />
             </li>
           ))}
         </ul>

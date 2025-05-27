@@ -1,0 +1,73 @@
+.order-display-container {
+  max-width: 1200px; /* Set a maximum width for the container */
+  margin: 20px auto; /* Center the container horizontally */
+  padding: 20px; /* Add padding inside the container */
+  background-color: #f9f9f9; /* Light background color */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.order-display-container h2 {
+  text-align: center; /* Center the heading */
+  color: #00a69b; /* Header color */
+}
+
+.order-display-container ul {
+  list-style-type: none; /* Remove default list styles */
+  padding: 0; /* Remove padding */
+}
+
+.order-display-container li {
+  border: 1px solid #ccc; /* Border for each order item */
+  padding: 10px; /* Padding inside the item */
+  margin: 10px 0; /* Margin between items */
+  border-radius: 6px; /* Rounded corners for items */
+  background-color: #fff; /* White background for items */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.order-display-container li:hover {
+  background-color: #f1f1f1; /* Highlight order item on hover */
+}
+
+.order-display-container p {
+  margin: 5px 0; /* Margin for paragraphs */
+  color: #797f88; /* Text color */
+}
+
+.order-display-container strong {
+  color: #00a69b; /* Strong text color */
+}
+.button {
+  padding: 5px 10px;
+  background-color: #00a69b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px; /* Space above buttons */
+}
+
+.button:hover {
+  background-color: #007e76;
+}
+
+.button.cancel {
+  background-color: #dc3545; /* Red for cancel button */
+}
+
+.button.cancel:hover {
+  background-color: #b21f28; /* Darker on hover */
+}.order-item-content {
+  display: flex;
+  justify-content: space-between; /* Details on left, buttons on right */
+  align-items: center;            /* Vertically center content */
+}
+
+.card-buttons {
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  gap: 10px;              /* Space between buttons */
+}
+
