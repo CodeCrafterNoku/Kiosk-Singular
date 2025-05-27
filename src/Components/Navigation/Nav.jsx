@@ -4,6 +4,7 @@ import { FaShoppingCart } from 'react-icons/fa';
 import { BsFillWalletFill } from "react-icons/bs";
 import { MdLightMode } from 'react-icons/md';
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
+import { HiBellAlert } from "react-icons/hi2";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
 import FundUser from './fundUser';
@@ -71,12 +72,7 @@ function Nav() {
     setDrawerOpen(!drawerOpen);
   };
 
-  // const handleMenuItemClick = (action) => {
-  //   setDrawerOpen(false);
-  //   if (action === 'Logout') {
-  //     navigate('/');
-  //   }
-  // };
+
 
   const addFunds = async () => {
     const userId = localStorage.getItem("userId");
@@ -443,7 +439,9 @@ const confirmOrder = async () => {
 
       <div className="profile-container">
         <a href="#"><MdLightMode className="nav-icons" /></a>
-        <a href="#"><FiHeart className="nav-icons" /></a>
+         <a href="#" className="notification-icon">
+        <HiBellAlert className="nav-icons" />
+        </a>
         <a href="#" onClick={toggleCart} className="cart-icon">
           <FaShoppingCart className="nav-icons" />
           {cartItems.length > 0 && (

@@ -25,7 +25,12 @@ function ProductAdmin() {
     const [isLoading, setIsLoading] = useState(false);
     const [isUpdateLoading, setIsUpdateLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-        const addToCart = async (productId) => { // **Added this function**
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [productsPerPage] = useState(7);
+
+    const addToCart = async (productId) => {
         const userId = localStorage.getItem('userId');
         if (!userId) {
             alert("You must be logged in to add items to your cart.");
@@ -33,25 +38,22 @@ function ProductAdmin() {
         }
 
         try {
-            // Check for existing cart
             const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
             let cartData;
 
             if (cartResponse.status === 404) {
-                // Create a new cart if it doesn't exist
                 cartData = await createCart(userId);
             } else {
                 cartData = await cartResponse.json();
             }
 
-            // Prepare the request body to add the cart item
             const requestBody = {
                 cartItemID: 0,
                 cartID: cartData.cartID,
                 productID: productId,
                 quantity: 1,
-                unitPrice: 0, // Fetch the product price based on productId if needed
-                productName: products.find(product => product.productID === productId)?.productName // Fetch dynamically
+                unitPrice: 0,
+                productName: products.find(product => product.productID === productId)?.productName
             };
 
             const response = await fetch(`http://localhost:5279/api/cart/${requestBody.cartID}/items`, {
@@ -72,7 +74,8 @@ function ProductAdmin() {
             alert("An error occurred while adding the item to the cart.");
         }
     };
-        const createCart = async (userId) => {
+
+    const createCart = async (userId) => {
         const requestBody = {
             userID: Number(userId),
             walletID: 0,
@@ -92,51 +95,47 @@ function ProductAdmin() {
                 throw new Error(errorText);
             }
 
-            return await response.json(); // Return the created cart
+            return await response.json();
         } catch (error) {
             console.error("Error creating cart:", error);
         }
     };
 
-    // New state for confirmation dialog
-    const [confirmToggle, setConfirmToggle] = useState(null); // `tick`
+    const [confirmToggle, setConfirmToggle] = useState(null);
 
-const handleAvailabilityToggle = (productId, currentAvailability) => {
-    if (!productId) return;
+    const handleAvailabilityToggle = (productId, currentAvailability) => {
+        if (!productId) return;
 
-    setIsUpdateLoading(true);
+        setIsUpdateLoading(true);
 
-    try {
-        const product = products.find(p => p.productID === productId);
+        try {
+            const product = products.find(p => p.productID === productId);
 
-        if (!product) {
-            console.error(`Product with ID ${productId} not found.`);
-            return;
+            if (!product) {
+                console.error(`Product with ID ${productId} not found.`);
+                return;
+            }
+
+            if (product.quantity > 0 && currentAvailability) {
+                setConfirmToggle({ productId, currentAvailability });
+                return;
+            }
+
+            toggleProductAvailability(productId, currentAvailability);
+        } catch (error) {
+            console.error("Error toggling availability:", error);
+            setPopup({ message: `Error: ${error.message}`, type: 'error' });
+        } finally {
+            setIsUpdateLoading(false);
         }
+    };
 
-        if (product.quantity > 0 && currentAvailability) {
-            setConfirmToggle({ productId, currentAvailability }); // show confirm popup
-            return;
-        }
-
-        toggleProductAvailability(productId, currentAvailability);
-    } catch (error) {
-        console.error("Error toggling availability:", error);
-        setPopup({ message: `Error: ${error.message}`, type: 'error' });
-    } finally {
-        setIsUpdateLoading(false);
-    }
-};
-
-
-    const toggleProductAvailability = async (productId, currentAvailability) => { // `tick`
-        // Prepare the updated product object
+    const toggleProductAvailability = async (productId, currentAvailability) => {
         const updatedProduct = {
             ...products.find(p => p.productID === productId),
-            isAvailable: !currentAvailability // Toggle availability
+            isAvailable: !currentAvailability
         };
 
-        // Make the API call to update the product
         const response = await fetch(`http://localhost:5279/api/Product/${productId}`, {
             method: "PUT",
             headers: {
@@ -147,7 +146,7 @@ const handleAvailabilityToggle = (productId, currentAvailability) => {
 
         if (response.ok) {
             setPopup({ message: 'Product availability updated successfully', type: 'success' });
-            fetchProducts(); // Refresh product list
+            fetchProducts();
         } else {
             const errorData = await response.json();
             console.error("Failed to update availability:", errorData);
@@ -246,32 +245,34 @@ const handleAvailabilityToggle = (productId, currentAvailability) => {
         }
     };
 
-const handleUpdateProduct = async () => {
-    if (!editingProduct) return;
-    setIsUpdateLoading(true);
+    const handleUpdateProduct = async () => {
+        if (!editingProduct) return;
+        setIsUpdateLoading(true);
 
-    // Automatically set availability based on quantity
-    const updatedAvailability = editingProduct.quantity > 0;
-    const updatedProduct = { ...editingProduct, isAvailable: updatedAvailability };
+        const updatedAvailability = editingProduct.quantity > 0;
+        const updatedProduct = { ...editingProduct, isAvailable: updatedAvailability };
 
-    const response = await fetch(`http://localhost:5279/api/Product/${updatedProduct.productID}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedProduct),
-    });
+        const response = await fetch(`http://localhost:5279/api/Product/${updatedProduct.productID}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedProduct),
+        });
 
-    if (response.ok) {
-        setPopup({ message: 'Product updated successfully', type: 'success' });
-        fetchProducts();
-        setEditingProduct(null);
-        setShowUpdateProductPopup(false);
-    } else {
-        setPopup({ message: 'Failed to update product. It did not meet the required specifications.', type: 'error' });
-    }
-    setIsUpdateLoading(false);
+        if (response.ok) {
+            setPopup({ message: 'Product updated successfully', type: 'success' });
+            fetchProducts();
+            setEditingProduct(null);
+            setShowUpdateProductPopup(false);
+        } else {
+            setPopup({ message: 'Failed to update product. It did not meet the required specifications.', type: 'error' });
+        }
+        setIsUpdateLoading(false);
+    };
+
+    const handleCategoryChange = (categoryID) => {
+    setSelectedCategory(categoryID); // Set the selected category
+    setCurrentPage(1); // Reset to the first page when category changes
 };
-
-    const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
 
     const filteredProducts = products.filter((product) => {
         const matchesCategory = !selectedCategory ||
@@ -280,6 +281,16 @@ const handleUpdateProduct = async () => {
             product.productName.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesCategory && matchesSearch;
     });
+
+    // Pagination Logic
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const handleEditProduct = (product) => {
         setEditingProduct({ ...product });
@@ -300,20 +311,19 @@ const handleUpdateProduct = async () => {
         );
     };
 
-    // New Confirmation Popup Component
     const ConfirmPopup = ({ onConfirm, onCancel }) => {
-      return (
-          <div className="popup-overlay">
-              <div className="popup">
-                  <p>This product still has quantity available. Are you sure you want to make it unavailable?</p>
-                  <div className="button-container"> {/* Add this wrapper */}
-                      <button onClick={onConfirm}>Yes</button>
-                      <button onClick={onCancel}>No</button>
-                  </div>
-              </div>
-          </div>
-      );
-  }
+        return (
+            <div className="popup-overlay">
+                <div className="popup">
+                    <p>This product still has quantity available. Are you sure you want to make it unavailable?</p>
+                    <div className="button-container">
+                        <button onClick={onConfirm}>Yes</button>
+                        <button onClick={onCancel}>No</button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
@@ -541,47 +551,60 @@ const handleUpdateProduct = async () => {
                                 <th>Edit</th>
                                 <th>Delete</th>
                             </tr>
-                        </thead>
-<tbody>
-  {filteredProducts.map((product) => (
-    <tr key={product.productID}>
-      <td>
-        <img src={product.imageURL || 'https://via.placeholder.com/50'} alt={product.productName} width="50" />
-      </td>
-      <td>{product.productName}</td>
-      <td>{product.productDescription}</td>
-      <td>R{parseFloat(product.price).toFixed(2)}</td>
-      <td>{product.quantity}</td>
-      <td>
-        <label className={`availability-label ${product.quantity > 0 && !product.isAvailable ? 'forced-unavailable' : ''}`}>
-          <input
-            type="checkbox"
-            checked={product.isAvailable}
-            onChange={() => handleAvailabilityToggle(product.productID, product.isAvailable)}
-          />
-          {product.isAvailable ? "Available" : "Not Available"}
-          {product.quantity > 0 && !product.isAvailable && (
-            <span className="availability-note"> (Admin override)</span>
-          )}
-        </label>
-      </td>
-      <td>
-        <MdAddBox
-          className="add-icon"
-          onClick={() => product.quantity > 0 && addToCart(product.productID)} // Only add if in stock
-          style={{ cursor: product.quantity === 0 ? 'not-allowed' : 'pointer', opacity: product.quantity === 0 ? 0.5 : 1 }}
-        />
-      </td>
-      <td>
-        <button className="button" onClick={() => handleEditProduct(product)}>Edit</button>
-      </td>
-      <td>
-        <button className="button delete" onClick={() => handleConfirmDelete(product.productID)}>Delete</button>
-      </td>
-    </tr>
-  ))}
-</tbody>
+                       </thead>
+                        <tbody>
+                            {currentProducts.map((product) => (
+                                <tr key={product.productID}>
+                                    <td>
+                                        <img src={product.imageURL || 'https://via.placeholder.com/50'} alt={product.productName} width="50" />
+                                    </td>
+                                    <td>{product.productName}</td>
+                                    <td>{product.productDescription}</td>
+                                    <td>R{parseFloat(product.price).toFixed(2)}</td>
+                                    <td>{product.quantity}</td>
+                                    <td>
+                                        <label className={`availability-label ${product.quantity > 0 && !product.isAvailable ? 'forced-unavailable' : ''}`}>
+                                            <input
+                                                type="checkbox"
+                                                checked={product.isAvailable}
+                                                onChange={() => handleAvailabilityToggle(product.productID, product.isAvailable)}
+                                            />
+                                            {product.isAvailable ? "Available" : "Not Available"}
+                                            {product.quantity > 0 && !product.isAvailable && (
+                                                <span className="availability-note"> (Admin override)</span>
+                                            )}
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <MdAddBox
+                                            className="add-icon"
+                                            onClick={() => product.quantity > 0 && addToCart(product.productID)}
+                                            style={{ cursor: product.quantity === 0 ? 'not-allowed' : 'pointer', opacity: product.quantity === 0 ? 0.5 : 1 }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <button className="button" onClick={() => handleEditProduct(product)}>Edit</button>
+                                    </td>
+                                    <td>
+                                        <button className="button delete" onClick={() => handleConfirmDelete(product.productID)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </table>
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="pagination">
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                            key={index + 1}
+                            onClick={() => handlePageChange(index + 1)}
+                            className={currentPage === index + 1 ? 'active' : ''}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
                 </div>
             </div>
 
@@ -597,12 +620,11 @@ const handleUpdateProduct = async () => {
 
             {popup && <Popup message={popup.message} type={popup.type} onClose={() => setPopup(null)} />}
             
-            {/* Render Confirmation Popup */}
             {confirmToggle && 
                 <ConfirmPopup 
                     onConfirm={() => {
-                        toggleProductAvailability(confirmToggle.productId, confirmToggle.currentAvailability); // `tick`
-                        setConfirmToggle(null); // Reset confirmation state
+                        toggleProductAvailability(confirmToggle.productId, confirmToggle.currentAvailability);
+                        setConfirmToggle(null);
                     }} 
                     onCancel={() => setConfirmToggle(null)} 
                 />

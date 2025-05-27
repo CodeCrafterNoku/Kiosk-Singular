@@ -10,10 +10,15 @@ function Products() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+   const [currentPage, setCurrentPage] = useState(1); // ✅
+  const [productsPerPage] = useState(12); // ✅ Number of products per page
+
+  
 
 
   const handleCategorySelect = (categoryName) => {
     setSelectedCategoryName(categoryName);
+    setCurrentPage(1);
   };
 
   useEffect(() => {
@@ -78,6 +83,11 @@ function Products() {
 
     return matchesCategory && matchesSearch && (isOutOfStock || (!isUnavailableWithStock)); // Include the conditions
   });
+  const indexOfLastProduct = currentPage * productsPerPage; // ✅
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage; // ✅
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct); // ✅
+  const paginate = (pageNumber) => setCurrentPage(pageNumber); // ✅
+
  const createCart = async (userId) => {
     const requestBody = {
         userID: Number(userId),
@@ -189,7 +199,7 @@ const addToCart = async (productId) => {
             </div>
 
 <section className="card-container">
-  {filteredProducts.map((product) => (
+  {currentProducts.map((product) => ( // ✅ Use currentProducts for pagination
     <section className="card" key={product.productID}>
       <div className="image-container">
         <img
@@ -220,6 +230,18 @@ const addToCart = async (productId) => {
     </section>
   ))}
 </section>
+ {/* ✅ Pagination controls */}
+            <div className="pagination">
+              {Array.from({ length: Math.ceil(filteredProducts.length / productsPerPage) }, (_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => paginate(index + 1)}
+                  className={currentPage === index + 1 ? 'active' : ''}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
           </>
         )}
       </div>
