@@ -8,6 +8,7 @@ import { HiBellAlert } from "react-icons/hi2";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
 import FundUser from './fundUser';
+import { Link } from 'react-router-dom';
 import './Nav.css';
 
 function Nav() {
@@ -439,9 +440,9 @@ const confirmOrder = async () => {
 
       <div className="profile-container">
         <a href="#"><MdLightMode className="nav-icons" /></a>
-         <a href="#" className="notification-icon">
-        <HiBellAlert className="nav-icons" />
-        </a>
+        <Link to="/orders" className="notification-icon">
+          <HiBellAlert className="nav-icons" />
+        </Link>
         <a href="#" onClick={toggleCart} className="cart-icon">
           <FaShoppingCart className="nav-icons" />
           {cartItems.length > 0 && (
