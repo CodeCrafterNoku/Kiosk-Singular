@@ -102,72 +102,75 @@ const closeFundModal = () => {
 
 
 
-  const addFunds = async () => {
-        const userId = localStorage.getItem("userId");
-        const amountToAdd = Number(fundAmount);
+const addFunds = async () => {
+    const userId = localStorage.getItem("userId");
+    const amountToAdd = Number(fundAmount);
 
-        if (!fundAmount || isNaN(amountToAdd) || amountToAdd <= 0) {
-            toast.error("Please enter a valid amount greater than zero", {
+    if (!fundAmount || isNaN(amountToAdd) || amountToAdd <= 0) {
+        toast.error("Please enter a valid amount greater than zero", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeButton: false,
+        });
+        return;
+    }
+
+    const requestBody = {
+        walletID: walletID,
+        userID: userId,
+        balance: amountToAdd,
+        lastUpdated: new Date().toISOString(),
+        userName: "Sinethemba"
+    };
+
+    setLoading(true); // Start loading before the API call
+    try {
+        const response = await fetch('http://localhost:5279/api/wallet/addfunds', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            toast.error(`Failed to add funds: ${errorData.message || response.statusText}`, {
                 position: "top-right",
-                autoClose: 3000,closeButton: false, 
-                hideProgressBar: false,
-                closeButton: false, 
+                autoClose: 3000,
+                hideProgressBar: true,
             });
             return;
         }
 
-        const requestBody = {
-            walletID: walletID,
-            userID: userId,
-            balance: amountToAdd,
-            lastUpdated: new Date().toISOString(),
-            userName: "Sinethemba"
-        };
+        const data = await response.json();
+        setWalletBalance(prevBalance => (Number(data.newBalance)).toFixed(2));
+        setFundAmount('');
+        setShowConfetti(true);
 
-        try {
-            setLoading(true); // Start loading
-            const response = await fetch('http://localhost:5279/api/wallet/addfunds', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody)
-            });
+        const successToast = toast.success(`Successfully funded wallet with R${amountToAdd}`, {
+            position: "top-right",
+            autoClose: false, // Prevent auto close
+            hideProgressBar: false,
+            closeButton: false,
+        });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                toast.error(`Failed to add funds: ${errorData.message || response.statusText}`, {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: true,
-                });
-                return;
-            }
-
-            const data = await response.json();
-            setWalletBalance(prevBalance => (Number(data.newBalance)).toFixed(2));
-            setFundAmount('');
-            setShowConfetti(true);
-            toast.success(`Successfully funded wallet with R${amountToAdd}`, {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeButton: false, 
-            });
-
-            setTimeout(() => {
-                setShowConfetti(false);
-                setLoading(false); // End loading
-                closeFundModal();
-            }, 3000);
-        } catch (error) {
-            console.error('Error adding funds:', error);
-            toast.error('An error occurred while adding funds.', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: true,
-            });
+        setTimeout(() => {
+            setShowConfetti(false);
+            toast.dismiss(successToast); // Dismiss the toast
             setLoading(false); // End loading
-        }
-    };
+            closeFundModal();
+        }, 3000);
+    } catch (error) {
+        console.error('Error adding funds:', error);
+        toast.error('An error occurred while adding funds.', {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+        });
+    } finally {
+        setLoading(false); // Ensure loading state is set to false
+    }
+};
 
 
   const toggleCart = () => {
@@ -522,7 +525,7 @@ const confirmOrder = async () => {
 
 {showWalletDropdown && (
   <div className="wallet-dropdown">
-    <button onClick={toggleFundModal}>Fund You wallet</button>
+    <button onClick={toggleFundModal}>Fund Your wallet</button>
 
     {/* Conditionally render the Fund User button */}
     {userRole === '8' && (
