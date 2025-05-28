@@ -31,6 +31,9 @@ function Nav() {
   const [orderSummaryData, setOrderSummaryData] = useState({});
   const [orders, setOrders] = useState([]); 
   const userId = localStorage.getItem("userId");
+  const [showFundModal, setShowFundModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -70,6 +73,14 @@ function Nav() {
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
+  const toggleFundModal = () => {
+  setShowFundModal((prev) => !prev);
+};
+
+const closeFundModal = () => {
+  setShowFundModal(false);
+  setFundAmount(''); // Clear the input after closing
+};
 
 
 
@@ -321,22 +332,28 @@ const handleMenuItemClick = (action) => {
   }
 };
 
+
+
+
+
   const toggleFundUserModal = () => {
     setShowFundUserModal(!showFundUserModal);
   };
   
+
+  // Check if the user is an Admin
   const userRole = localStorage.getItem("roleID");
 
-    const updateCartItemQuantity = async (cartItemId, newQuantity) => {
+ const updateCartItemQuantity = async (cartItemId, newQuantity) => {
     const userId = localStorage.getItem("userId");
     
-    // Prepare request body for updating the cart item
     const requestBody = {
         quantity: newQuantity,
     };
+
     try {
         const response = await fetch(`http://localhost:5279/api/cart/cartitem/${cartItemId}`, {
-            method: 'PUT', // Use PUT or PATCH depending on your API design
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -345,17 +362,18 @@ const handleMenuItemClick = (action) => {
 
         if (!response.ok) {
             const errorData = await response.json();
-            alert(`Failed to update item quantity: ${errorData.message || response.statusText}`);
+            setErrorMessage(errorData.message || 'Oops! This product is currently out of stock. Please check back later.');
             return;
         }
 
-        // Refresh cart items after update
+        setErrorMessage(''); // Clear error message on success
         fetchCartByUser(userId);
     } catch (error) {
         console.error('Error updating cart item quantity:', error);
-        alert('An error occurred while updating the item quantity.');
+        setErrorMessage('Oops! This product is currently out of stock. Please check back later.');
     }
 };
+
 const fetchOrdersByUser = async (userId) => {
   try {
     const response = await fetch(`http://localhost:5279/api/order/user/${userId}`);
@@ -418,6 +436,8 @@ const confirmOrder = async () => {
         alert('An error occurred during checkout.');
     }
 };
+
+
   return (
     <nav>
       <div className="logo-container">
@@ -440,22 +460,32 @@ const confirmOrder = async () => {
           <span className="wallet-balance">BALANCE R{walletBalance}</span>
         </a>
 
-        {showWalletDropdown && (
-          <div className="wallet-dropdown">
-            <input
-              type="number"
-              min="1"
-              placeholder="Enter amount"
-              value={fundAmount}
-              onChange={(e) => setFundAmount(e.target.value)}
-            />
-            <button onClick={addFunds}>Fund</button>
+{showWalletDropdown && (
+  <div className="wallet-dropdown">
+    <button onClick={toggleFundModal}>Fund You wallet</button>
 
-            {/* Conditionally render the Fund User button */}
-            {userRole === '8' && ( // Check if the user is an Admin
-              <button onClick={toggleFundUserModal}>Fund User</button>
-            )}
-          </div>
+    {/* Conditionally render the Fund User button */}
+    {userRole === '8' && (
+      <button onClick={toggleFundUserModal}>Fund User</button>
+    )}
+ 
+{showFundModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Fund Your Wallet</h2>
+      <input
+        type="number"
+        min="1"
+        placeholder="Enter amount"
+        value={fundAmount}
+        onChange={(e) => setFundAmount(e.target.value)}
+      />
+     <button onClick={addFunds}>Fund</button>
+      <button className="close" onClick={closeFundModal}>Close</button>
+    </div>
+  </div>
+)}
+  </div>
         )}
 
         <a href="#" className="menu-icon" onClick={toggleDrawer}>
@@ -463,9 +493,14 @@ const confirmOrder = async () => {
         </a>
       </div>
 
-     {showCart && (
+{showCart && (
     <div className="cart-popup">
         <h3>Cart Items</h3>
+
+        {errorMessage && (
+            <p className="error-message">{errorMessage}</p>
+        )}
+
         <ul>
             {cartItems.map(item => (
                 <li key={item.cartItemID}>
@@ -493,11 +528,7 @@ const confirmOrder = async () => {
         <button
             onClick={handleCheckout}
             disabled={isBalanceExceeded}
-            style={{
-                backgroundColor: isBalanceExceeded ? '#ccc' : '#4CAF50',
-                cursor: isBalanceExceeded ? 'not-allowed' : 'pointer',
-                color: isBalanceExceeded ? '#666' : '#fff'
-            }}
+            className={`checkout-button ${isBalanceExceeded ? 'disabled' : ''}`}
         >
             <MdOutlineShoppingCartCheckout /> Checkout
         </button>
@@ -529,6 +560,8 @@ const confirmOrder = async () => {
     </div>
   </div>
 )}
+
+
       {drawerOpen && (
         <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
           <ul>

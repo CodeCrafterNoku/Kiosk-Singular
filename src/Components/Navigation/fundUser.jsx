@@ -106,7 +106,7 @@ const FundUser = ({ onClose }) => {
                 </ul>
             )}
 
-            {/* Amount input */}
+                        {/* Amount input */}
             <input
                 type="number"
                 placeholder="Enter amount to fund"
@@ -115,8 +115,8 @@ const FundUser = ({ onClose }) => {
             />
 
             {/* Action buttons */}
-            <button onClick={fundUserWallet}>Fund Wallet</button>
-            <button onClick={onClose}>Close</button>
+            <button className="action-button" onClick={fundUserWallet}>Fund Wallet</button>
+            <button className="action-button close" onClick={onClose}>Close</button>
             <ToastContainer />
         </div>
     );

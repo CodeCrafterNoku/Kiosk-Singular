@@ -141,11 +141,12 @@ body.dark-mode .drawer li:hover {
   border-radius: 8px;
   z-index: 1000;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  margin-bottom: 10px;
 }
 
 .wallet-dropdown input {
   padding: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   width: 120px;
   border-radius: 4px;
   border: 1px solid #ddd;
@@ -159,6 +160,7 @@ body.dark-mode .drawer li:hover {
   width: 100%;
   border-radius: 4px;
   cursor: pointer;
+  margin-bottom: 10px;
 }
 
 .wallet-dropdown button:hover {
@@ -311,6 +313,28 @@ body.dark-mode .drawer li:hover {
 .close-cart:hover {
   background-color: #666;
 }
+.error-message {
+    color: red;
+  
+    margin-bottom: 10px; /* Space below the error message */
+}
+
+.checkout-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.checkout-button.disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    color: #666;
+}
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -429,4 +453,40 @@ body.dark-mode .drawer li:hover {
     height: 100%;
     pointer-events: none; /* Allow clicks to pass through */
     z-index: 9999; /* Ensure it appears above other elements */
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px; /* Adjust as needed */
+  width: 90%; /* Responsive width */
+}
+.modal-content button {
+  background-color: #00a69b; /* Base background color */
+  color: white; /* Text color */
+  border: none;
+  padding: 8px 12px; /* Button padding */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition */
+  width: 100%; /* Full width */
+  margin-top: 10px; /* Space between buttons */
+}
+
+.modal-content button:hover {
+  background-color: #115f5a; /* Background color on hover */
 }

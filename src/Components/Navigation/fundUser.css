@@ -72,3 +72,27 @@
 .fund-user-modal .close-btn:hover {
     color: #dc3545; /* Change color on hover */
 }
+.action-button {
+  background-color: #00a69b; /* Base background color for buttons */
+  color: white; /* Text color */
+  border: none;
+  padding: 8px 12px; /* Button padding */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition */
+  width: 100%; /* Full width */
+  margin-top: 10px; /* Space between buttons */
+}
+
+.action-button:hover {
+  background-color: #115f5a; /* Background color on hover for Fund button */
+}
+
+/* Specific styles for Close button */
+.action-button.close {
+  background-color: #00a69b; /* Same as Fund button */
+}
+
+.action-button.close:hover {
+  background-color: #ff4c4c; /* Change to red on hover for Close button */
+}
