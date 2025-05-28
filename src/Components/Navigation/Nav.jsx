@@ -31,9 +31,6 @@ function Nav() {
   const [orderSummaryData, setOrderSummaryData] = useState({});
   const [orders, setOrders] = useState([]); 
   const userId = localStorage.getItem("userId");
-  
-  
-  
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -324,27 +321,19 @@ const handleMenuItemClick = (action) => {
   }
 };
 
-
-
-
-
   const toggleFundUserModal = () => {
     setShowFundUserModal(!showFundUserModal);
   };
   
-
-  // Check if the user is an Admin
   const userRole = localStorage.getItem("roleID");
 
-  const updateCartItemQuantity = async (cartItemId, newQuantity) => {
+    const updateCartItemQuantity = async (cartItemId, newQuantity) => {
     const userId = localStorage.getItem("userId");
-  
     
     // Prepare request body for updating the cart item
     const requestBody = {
         quantity: newQuantity,
     };
-
     try {
         const response = await fetch(`http://localhost:5279/api/cart/cartitem/${cartItemId}`, {
             method: 'PUT', // Use PUT or PATCH depending on your API design
@@ -429,8 +418,6 @@ const confirmOrder = async () => {
         alert('An error occurred during checkout.');
     }
 };
-
-
   return (
     <nav>
       <div className="logo-container">
@@ -542,8 +529,6 @@ const confirmOrder = async () => {
     </div>
   </div>
 )}
-
-
       {drawerOpen && (
         <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
           <ul>

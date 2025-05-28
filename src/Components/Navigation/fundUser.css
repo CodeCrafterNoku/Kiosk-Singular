@@ -1,0 +1,74 @@
+.fund-user-modal {
+    max-width: 500px; /* Max width for modal */
+    margin: 20px auto; /* Center the modal */
+    padding: 20px; /* Padding inside modal */
+    background-color: #f9f9f9; /* Light background color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    position: relative; /* Position for absolute elements */
+}
+
+.fund-user-modal h3 {
+    color: #00a69b; /* Header color */
+    margin-bottom: 20px; /* Space below header */
+    text-align: center; /* Center header text */
+}
+
+.fund-user-modal input[type="text"],
+.fund-user-modal input[type="number"] {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding inside input */
+    margin-bottom: 10px; /* Space below input */
+    border: 1px solid #00a69b; /* Change border color */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+}
+
+.fund-user-modal .user-list {
+    max-height: 150px; /* Limit height */
+    overflow-y: auto; /* Scroll if too many items */
+    background-color: white; /* Background color */
+    border: 1px solid #00a69b; /* Change border color */
+    border-radius: 4px; /* Rounded corners */
+}
+
+.fund-user-modal .user-list li {
+    padding: 10px; /* Padding for list items */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.fund-user-modal .user-list li:hover {
+    background-color: #e0f7f5; /* Lighter hover color */
+}
+
+.fund-user-modal button {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding inside button */
+    margin-top: 10px; /* Space above button */
+    background-color: #00a69b; /* Button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.fund-user-modal button:hover {
+    background-color: #007e76; /* Darker shade on hover */
+}
+
+.fund-user-modal .close-btn {
+    background: none; /* No background */
+    border: none; /* No border */
+    font-size: 24px; /* Font size */
+    color: #333; /* Close button color */
+    position: absolute; /* Position for close button */
+    top: 10px; /* Position from top */
+    right: 15px; /* Position from right */
+    cursor: pointer; /* Pointer cursor */
+}
+
+.fund-user-modal .close-btn:hover {
+    color: #dc3545; /* Change color on hover */
+}

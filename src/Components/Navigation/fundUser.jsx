@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import Confetti from 'react-confetti';
+import 'react-toastify/dist/ReactToastify.css';
+import './fundUser.css';
 
 const FundUser = ({ onClose }) => {
     const [users, setUsers] = useState([]);
@@ -6,6 +10,7 @@ const FundUser = ({ onClose }) => {
     const [selectedUserId, setSelectedUserId] = useState('');
     const [selectedUserName, setSelectedUserName] = useState('');
     const [fundAmount, setFundAmount] = useState('');
+    const [showConfetti, setShowConfetti] = useState(false);
 
     useEffect(() => {
         fetchUsers();
@@ -25,16 +30,15 @@ const FundUser = ({ onClose }) => {
     const handleUserSelect = (user) => {
         setSelectedUserId(user.userID);
         setSelectedUserName(user.name);
-        setSearchTerm(user.name); // Show name in search bar
+        setSearchTerm(user.name); // Populate input field
     };
 
     const fundUserWallet = async () => {
         const amountToAdd = Number(fundAmount);
         if (!selectedUserId || !fundAmount || isNaN(amountToAdd) || amountToAdd <= 0) {
-            alert("Please select a user and enter a valid amount.");
+            toast.error("Please select a user and enter a valid amount.", { closeButton: false });
             return;
         }
-
         const requestBody = {
             userID: Number(selectedUserId),
             balance: amountToAdd,
@@ -52,15 +56,19 @@ const FundUser = ({ onClose }) => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                alert(`Failed to fund user wallet: ${errorData.message || response.statusText}`);
+                toast.error(`Failed to fund user wallet: ${errorData.message || response.statusText}`, { closeButton: false });
                 return;
             }
 
-            alert(`Successfully funded user wallet with R${amountToAdd}`);
-            onClose();
+            setShowConfetti(true);
+            toast.success(`Successfully funded user wallet with R${amountToAdd}`, { closeButton: false });
+            setTimeout(() => {
+                setShowConfetti(false);
+                onClose();
+            }, 3000);
         } catch (error) {
             console.error('Error funding user wallet:', error);
-            alert('An error occurred while funding the user wallet.');
+            toast.error('An error occurred while funding the user wallet.', { closeButton: false });
         }
     };
 
@@ -70,6 +78,7 @@ const FundUser = ({ onClose }) => {
 
     return (
         <div className="fund-user-modal">
+            {showConfetti && <Confetti />}
             <h3>Fund User Wallet</h3>
 
             {/* Search Bar */}
@@ -80,29 +89,13 @@ const FundUser = ({ onClose }) => {
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
             {searchTerm && (
-                <ul style={{
-                    maxHeight: '100px',
-                    overflowY: 'auto',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px',
-                    padding: '5px',
-                    marginTop: '4px',
-                    backgroundColor: '#fff',
-                    zIndex: 10,
-                    position: 'relative'
-                }}>
+                <ul className="user-list">
                     {filteredUsers.length > 0 ? (
                         filteredUsers.map(user => (
                             <li
                                 key={user.userID}
                                 onClick={() => handleUserSelect(user)}
-                                style={{
-                                    padding: '4px',
-                                    cursor: 'pointer',
-                                    backgroundColor: user.userID === selectedUserId ? '#00a69b' : 'white',
-                                    color: user.userID === selectedUserId ? 'white' : '#333',
-                                    borderBottom: '1px solid #eee'
-                                }}
+                                className={user.userID === selectedUserId ? 'selected' : ''}
                             >
                                 {user.name}
                             </li>
@@ -124,6 +117,7 @@ const FundUser = ({ onClose }) => {
             {/* Action buttons */}
             <button onClick={fundUserWallet}>Fund Wallet</button>
             <button onClick={onClose}>Close</button>
+            <ToastContainer />
         </div>
     );
 };
