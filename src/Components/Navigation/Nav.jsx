@@ -41,6 +41,7 @@ function Nav() {
   const [loading, setLoading] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  
 
   useEffect(() => {
     const handleResize = () => {
@@ -247,7 +248,6 @@ const deleteCartItem = async (cartItemId) => {
   const cartID = localStorage.getItem("cartID");
   const walletID = localStorage.getItem("walletID");
 
-
 const handleCheckout = async () => {
     const userId = localStorage.getItem("userId");
 
@@ -269,11 +269,6 @@ const handleCheckout = async () => {
         TotalAmount: totalAmount,
         OrderStatus: "Pending",
         OrderDateTime: new Date(),
-        CartItems: cartItems.map(item => ({
-            ProductID: item.productID,
-            Quantity: item.quantity,
-            UnitPrice: item.unitPrice,
-        })),
     };
 
     try {
@@ -295,8 +290,34 @@ const handleCheckout = async () => {
         const orderResponse = await response.json(); // Get the order response
         localStorage.setItem("orderID", orderResponse.orderID); // Store the order ID
         alert('Checkout successful!');
-        
-        setCartItems([]); // Clear the cart after successful order creation
+
+        // Now create order items for each cart item
+        await Promise.all(cartItems.map(async (item) => {
+            const orderItemDto = {
+                OrderID: orderResponse.orderID, // Use the new order ID
+                ProductID: item.productID,
+                Quantity: item.quantity,
+                UnitPrice: item.unitPrice,
+                TotalPrice: (item.unitPrice * item.quantity).toFixed(2), // Calculate total price for the item
+            };
+
+            const orderItemResponse = await fetch('http://localhost:5279/api/orderitem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderItemDto),
+            });
+
+            if (!orderItemResponse.ok) {
+                const errorData = await orderItemResponse.json();
+                console.error('Failed to create order item:', errorData);
+                alert(`Failed to create order item for ${item.productID}: ${errorData.message || 'Unknown error'}`);
+            }
+        }));
+
+        // Clear the cart after successful order creation
+        setCartItems([]);
         setTotalAmount(0);
         setWalletBalance(prevBalance => (Number(prevBalance) - totalAmount).toFixed(2));
 
@@ -502,106 +523,132 @@ const confirmOrder = async () => {
 
 
   return (
-    <nav>
-      <div className="logo-container">
-        <img src="/singular.png" alt="Company Logo" className="logo" />
-      </div>
+ <nav>
+        <div className="logo-container">
+            <img src="/singular.png" alt="Company Logo" className="logo" />
+        </div>
 
-      <div className="profile-container">
-        <a href="#"><AiFillHome className="nav-icons" /></a>
-        <Link to="/orders" className="notification-icon">
-          <HiBellAlert className="nav-icons" />
-        </Link>
-        <a href="#" onClick={toggleCart} className="cart-icon">
-          <FaShoppingCart className="nav-icons" />
-          {cartItems.length > 0 && (
-            <span className="cart-item-count">{cartItems.length}</span>
-          )}
-        </a>
-        <a href="#" className="wallet-container" onClick={() => setShowWalletDropdown(prev => !prev)}>
-          <BsFillWalletFill className="nav-icons" />
-          <span className="wallet-balance">BALANCE R{walletBalance}</span>
-        </a>
+        <div className="profile-container">
+            <a href="#"><AiFillHome className="nav-icons" /></a>
 
-{showWalletDropdown && (
-  <div className="wallet-dropdown">
-    <button onClick={toggleFundModal}>Fund Your wallet</button>
+            {/* Conditionally render the notification icon for admin users only */}
+            {userRole === '8' && (
+                <Link to="/orders" className="notification-icon">
+                    <HiBellAlert className="nav-icons" />
+                </Link>
+            )}
 
-    {/* Conditionally render the Fund User button */}
-    {userRole === '8' && (
-      <button onClick={toggleFundUserModal}>Fund User</button>
-    )}
- 
-{showFundModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        {showConfetti && <Confetti width={windowWidth} height={windowHeight} />}
-                        <h2>Fund Your Wallet</h2>
-                        <input
-                            type="number"
-                            min="1"
-                            placeholder="Enter amount"
-                            value={fundAmount}
-                            onChange={(e) => setFundAmount(e.target.value)}
-                        />
-                        <button onClick={addFunds}>Fund</button>
-                        <button className="close" onClick={closeFundModal}>Close</button>
-                    </div>
+            <a href="#" onClick={toggleCart} className="cart-icon">
+                <FaShoppingCart className="nav-icons" />
+                {cartItems.length > 0 && (
+                    <span className="cart-item-count">{cartItems.length}</span>
+                )}
+            </a>
+            <a href="#" className="wallet-container" onClick={() => setShowWalletDropdown(prev => !prev)}>
+                <BsFillWalletFill className="nav-icons" />
+                <span className="wallet-balance">BALANCE R{walletBalance}</span>
+            </a>
+
+            {showWalletDropdown && (
+                <div className="wallet-dropdown">
+                    <button onClick={toggleFundModal}>Fund Your wallet</button>
+
+                    {/* Conditionally render the Fund User button */}
+                    {userRole === '8' && (
+                        <button onClick={toggleFundUserModal}>Fund User</button>
+                    )}
+                    
+                    {showFundModal && (
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                {showConfetti && <Confetti width={windowWidth} height={windowHeight} />}
+                                <h2>Fund Your Wallet</h2>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    placeholder="Enter amount"
+                                    value={fundAmount}
+                                    onChange={(e) => setFundAmount(e.target.value)}
+                                />
+                                <button onClick={addFunds}>Fund</button>
+                                <button className="close" onClick={closeFundModal}>Close</button>
+                            </div>
+                        </div>
+                    )}
+                    <ToastContainer />  {/* Toast container for notifications */}
                 </div>
             )}
-            <ToastContainer />  {/* Toast container for notifications */}
-  </div>
-        )}
 
-        <a href="#" className="menu-icon" onClick={toggleDrawer}>
-          <FiMenu className="nav-icons" />
-        </a>
-      </div>
-<ToastContainer />
-{showCart && (
-    <div className="cart-popup">
-        <h3>Cart Items</h3>
+            <a href="#" className="menu-icon" onClick={toggleDrawer}>
+                <FiMenu className="nav-icons" />
+            </a>
+        </div>
 
-        {errorMessage && (
-            <p className="error-message">{errorMessage}</p>
-        )}
+        <ToastContainer />
+        {showCart && (
+            <div className="cart-popup">
+                <h3>Cart Items</h3>
 
-        <ul>
-            {cartItems.map(item => (
-                <li key={item.cartItemID}>
-                    <span>
-                        {item.productName} - Qty: {item.quantity} - R{item.unitPrice}
-                    </span>
-                    <button onClick={() => updateCartItemQuantity(item.cartItemID, item.quantity + 1)}>+</button>
-                    <button 
-                        onClick={() => item.quantity > 1 ? updateCartItemQuantity(item.cartItemID, item.quantity - 1) : deleteCartItem(item.cartItemID)}
-                    >
-                        -
-                    </button>
-                    <RiDeleteBinLine className="delete-icon" onClick={() => deleteCartItem(item.cartItemID)} />
-                </li>
-            ))}
-        </ul>
-        <h4>Total: R{totalAmount}</h4>
+                {errorMessage && (
+                    <p className="error-message">{errorMessage}</p>
+                )}
 
-        {isBalanceExceeded && (
-            <p style={{ color: 'red', fontWeight: 'bold' }}>
-                You have exceeded your wallet balance.
-            </p>
-        )}
+                <ul>
+                    {cartItems.map(item => (
+                        <li key={item.cartItemID}>
+                            <span>
+                                {item.productName} - Qty: {item.quantity} - R{item.unitPrice}
+                            </span>
+                            <button onClick={() => updateCartItemQuantity(item.cartItemID, item.quantity + 1)}>+</button>
+                            <button 
+                                onClick={() => item.quantity > 1 ? updateCartItemQuantity(item.cartItemID, item.quantity - 1) : deleteCartItem(item.cartItemID)}
+                            >
+                                -
+                            </button>
+                            <RiDeleteBinLine className="delete-icon" onClick={() => deleteCartItem(item.cartItemID)} />
+                        </li>
+                    ))}
+                </ul>
+                <h4>Total: R{totalAmount}</h4>
+                <div>
+                    <h3>Select Delivery Method</h3>
+                    <label>
+                      <input
+                        type="radio"
+                        value="Pickup"
+                        checked={selectedDeliveryMethod === "Pickup"}
+                        onChange={() => setSelectedDeliveryMethod("Pickup")}
+                      />
+                      Pickup
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        value="Delivery"
+                        checked={selectedDeliveryMethod === "Delivery"}
+                        onChange={() => setSelectedDeliveryMethod("Delivery")}
+                      />
+                      Delivery
+                    </label>
+                  </div>
+                {isBalanceExceeded && (
+                    <p style={{ color: 'red', fontWeight: 'bold' }}>
+                        You have exceeded your wallet balance.
+                    </p>
+                )}
 
-        <button
-            onClick={handleCheckout}
-            disabled={isBalanceExceeded}
-            className={`checkout-button ${isBalanceExceeded ? 'disabled' : ''}`}
-        >
-            <MdOutlineShoppingCartCheckout /> Checkout
-        </button>
+                <button
+                    onClick={handleCheckout}
+                    disabled={isBalanceExceeded}
+                    className={`checkout-button ${isBalanceExceeded ? 'disabled' : ''}`}
+                >
+                    <MdOutlineShoppingCartCheckout /> Checkout
+                </button>
 
-        <button onClick={toggleCart} className="close-cart">
-            Close
-        </button>
-    </div>
+                <button onClick={toggleCart} className="close-cart">
+                    Close
+                </button>
+            </div>
 )}
 {showOrderSummary && (
   <div className="modal-overlay">
