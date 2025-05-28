@@ -9,6 +9,10 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
 import FundUser from './fundUser';
 import { AiFillHome } from "react-icons/ai";
+import Confetti from 'react-confetti';
+import { ToastContainer, toast } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
+import { AiOutlineCheck } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import './Nav.css';
 
@@ -33,6 +37,20 @@ function Nav() {
   const userId = localStorage.getItem("userId");
   const [showFundModal, setShowFundModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showConfetti, setShowConfetti] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+        setWindowWidth(window.innerWidth);
+        setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+}, []);
 
 
   useEffect(() => {
@@ -84,46 +102,72 @@ const closeFundModal = () => {
 
 
 
- const addFunds = async () => {
-    const userId = localStorage.getItem("userId");
-    const amountToAdd = Number(fundAmount);
+  const addFunds = async () => {
+        const userId = localStorage.getItem("userId");
+        const amountToAdd = Number(fundAmount);
 
-    if (!fundAmount || isNaN(amountToAdd) || amountToAdd <= 0) {
-        alert("Please enter a valid amount greater than zero");
-        return;
-    }
-
-    const requestBody = {
-        walletID: walletID, // Use the wallet ID if available
-        userID: userId,
-        balance: amountToAdd,
-        lastUpdated: new Date().toISOString(),
-        userName: "Sinethemba" // Replace with actual user name if needed
-    };
-
-    try {
-        const response = await fetch('http://localhost:5279/api/wallet/addfunds', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            alert(`Failed to add funds: ${errorData.message || response.statusText}`);
+        if (!fundAmount || isNaN(amountToAdd) || amountToAdd <= 0) {
+            toast.error("Please enter a valid amount greater than zero", {
+                position: "top-right",
+                autoClose: 3000,closeButton: false, 
+                hideProgressBar: false,
+                closeButton: false, 
+            });
             return;
         }
 
-        const data = await response.json();
-        setWalletBalance(prevBalance => (Number(data.newBalance)).toFixed(2));
-        setFundAmount('');
-        setShowWalletDropdown(false);
-        alert(`Successfully funded wallet with R${amountToAdd}`);
-    } catch (error) {
-        console.error('Error adding funds:', error);
-        alert('An error occurred while adding funds.');
-    }
-};
+        const requestBody = {
+            walletID: walletID,
+            userID: userId,
+            balance: amountToAdd,
+            lastUpdated: new Date().toISOString(),
+            userName: "Sinethemba"
+        };
+
+        try {
+            setLoading(true); // Start loading
+            const response = await fetch('http://localhost:5279/api/wallet/addfunds', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                toast.error(`Failed to add funds: ${errorData.message || response.statusText}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                });
+                return;
+            }
+
+            const data = await response.json();
+            setWalletBalance(prevBalance => (Number(data.newBalance)).toFixed(2));
+            setFundAmount('');
+            setShowConfetti(true);
+            toast.success(`Successfully funded wallet with R${amountToAdd}`, {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeButton: false, 
+            });
+
+            setTimeout(() => {
+                setShowConfetti(false);
+                setLoading(false); // End loading
+                closeFundModal();
+            }, 3000);
+        } catch (error) {
+            console.error('Error adding funds:', error);
+            toast.error('An error occurred while adding funds.', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: true,
+            });
+            setLoading(false); // End loading
+        }
+    };
 
 
   const toggleCart = () => {
@@ -147,39 +191,55 @@ const closeFundModal = () => {
   };
   
 
-  const deleteCartItem = async (cartItemId) => {
+const deleteCartItem = async (cartItemId) => {
     setIsLoading(true);
     setError(null);
     const userId = localStorage.getItem("userId");
     
     try {
-      const response = await fetch(`http://localhost:5279/api/Cart/cartitem/${cartItemId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete item');
-      }
+        const response = await fetch(`http://localhost:5279/api/Cart/cartitem/${cartItemId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to delete item');
+        }
 
-      await Promise.all([
-        fetchCartByUser(userId),
-        fetchProducts()
-      ]);
-      
-      alert('Item deleted successfully!');
-      
+        await Promise.all([
+            fetchCartByUser(userId),
+            fetchProducts()
+        ]);
+        
+        toast.success(
+          <span>
+            <AiOutlineCheck /> Item deleted successfully!
+          </span>,
+          {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeButton: false,
+          }
+        );
+
+        
     } catch (error) {
-      console.error('Delete error:', error);
-      setError(error.message);
-      alert(`Error: ${error.message}`);
+        console.error('Delete error:', error);
+        setError(error.message);
+        toast.error(`Error: ${error.message}`, {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeButton: false,
+        });
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
 
   const cartID = localStorage.getItem("cartID");
   const walletID = localStorage.getItem("walletID");
@@ -470,21 +530,23 @@ const confirmOrder = async () => {
     )}
  
 {showFundModal && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <h2>Fund Your Wallet</h2>
-      <input
-        type="number"
-        min="1"
-        placeholder="Enter amount"
-        value={fundAmount}
-        onChange={(e) => setFundAmount(e.target.value)}
-      />
-     <button onClick={addFunds}>Fund</button>
-      <button className="close" onClick={closeFundModal}>Close</button>
-    </div>
-  </div>
-)}
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        {showConfetti && <Confetti width={windowWidth} height={windowHeight} />}
+                        <h2>Fund Your Wallet</h2>
+                        <input
+                            type="number"
+                            min="1"
+                            placeholder="Enter amount"
+                            value={fundAmount}
+                            onChange={(e) => setFundAmount(e.target.value)}
+                        />
+                        <button onClick={addFunds}>Fund</button>
+                        <button className="close" onClick={closeFundModal}>Close</button>
+                    </div>
+                </div>
+            )}
+            <ToastContainer />  {/* Toast container for notifications */}
   </div>
         )}
 
@@ -492,7 +554,7 @@ const confirmOrder = async () => {
           <FiMenu className="nav-icons" />
         </a>
       </div>
-
+<ToastContainer />
 {showCart && (
     <div className="cart-popup">
         <h3>Cart Items</h3>
