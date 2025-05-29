@@ -42,6 +42,11 @@
 .add-product-button:hover {
   background-color: #007e76; /* Slightly darker teal on hover */
 }
+.product-search-container {
+  display: flex;
+  align-items: center;
+  margin-left: 10px !important; /* Pushes the search input to the far right */
+}
 
 /* Add styles for the popup overlay */
 .delete-popup-overlay {

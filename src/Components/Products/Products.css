@@ -185,7 +185,7 @@
 .search-container {
   display: flex;
   align-items: center;
-  margin-left: 255px; /* Pushes the search input to the far right */
+  margin-left: 270px; /* Pushes the search input to the far right */
 }
 
 .search-input {
