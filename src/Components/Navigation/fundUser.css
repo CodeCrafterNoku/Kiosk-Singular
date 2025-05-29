@@ -9,7 +9,7 @@
 }
 
 .fund-user-modal h3 {
-    color: #00a69b; /* Header color */
+    color: #097a73; /* Header color */
     margin-bottom: 20px; /* Space below header */
     text-align: center; /* Center header text */
 }
@@ -95,4 +95,36 @@
 
 .action-button.close:hover {
   background-color: #ff4c4c; /* Change to red on hover for Close button */
+}
+.input-container {
+  width: 300px;           /* fixed width */
+  height: 40px;           /* fixed height */
+  box-sizing: border-box; /* include padding/border in size */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.user-list {
+  width: 300px;           /* same fixed width */
+  height: 40px;           /* same fixed height */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  overflow-y: auto;       /* scroll if content exceeds height */
+  font-size: 16px;
+}
+
+.user-list li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.user-list li.selected {
+  background-color: #007BFF;
+  color: white;
 }

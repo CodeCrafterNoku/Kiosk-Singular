@@ -87,6 +87,7 @@ const FundUser = ({ onClose }) => {
                 placeholder="Search user by name"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                className="input-container"
             />
             {searchTerm && (
                 <ul className="user-list">
@@ -112,6 +113,7 @@ const FundUser = ({ onClose }) => {
                 placeholder="Enter amount to fund"
                 value={fundAmount}
                 onChange={(e) => setFundAmount(e.target.value)}
+                className="input-container"
             />
 
             {/* Action buttons */}

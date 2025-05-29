@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { FiHeart, FiMenu } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { BsFillWalletFill } from "react-icons/bs";
@@ -41,6 +41,27 @@ function Nav() {
   const [loading, setLoading] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const dropdownRef = useRef();
+  const drawerRef = useRef(null);  
+
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (drawerRef.current && !drawerRef.current.contains(event.target)) {
+      setDrawerOpen(false);  // Close drawer
+    }
+  };
+
+  if (drawerOpen) {
+    document.addEventListener('mousedown', handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, [drawerOpen]);
+
+
+
   
 useEffect(() => {
     const handleResize = () => {
@@ -251,7 +272,12 @@ const handleCheckout = async () => {
     const userId = localStorage.getItem("userId");
 
     if (cartItems.length === 0) {
-        alert("Cart is empty.");
+        toast.error("Cart is empty. Please add items to your cart before checking out.", {
+            position: "top-right",
+            autoClose: 2000, // Auto close after 3 seconds
+            hideProgressBar: true,
+            closeButton: false,
+        });
         return;
     }
 
@@ -561,7 +587,7 @@ const confirmOrder = async () => {
             </a>
 
             {showWalletDropdown && (
-                <div className="wallet-dropdown">
+                <div className="wallet-dropdown" ref={dropdownRef}>
                     <button onClick={toggleFundModal}>Fund Your wallet</button>
 
                     {/* Conditionally render the Fund User button */}
@@ -597,6 +623,7 @@ const confirmOrder = async () => {
 
         <ToastContainer />
         {showCart && (
+          <div class="modal-overlay">
             <div className="cart-popup">
                 <h3>Cart Items</h3>
 
@@ -611,11 +638,12 @@ const confirmOrder = async () => {
                                 {item.productName} - Qty: {item.quantity} - R{item.unitPrice}
                             </span>
                             <button onClick={() => updateCartItemQuantity(item.cartItemID, item.quantity + 1)}>+</button>
-                            <button 
-                                onClick={() => item.quantity > 1 ? updateCartItemQuantity(item.cartItemID, item.quantity - 1) : deleteCartItem(item.cartItemID)}
-                            >
-                                -
-                            </button>
+                              <button 
+                                  className="decrease-button"
+                                  onClick={() => item.quantity > 1 ? updateCartItemQuantity(item.cartItemID, item.quantity - 1) : deleteCartItem(item.cartItemID)}
+                              >
+                                  -
+                              </button>
                             <RiDeleteBinLine className="delete-icon" onClick={() => deleteCartItem(item.cartItemID)} />
                         </li>
                     ))}
@@ -643,22 +671,24 @@ const confirmOrder = async () => {
                     </label>
                   </div>
                 {isBalanceExceeded && (
-                    <p style={{ color: 'red', fontWeight: 'bold' }}>
+                    <p style={{ color: 'red', fontWeight: '600' }}>
                         You have exceeded your wallet balance.
                     </p>
                 )}
-
-                <button
+                <div className="cart-popup-buttons">
+                  <button
                     onClick={handleCheckout}
                     disabled={isBalanceExceeded}
                     className={`checkout-button ${isBalanceExceeded ? 'disabled' : ''}`}
-                >
+                  >
                     <MdOutlineShoppingCartCheckout /> Checkout
-                </button>
+                  </button>
 
-                <button onClick={toggleCart} className="close-cart">
+                  <button onClick={toggleCart} className="close-cart">
                     Close
-                </button>
+                  </button>
+                </div>
+            </div>
             </div>
 )}
 {showOrderSummary && (
@@ -695,15 +725,16 @@ const confirmOrder = async () => {
 )}
 
 
-      {drawerOpen && (
-        <div className={`drawer ${drawerOpen ? 'open' : ''}`}>
-          <ul>
-            <li onClick={() => handleMenuItemClick('View Orders')}>View Orders</li>
-            <li onClick={() => handleMenuItemClick('Account Settings')}>Account Settings</li>
-            <li onClick={() => handleMenuItemClick('Logout')}>Logout</li>
-          </ul>
-        </div>
-      )}
+{drawerOpen && (
+  <div className={`drawer ${drawerOpen ? 'open' : ''}`} ref={drawerRef}>
+    <ul>
+      <li onClick={() => handleMenuItemClick('View Orders')}>View Orders</li>
+      <li onClick={() => handleMenuItemClick('Account Settings')}>Account Settings</li>
+      <li onClick={() => handleMenuItemClick('Logout')}>Logout</li>
+    </ul>
+  </div>
+)}
+
 
       {showFundUserModal && (
         <div className="modal-overlay">

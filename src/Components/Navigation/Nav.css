@@ -177,13 +177,14 @@ body.dark-mode .drawer li:hover {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   padding: 16px;
   z-index: 1000; /* Ensure it's on top */
-  width: 300px; /* Set a width for the pop-up */
-  max-height: 80vh; /* Limit height */
+  width: 500px !important; /* Set a width for the pop-up */
+  max-height: 90vh; /* Limit height */
   overflow-y: auto; /* Scroll if needed */
 }
 
 .cart-popup h3 {
   margin-top: 0; /* Remove top margin */
+  color:#097a73 !important ;
 }
 
 .cart-popup ul {
@@ -194,19 +195,29 @@ body.dark-mode .drawer li:hover {
 .cart-popup li {
   margin: 8px 0; /* Add some spacing between items */
 }
+.cart-popup-buttons {
+  display: flex;
+  justify-content: flex-start; /* or center / flex-start */
+  gap: 25px; /* space between buttons */
+  margin-top: 15px;
+}
+
+.cart-popup-buttons button {
+  flex: none;        /* Remove flex:1 to avoid stretching */
+  width: 120px;      /* Set fixed width */
+  box-sizing: border-box; /* Ensure padding is included in width */
+}
+
 
 .close-cart {
-  background-color: #00a69b;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 12px;
-  cursor: pointer;
-  margin-top: 10px;
+  margin-top: 0; 
+  background-color:#e74c3c !important;  /* Remove extra top margin */
+  border-radius: 6px; /* Match border-radius if needed */
+
 }
 
 .close-cart:hover {
-  background-color: #009b8a;
+  background-color: #b32f20 !important; /* Darker red on hover */
 }
 .cart-icon {
   position: relative; /* Position relative for absolute positioning of the badge */
@@ -315,9 +326,21 @@ body.dark-mode .drawer li:hover {
 }
 .error-message {
     color: red;
-    font-weight: bold;
+    font-weight: 600;
     margin-bottom: 10px; /* Space below the error message */
 }
+.cart-popup .decrease-button {
+    color: white !important;
+    border: 1px solid #e74c3c !important;
+    background-color: #e74c3c!important;
+}
+
+.cart-popup .decrease-button:hover {
+    background-color: #c0392b !important;
+    color: white !important;
+}
+
+
 
 .checkout-button {
     background-color: #4CAF50;
@@ -426,7 +449,7 @@ body.dark-mode .drawer li:hover {
 }
 
 .modal-content h2 {
-  color: #00a69b; /* Header color */
+  color: #097a73;/* Header color */
   margin-bottom: 20px; /* Space below header */
 }
 
@@ -444,74 +467,18 @@ body.dark-mode .drawer li:hover {
   margin: 5px 0; /* Margin for paragraphs */
   color: #797f88; /* Text color */
 }
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.modal-content .close {
+  background-color: #e74c3c; /* red */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.modal-content .close:hover {
+  background-color: #c0392b; /* darker red on hover */
 }
 
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 80%;
-    max-width: 600px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    position: relative;
-}
-
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-.order-list {
-    list-style-type: none;
-    padding: 0;
-}
-
-.order-item {
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.status {
-    font-weight: bold;
-}
-
-.status.pending {
-    color: orange;
-}
-
-.status.completed {
-    color: green;
-}
-
-.status.cancelled {
-    color: red;
-}
-
-.item-list {
-    list-style-type: none;
-    padding: 0;
-}
-
-.item {
-    margin-left: 20px;
-}
 /* Add this to your CSS file */
 .confetti {
     position: fixed; /* Ensure it covers the viewport */
