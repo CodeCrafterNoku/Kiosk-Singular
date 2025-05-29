@@ -167,7 +167,7 @@ const addFunds = async () => {
         setWalletBalance(prevBalance => (Number(data.newBalance)).toFixed(2));
         setFundAmount('');
         setShowConfetti(true);
-        
+
         toast.dismiss();
         const successToast = toast.success(`Successfully funded wallet with R${amountToAdd}`, {
             position: "top-right",
@@ -275,7 +275,7 @@ const handleCheckout = async () => {
     if (cartItems.length === 0) {
         toast.error("Cart is empty. Please add items to your cart before checking out.", {
             position: "top-right",
-            autoClose: 2000, // Auto close after 3 seconds
+            autoClose: 2000,
             hideProgressBar: true,
             closeButton: false,
         });
@@ -283,10 +283,9 @@ const handleCheckout = async () => {
     }
 
     const subtotal = cartItems.reduce((total, item) => total + (item.unitPrice * item.quantity), 0);
-    const deliveryFee = selectedDeliveryMethod === "Delivery" ? 10 : 0; // Adjust based on delivery method
+    const deliveryFee = selectedDeliveryMethod === "Delivery" ? 10 : 0;
     const totalAmount = subtotal + deliveryFee;
 
-    // Prepare order data
     const checkoutData = {
         UserID: Number(userId),
         DeliveryMethod: selectedDeliveryMethod,
@@ -308,104 +307,81 @@ const handleCheckout = async () => {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Error response:', errorText);
-            alert(`Checkout failed: ${errorText}`);
-            return;
+            console.error('Checkout failed:', errorText);
+            return; // Exit on failure without showing an alert
         }
 
-        const orderResponse = await response.json(); // Get the order response
-        localStorage.setItem("orderID", orderResponse.orderID); // Store the order ID
-        alert('Checkout successful!');
+        const orderResponse = await response.json();
+        localStorage.setItem("orderID", orderResponse.orderID);
+        toast.success("Checkout successful!", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeButton: false,
+        });
 
-        // Now create order items for each cart item
+        // Create order items quietly
         await Promise.all(cartItems.map(async (item) => {
             const orderItemDto = {
-                OrderID: orderResponse.orderID, // Use the new order ID
+                OrderID: orderResponse.orderID,
                 ProductID: item.productID,
                 Quantity: item.quantity,
                 UnitPrice: item.unitPrice,
-                TotalPrice: (item.unitPrice * item.quantity).toFixed(2), // Calculate total price for the item
+                TotalPrice: (item.unitPrice * item.quantity).toFixed(2),
             };
 
-            const orderItemResponse = await fetch('http://localhost:5279/api/orderitem', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(orderItemDto),
-            });
+            try {
+                const orderItemResponse = await fetch('http://localhost:5279/api/orderitem', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderItemDto),
+                });
 
-            if (!orderItemResponse.ok) {
-                const errorData = await orderItemResponse.json();
-                console.error('Failed to create order item:', errorData);
-                alert(`Failed to create order item for ${item.productID}: ${errorData.message || 'Unknown error'}`);
+                // Suppress error handling for order items
+                if (!orderItemResponse.ok) {
+                    const errorData = await orderItemResponse.json();
+                    console.error('Failed to create order item:', errorData);
+                }
+            } catch (error) {
+                console.error('Error creating order item:', error);
             }
         }));
 
-        // Clear the cart after successful order creation
+        // Clear the cart and update wallet balance
         setCartItems([]);
         setTotalAmount(0);
         setWalletBalance(prevBalance => (Number(prevBalance) - totalAmount).toFixed(2));
 
-        // Call createTransaction after successful checkout
+        // Create transaction quietly
         await createTransaction(totalAmount);
+
     } catch (error) {
         console.error('Checkout error:', error);
-        alert('An error occurred during checkout.');
     }
 };
-// Example of setting walletID when fetching the wallet
-const fetchWallet = async (userId) => {
-    try {
-        const response = await fetch(`http://localhost:5279/api/wallet/user/${userId}`);
-        if (!response.ok) throw new Error("Failed to fetch wallet");
-        const data = await response.json();
-        setWalletBalance(Number(data.balance).toFixed(2));
-        localStorage.setItem("walletID", data.walletID); // Ensure this is set
-        console.log('Fetched Wallet ID:', data.walletID); // Debug log
-    } catch (error) {
-        console.error("Wallet fetch error:", error);
-    }
-};
-useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-        console.warn("No userId in localStorage");
-        return;
-    }
-    fetchWallet(userId); // Call to fetch wallet here
-    fetchCartByUser(userId);
-}, []);
+
+// Transaction creation function
 const createTransaction = async (totalAmount) => {
     const userId = localStorage.getItem("userId");
     const walletID = localStorage.getItem("walletID");
-    const orderID = localStorage.getItem("orderID"); // Ensure orderID is set correctly
-
-    // Log wallet ID to check its value
-    console.log('Retrieved Wallet ID:', walletID);
+    const orderID = localStorage.getItem("orderID");
 
     // Validate walletID and orderID
-    if (!walletID || walletID === "0") {
-        alert("Invalid Wallet ID.");
-        return;
-    }
-    
-    if (!orderID || orderID === "0") {
-        alert("Invalid Order ID.");
-        return;
+    if (!walletID || walletID === "0" || !orderID || orderID === "0") {
+        return; // Exit if IDs are invalid without alerting the user
     }
 
     const transactionData = {
-        transactionID: 0, // Assuming this is auto-generated on the server
+        transactionID: 0,
         walletID: Number(walletID),
         amount: totalAmount,
         orderID: Number(orderID),
         paymentMethod: 'EFT',
-        paymentDateTime: new Date().toISOString(), // Ensure this is in ISO format
-        paymentStatus: 'Completed' // Set payment status if required
+        paymentDateTime: new Date().toISOString(),
+        paymentStatus: 'Completed'
     };
-
-    console.log('Transaction Data:', transactionData); // Log the data for debugging
 
     try {
         const response = await fetch('http://localhost:5279/api/Transaction/withdraw', {
@@ -420,15 +396,12 @@ const createTransaction = async (totalAmount) => {
         if (response.ok) {
             const data = await response.json();
             console.log("Transaction created successfully:", data);
-            alert('Transaction successful!');
-            // Optionally, update wallet balance or navigate to another page
         } else {
             const errorData = await response.json();
-            alert(`Transaction failed: ${errorData.message || response.statusText}`);
+            console.error(`Transaction failed: ${errorData.message || response.statusText}`);
         }
     } catch (error) {
         console.error('Transaction error:', error);
-        alert('An error occurred during the transaction.');
     }
 };
     const handleMenuItemClick = (action) => {
