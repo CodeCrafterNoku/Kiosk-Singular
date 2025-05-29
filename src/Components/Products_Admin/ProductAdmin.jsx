@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './ProductAdmin.css';
+import { toast } from 'react-toastify'; // Ensure you import toast
+import { AiOutlineCheck } from 'react-icons/ai'; // Import the icon
 import { MdAddBox } from "react-icons/md";
 
 function ProductAdmin() {
@@ -30,50 +32,62 @@ function ProductAdmin() {
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(7);
 
-    const addToCart = async (productId) => {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-            alert("You must be logged in to add items to your cart.");
+const addToCart = async (productId) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert("You must be logged in to add items to your cart.");
+        return;
+    }
+
+    try {
+        const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
+        let cartData;
+
+        if (cartResponse.status === 404) {
+            cartData = await createCart(userId);
+        } else {
+            cartData = await cartResponse.json();
+        }
+
+        const requestBody = {
+            cartItemID: 0,
+            cartID: cartData.cartID,
+            productID: productId,
+            quantity: 1,
+            unitPrice: 0,
+            productName: products.find(product => product.productID === productId)?.productName
+        };
+
+        const response = await fetch(`http://localhost:5279/api/cart/${requestBody.cartID}/items`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert(`Failed to add item to cart: ${errorData.message || response.statusText}`);
             return;
         }
 
-        try {
-            const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
-            let cartData;
-
-            if (cartResponse.status === 404) {
-                cartData = await createCart(userId);
-            } else {
-                cartData = await cartResponse.json();
+        // Show success toast
+        toast.success(
+            <span>
+                <AiOutlineCheck /> Item added to cart successfully!
+            </span>,
+            {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeButton: false,
             }
+        );
 
-            const requestBody = {
-                cartItemID: 0,
-                cartID: cartData.cartID,
-                productID: productId,
-                quantity: 1,
-                unitPrice: 0,
-                productName: products.find(product => product.productID === productId)?.productName
-            };
-
-            const response = await fetch(`http://localhost:5279/api/cart/${requestBody.cartID}/items`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                alert(`Failed to add item to cart: ${errorData.message || response.statusText}`);
-                return;
-            }
-
-            alert("Item added to cart successfully!");
-        } catch (error) {
-            console.error("Error adding item to cart:", error);
-            alert("An error occurred while adding the item to the cart.");
-        }
-    };
+    } catch (error) {
+        console.error("Error adding item to cart:", error);
+        alert("An error occurred while adding the item to the cart.");
+    }
+};
 
     const createCart = async (userId) => {
         const requestBody = {

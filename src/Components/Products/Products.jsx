@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import "./Products.css";
+import { toast } from 'react-toastify'; 
+import { AiOutlineCheck } from 'react-icons/ai';
 import { MdAddBox } from "react-icons/md";
 
 
@@ -113,6 +115,8 @@ function Products() {
         console.error("Error creating cart:", error);
     }
 };
+
+
 const addToCart = async (productId) => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
@@ -154,7 +158,19 @@ const addToCart = async (productId) => {
             return;
         }
 
-        alert("Item added to cart successfully!");
+        // Show success toast
+        toast.success(
+          <span>
+            <AiOutlineCheck /> Item added to cart successfully!
+          </span>,
+          {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeButton: false,
+          }
+        );
+
     } catch (error) {
         console.error("Error adding item to cart:", error);
         alert("An error occurred while adding the item to the cart.");

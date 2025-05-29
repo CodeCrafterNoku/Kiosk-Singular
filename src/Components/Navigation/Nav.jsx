@@ -529,7 +529,19 @@ const confirmOrder = async () => {
         </div>
 
         <div className="profile-container">
-            <a href="#"><AiFillHome className="nav-icons" /></a>
+                   {userRole === '8' ? (
+            <Link to="/admin/products" className="home-icon" aria-label="Home">
+                <AiFillHome className="nav-icons" />
+            </Link>
+        ) : (
+            <Link to="/user/products" className="home-icon" aria-label="Home">
+                <AiFillHome className="nav-icons" />
+            </Link>
+        )}
+
+
+            {/* Check if userRole is correct */}
+            {console.log("User Role:", userRole)}
 
             {/* Conditionally render the notification icon for admin users only */}
             {userRole === '8' && (
