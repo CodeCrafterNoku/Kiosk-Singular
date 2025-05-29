@@ -313,19 +313,6 @@ body.dark-mode .drawer li:hover {
 .close-cart:hover {
   background-color: #666;
 }
-.decrease-button {
-    background-color: red; /* Red background */
-    color: white; /* White text */
-    border: none; /* No border */
-    padding: 10px; /* Padding */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s; /* Smooth transition */
-}
-
-.decrease-button:hover {
-    background-color: darkred; /* Darker shade on hover */
-}
 .error-message {
     color: red;
     font-weight: bold;
@@ -456,6 +443,74 @@ body.dark-mode .drawer li:hover {
 .modal-content p {
   margin: 5px 0; /* Margin for paragraphs */
   color: #797f88; /* Text color */
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.order-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.order-item {
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.status {
+    font-weight: bold;
+}
+
+.status.pending {
+    color: orange;
+}
+
+.status.completed {
+    color: green;
+}
+
+.status.cancelled {
+    color: red;
+}
+
+.item-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.item {
+    margin-left: 20px;
 }
 /* Add this to your CSS file */
 .confetti {

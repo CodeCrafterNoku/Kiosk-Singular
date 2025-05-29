@@ -42,11 +42,10 @@ function Nav() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   
-
-  useEffect(() => {
+useEffect(() => {
     const handleResize = () => {
         setWindowWidth(window.innerWidth);
-        setWindowHeight(window.innerHeight);
+        setWindowHeight(window.innerHeight); // Ensure this is included
     };
 
     window.addEventListener('resize', handleResize);
@@ -405,16 +404,15 @@ const createTransaction = async (totalAmount) => {
         alert('An error occurred during the transaction.');
     }
 };
-const handleMenuItemClick = (action) => {
-  setDrawerOpen(false);
-  if (action === 'View Orders') {
-    const userId = localStorage.getItem("userId");
-    fetchOrdersByUser(userId); // Fetch user orders
-    setShowOrderSummary(true); // Show the order modal
-  } else if (action === 'Logout') {
-    navigate('/');
-  }
-};
+    const handleMenuItemClick = (action) => {
+        setDrawerOpen(false);
+        if (action === 'View Orders') {
+            fetchOrdersByUser(userId); // Fetch user orders
+            setShowOrderSummary(true); // Show the order modal
+        } else if (action === 'Logout') {
+            navigate('/');
+        }
+    };
 
 
 
@@ -458,17 +456,18 @@ const handleMenuItemClick = (action) => {
     }
 };
 
-const fetchOrdersByUser = async (userId) => {
-  try {
-    const response = await fetch(`http://localhost:5279/api/order/user/${userId}`);
-    if (!response.ok) throw new Error("Failed to fetch orders");
+    // Fetch user orders function
+    const fetchOrdersByUser = async (userId) => {
+        try {
+            const response = await fetch(`http://localhost:5279/api/Order/user/${userId}/with-items`);
+            if (!response.ok) throw new Error("Failed to fetch orders");
 
-    const ordersData = await response.json();
-    setOrders(ordersData);
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-  }
-};
+            const ordersData = await response.json();
+            setOrders(ordersData); // Set the orders in state for display
+        } catch (error) {
+            console.error("Error fetching user orders:", error);
+        }
+    };
 
 const confirmOrder = async () => {
     const userId = localStorage.getItem("userId");
@@ -670,15 +669,25 @@ const confirmOrder = async () => {
       {orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
-        <ul>
-          {orders.map((order, index) => (
-            <li key={index}>
-              <p><strong>Order #{order.orderID}</strong></p>
-              <p>Status: {order.orderStatus}</p>
-              <p>Total: R{order.totalAmount}</p>
-              <p>Date: {new Date(order.orderDateTime).toLocaleString()}</p>
-            </li>
-          ))}
+        <ul className="order-list">
+          {orders
+            .sort((a, b) => new Date(b.orderDateTime) - new Date(a.orderDateTime)) // Sort by date
+            .map((order) => (
+              <li key={order.orderID} className="order-item">
+                <p><strong>Order #{order.orderID}</strong></p>
+                <p>Status: <span className={`status ${order.orderStatus.toLowerCase()}`}>{order.orderStatus}</span></p>
+                <p>Total: R{order.totalAmount.toFixed(2)}</p>
+                <p>Date: {new Date(order.orderDateTime).toLocaleString()}</p>
+                <h4>Items:</h4>
+                <ul className="item-list">
+                  {order.orderItems.map(item => (
+                    <li key={item.orderItemID} className="item">
+                      {item.quantity} x {item.productName} @ R{item.unitPrice.toFixed(2)} (Total: R{item.totalPrice.toFixed(2)})
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
         </ul>
       )}
     </div>
