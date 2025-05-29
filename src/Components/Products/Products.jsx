@@ -165,7 +165,7 @@ const addToCart = async (productId) => {
           </span>,
           {
             position: "top-center",
-            autoClose: 3000,
+            autoClose: 600,
             hideProgressBar: true,
             closeButton: false,
           }

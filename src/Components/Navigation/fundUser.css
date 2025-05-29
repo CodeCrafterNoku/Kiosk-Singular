@@ -57,9 +57,22 @@
 .fund-user-modal button:hover {
     background-color: #007e76; /* Darker shade on hover */
 }
+.action-button.close {
+    background-color: #dc3545; /* Red background */
+    color: white; /* Text color */
+    border: none; /* No border */
+    padding: 10px; /* Padding for button */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.action-button.close:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
 
 .fund-user-modal .close-btn {
-    background: none; /* No background */
+    background: #dc3545 !important; /* No background */
     border: none; /* No border */
     font-size: 24px; /* Font size */
     color: #333; /* Close button color */

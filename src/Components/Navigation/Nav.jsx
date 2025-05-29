@@ -167,7 +167,8 @@ const addFunds = async () => {
         setWalletBalance(prevBalance => (Number(data.newBalance)).toFixed(2));
         setFundAmount('');
         setShowConfetti(true);
-
+        
+        toast.dismiss();
         const successToast = toast.success(`Successfully funded wallet with R${amountToAdd}`, {
             position: "top-right",
             autoClose: false, // Prevent auto close
@@ -244,7 +245,7 @@ const deleteCartItem = async (cartItemId) => {
           </span>,
           {
             position: "top-center",
-            autoClose: 3000,
+            autoClose: 1500,
             hideProgressBar: true,
             closeButton: false,
           }
@@ -545,6 +546,7 @@ const confirmOrder = async () => {
         alert('An error occurred during checkout.');
     }
 };
+
 
 
   return (
