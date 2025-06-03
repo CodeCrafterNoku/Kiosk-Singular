@@ -32,62 +32,62 @@ function ProductAdmin() {
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(7);
 
-const addToCart = async (productId) => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-        alert("You must be logged in to add items to your cart.");
-        return;
-    }
-
-    try {
-        const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
-        let cartData;
-
-        if (cartResponse.status === 404) {
-            cartData = await createCart(userId);
-        } else {
-            cartData = await cartResponse.json();
-        }
-
-        const requestBody = {
-            cartItemID: 0,
-            cartID: cartData.cartID,
-            productID: productId,
-            quantity: 1,
-            unitPrice: 0,
-            productName: products.find(product => product.productID === productId)?.productName
-        };
-
-        const response = await fetch(`http://localhost:5279/api/cart/${requestBody.cartID}/items`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            alert(`Failed to add item to cart: ${errorData.message || response.statusText}`);
+    const addToCart = async (productId) => {
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            alert("You must be logged in to add items to your cart.");
             return;
         }
 
-        // Show success toast
-        toast.success(
-            <span>
-                <AiOutlineCheck /> Item added to cart successfully!
-            </span>,
-            {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeButton: false,
-            }
-        );
+        try {
+            const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
+            let cartData;
 
-    } catch (error) {
-        console.error("Error adding item to cart:", error);
-        alert("An error occurred while adding the item to the cart.");
-    }
-};
+            if (cartResponse.status === 404) {
+                cartData = await createCart(userId);
+            } else {
+                cartData = await cartResponse.json();
+            }
+
+            const requestBody = {
+                cartItemID: 0,
+                cartID: cartData.cartID,
+                productID: productId,
+                quantity: 1,
+                unitPrice: 0,
+                productName: products.find(product => product.productID === productId)?.productName
+            };
+
+            const response = await fetch(`http://localhost:5279/api/cart/${requestBody.cartID}/items`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(`Failed to add item to cart: ${errorData.message || response.statusText}`);
+                return;
+            }
+
+            // Show success toast
+            toast.success(
+                <span>
+                    <AiOutlineCheck /> Item added to cart successfully!
+                </span>,
+                {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeButton: false,
+                }
+            );
+
+        } catch (error) {
+            console.error("Error adding item to cart:", error);
+            alert("An error occurred while adding the item to the cart.");
+        }
+    };
 
     const createCart = async (userId) => {
         const requestBody = {
@@ -284,9 +284,9 @@ const addToCart = async (productId) => {
     };
 
     const handleCategoryChange = (categoryID) => {
-    setSelectedCategory(categoryID); // Set the selected category
-    setCurrentPage(1); // Reset to the first page when category changes
-};
+        setSelectedCategory(categoryID); // Set the selected category
+        setCurrentPage(1); // Reset to the first page when category changes
+    };
 
     const filteredProducts = products.filter((product) => {
         const matchesCategory = !selectedCategory ||
@@ -410,7 +410,7 @@ const addToCart = async (productId) => {
     };
 
     return (
-        <>
+        <div className="main-container"> {/* Add this wrapper */}
             {error && <p className="error">Error: {error}</p>}
             {isLoading && <div className="spinner">Loading...</div>}
 
@@ -523,7 +523,7 @@ const addToCart = async (productId) => {
                 </div>
             )}
 
-            <div>
+            <div className="content"> {/* Wrap your main content */}
                 <div className="category-buttons-container">
                     <button onClick={() => setSelectedCategory('')} className={selectedCategory === '' ? 'active' : ''}>
                         All Categories
@@ -540,9 +540,9 @@ const addToCart = async (productId) => {
                     <button className="add-product-button" onClick={() => setShowAddProductPopup(true)}>
                         Add New Product
                     </button>
-                    <div className="search-container">
+                    <div className="product-search-container">
                         <input
-                            type="text"
+                           type="text"
                             placeholder="Search products by name..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -643,7 +643,7 @@ const addToCart = async (productId) => {
                     onCancel={() => setConfirmToggle(null)} 
                 />
             }
-        </>
+        </div> 
     );
 }
 

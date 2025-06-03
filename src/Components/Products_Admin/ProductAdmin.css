@@ -388,3 +388,25 @@
   justify-content: center; /* Center the buttons */
   gap: 20px; /* Space between buttons */
 }
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure the container takes full height */
+}
+
+.content {
+    flex: 1; /* This allows the content to grow and push the footer down */
+    padding-bottom: 60px; /* Prevent overlap with pagination */
+}
+
+.pagination {
+    position: fixed; /* Fixes the position of pagination */
+    bottom: 0; /* Positions it at the bottom */
+    left: 0;
+    right: 0; /* Full width */
+    display: flex;
+    justify-content: center; /* Center the pagination buttons */
+    padding: 10px; /* Add some padding */
+    background-color: red; /* Background color for pagination */
+   
+}

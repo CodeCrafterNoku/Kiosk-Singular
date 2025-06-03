@@ -223,17 +223,24 @@
 
 /* Pagination container */
 .pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 8px; /* Space between buttons */
+    position: fixed; /* Fixes the position of pagination */
+    bottom: -10px !important; /* Positions it at the bottom */
+    left: 0;
+    right: 0; /* Full width */
+    display: flex;
+    justify-content: center; /* Center buttons */
+    padding: 5px !important ; /* Padding around buttons */
+    background-color: transparent !important; /* Background color for pagination */
+    margin-top: 60px; /* Adjust this value as needed */
+    z-index: 10; /* Ensure it’s above other elements */
 }
 
 /* Pagination buttons */
 .pagination button {
-  padding: 8px 12px;
+  margin: 0 5px; /* Adjust the horizontal spacing */
+  padding: 10px 15px; /* Adjust padding for button size */
   border: none;
-  background-color: #f0f0f0;
+  background-color: #d6d5d5;
   color: #333;
   font-weight: bold;
   border-radius: 4px;

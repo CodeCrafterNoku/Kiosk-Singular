@@ -43,6 +43,7 @@ function Nav() {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   const dropdownRef = useRef();
   const drawerRef = useRef(null);  
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
 useEffect(() => {
   const handleClickOutside = (event) => {
@@ -60,8 +61,20 @@ useEffect(() => {
   };
 }, [drawerOpen]);
 
+//NEW CHANGES
+const handleFundClick = () => {
+    setShowConfirmation(true); // Show confirmation when Fund is clicked
+};
 
+const confirmFund = () => {
+    addFunds(); // Proceed with the fund process
+    setShowConfirmation(false); // Close confirmation popup
+};
 
+const cancelFund = () => {
+    setShowConfirmation(false); // Close confirmation popup
+};
+//END NEW CHANGES
   
 useEffect(() => {
     const handleResize = () => {
@@ -563,31 +576,44 @@ const confirmOrder = async () => {
 
             {showWalletDropdown && (
                 <div className="wallet-dropdown" ref={dropdownRef}>
-                    <button onClick={toggleFundModal}>Fund Your wallet</button>
+                    <button onClick={toggleFundModal}>Fund Your Wallet</button>
 
                     {/* Conditionally render the Fund User button */}
                     {userRole === '8' && (
                         <button onClick={toggleFundUserModal}>Fund User</button>
                     )}
                     
-                    {showFundModal && (
-                        <div className="modal-overlay">
-                            <div className="modal-content">
-                                {showConfetti && <Confetti width={windowWidth} height={windowHeight} />}
-                                <h2>Fund Your Wallet</h2>
-                                <input
-                                    type="number"
-                                    min="1"
-                                    placeholder="Enter amount"
-                                    value={fundAmount}
-                                    onChange={(e) => setFundAmount(e.target.value)}
-                                />
-                                <button onClick={addFunds}>Fund</button>
-                                <button className="close" onClick={closeFundModal}>Close</button>
-                            </div>
-                        </div>
-                    )}
-                    <ToastContainer />  {/* Toast container for notifications */}
+{showFundModal && (
+    <div className="modal-overlay">
+        <div className="modal-content">
+            {showConfetti && <Confetti width={windowWidth} height={windowHeight} />}
+            <h2>Fund Your Wallet</h2>
+            <input
+                type="number"
+                min="1"
+                placeholder="Enter amount"
+                value={fundAmount}
+                onChange={(e) => setFundAmount(e.target.value)}
+                className="input-container" // Add this class for styling
+            />
+            <button className="action-button" onClick={handleFundClick}>Fund</button>
+
+            {/* Confirmation Section */}
+            {showConfirmation && (
+                <div className="confirmation-popup">
+                    <div className="confirmation-box">
+                        <p>Are you sure you want to fund your wallet with R{fundAmount}?</p>
+                        <button className="action-button" onClick={confirmFund}>Yes</button>
+                        <button className="action-button close" onClick={cancelFund}>No</button>
+                    </div>
+                </div>
+            )}
+            <button className="close" onClick={closeFundModal}>Close</button>
+        </div>
+    </div>
+)}
+<ToastContainer />
+
                 </div>
             )}
 
@@ -645,11 +671,15 @@ const confirmOrder = async () => {
                       Delivery
                     </label>
                   </div>
-                {isBalanceExceeded && (
-                    <p style={{ color: 'red', fontWeight: '600' }}>
-                        You have exceeded your wallet balance.
-                    </p>
-                )}
+                        {isBalanceExceeded && (
+                          <>
+                            <p style={{ color: 'red', fontWeight: '600' }}>
+                                You have exceeded your wallet balance.
+                            </p>
+                              <button onClick={() => { toggleFundModal(); setShowCart(false); }}>Fund Your Wallet</button>
+                          </>
+                        )}
+                
                 <div className="cart-popup-buttons">
                   <button
                     onClick={handleCheckout}

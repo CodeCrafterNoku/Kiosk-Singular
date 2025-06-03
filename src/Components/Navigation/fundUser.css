@@ -140,4 +140,46 @@
 .user-list li.selected {
   background-color: #007BFF;
   color: white;
+}.confirmation-popup {
+    position: fixed; /* Full screen overlay */
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    z-index: 2000; /* Ensure it's on top */
+}
+
+.confirmation-box {
+    background: white; /* White background for the box */
+    padding: 30px; /* Padding around the text */
+    border-radius: 10px; /* Rounded corners */
+    text-align: center; /* Center text */
+}
+
+/* Button styles */
+.action-button {
+    background-color: #00a69b; /* Primary button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    padding: 10px; /* Padding for buttons */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    width: 100%; /* Full width */
+    margin-top: 10px; /* Space above buttons */
+}
+
+.action-button:hover {
+    background-color: #007e76; /* Darker on hover */
+}
+
+.action-button.close {
+    background-color: #dc3545; /* Red background for close button */
+}
+
+.action-button.close:hover {
+    background-color: #c82333; /* Darker red on hover */
 }

@@ -95,9 +95,9 @@ function OrderDisplay() {
                     ))}
                   </ul>
                 </div>
-                <div className="card-buttons">
+                {/* <div className="card-buttons">
                   <button className="button" onClick={() => handleEdit(order.orderID)}>Edit</button>
-                </div>
+                </div> */}
               </div>
             </li>
           ))}

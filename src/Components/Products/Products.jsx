@@ -13,7 +13,7 @@ function Products() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
    const [currentPage, setCurrentPage] = useState(1); // ✅
-  const [productsPerPage] = useState(12); // ✅ Number of products per page
+  const [productsPerPage] = useState(12); // ✅ 
 
   
 
@@ -259,6 +259,7 @@ const addToCart = async (productId) => {
               ))}
             </div>
           </>
+          
         )}
       </div>
     </>
