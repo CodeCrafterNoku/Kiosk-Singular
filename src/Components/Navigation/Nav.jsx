@@ -279,8 +279,8 @@ const deleteCartItem = async (cartItemId) => {
     }
 };
 
-  const cartID = localStorage.getItem("cartID");
-  const walletID = localStorage.getItem("walletID");
+const cartID = localStorage.getItem("cartID");
+const walletID = localStorage.getItem("walletID");
 
 const handleCheckout = async () => {
     const userId = localStorage.getItem("userId");
@@ -321,7 +321,13 @@ const handleCheckout = async () => {
         if (!response.ok) {
             const errorText = await response.text();
             console.error('Checkout failed:', errorText);
-            return; // Exit on failure without showing an alert
+            toast.error(`Checkout failed: ${errorText}`, {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeButton: false,
+            });
+            return;
         }
 
         const orderResponse = await response.json();
@@ -354,7 +360,7 @@ const handleCheckout = async () => {
 
                 // Suppress error handling for order items
                 if (!orderItemResponse.ok) {
-                    const errorData = await orderItemResponse.json();
+                    const errorData = await orderItemResponse.text();
                     console.error('Failed to create order item:', errorData);
                 }
             } catch (error) {
@@ -362,41 +368,88 @@ const handleCheckout = async () => {
             }
         }));
 
-        // Clear the cart and update wallet balance
+        // Clear the cart
         setCartItems([]);
         setTotalAmount(0);
-        setWalletBalance(prevBalance => (Number(prevBalance) - totalAmount).toFixed(2));
-
-        // Create transaction quietly
-        await createTransaction(totalAmount);
+        
+        // Create transaction and update wallet balance
+        const transactionResult = await createTransaction(totalAmount);
+        if (transactionResult) {
+            // Only update local balance if transaction was successful
+            await fetchUpdatedWalletBalance();
+        }
 
     } catch (error) {
         console.error('Checkout error:', error);
+        toast.error(`An error occurred during checkout: ${error.message}`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeButton: false,
+        });
     }
 };
+// Refetch updated wallet balance after checkout
+fetch(`http://localhost:5279/api/wallet/user/${userId}`)
+  .then(res => res.json())
+  .then(data => {
+    setWalletBalance(Number(data.balance).toFixed(2));
+  })
+  .catch(err => console.error("Failed to refresh wallet after checkout:", err));
 
-// Transaction creation function
+// Fetch updated wallet balance
+const fetchUpdatedWalletBalance = async () => {
+    try {
+        const walletResponse = await fetch(`http://localhost:5279/api/wallet/${walletID}`);
+        if (walletResponse.ok) {
+            const walletData = await walletResponse.json();
+            setWalletBalance(walletData.balance.toFixed(2));
+        } else {
+            console.error('Failed to fetch updated wallet balance');
+        }
+    } catch (error) {
+        console.error('Error fetching updated wallet balance:', error);
+    }
+};
+localStorage.setItem("userId", userId);
+localStorage.setItem("walletID", walletID);
+
+// Transaction creation function - updated
 const createTransaction = async (totalAmount) => {
     const userId = localStorage.getItem("userId");
-    const walletID = localStorage.getItem("walletID");
     const orderID = localStorage.getItem("orderID");
 
-    // Validate walletID and orderID
-    if (!walletID || walletID === "0" || !orderID || orderID === "0") {
-        return; // Exit if IDs are invalid without alerting the user
+    // Validate userId and orderID
+    if (!userId || !orderID || orderID === "0") {
+        console.error("Invalid userId or orderID");
+        return false;
     }
 
-    const transactionData = {
-        transactionID: 0,
-        walletID: Number(walletID),
-        amount: totalAmount,
-        orderID: Number(orderID),
-        paymentMethod: 'EFT',
-        paymentDateTime: new Date().toISOString(),
-        paymentStatus: 'Completed'
-    };
-
+    // Fetch wallet info dynamically for the current user
     try {
+        const walletResponse = await fetch(`http://localhost:5279/api/Wallet/user/${userId}`);
+        if (!walletResponse.ok) {
+            console.error("Failed to get wallet info");
+            return false;
+        }
+        const walletData = await walletResponse.json();
+        const walletID = walletData.walletID;
+
+        if (!walletID || walletID === 0) {
+            console.error("Invalid walletID from API");
+            return false;
+        }
+
+        const transactionData = {
+            transactionID: 0,
+            walletID: Number(walletID),
+            amount: totalAmount,
+            orderID: Number(orderID),
+            paymentMethod: 'EFT',
+            paymentDateTime: new Date().toISOString(),
+            paymentStatus: 'Completed'
+        };
+
         const response = await fetch('http://localhost:5279/api/Transaction/withdraw', {
             method: 'POST',
             headers: {
@@ -409,14 +462,43 @@ const createTransaction = async (totalAmount) => {
         if (response.ok) {
             const data = await response.json();
             console.log("Transaction created successfully:", data);
+            return true;
         } else {
-            const errorData = await response.json();
-            console.error(`Transaction failed: ${errorData.message || response.statusText}`);
+            // Handle error responses
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                console.error(`Transaction failed: ${errorData.message || response.statusText}`);
+                toast.error(`Transaction failed: ${errorData.message || "Payment could not be processed"}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeButton: false,
+                });
+            } else {
+                const errorText = await response.text();
+                console.error(`Transaction failed: ${errorText || response.statusText}`);
+                toast.error(`Transaction failed: ${errorText || "Payment could not be processed"}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeButton: false,
+                });
+            }
+            return false;
         }
     } catch (error) {
         console.error('Transaction error:', error);
+        toast.error(`Transaction error: ${error.message}`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeButton: false,
+        });
+        return false;
     }
 };
+
     const handleMenuItemClick = (action) => {
         setDrawerOpen(false);
         if (action === 'View Orders') {

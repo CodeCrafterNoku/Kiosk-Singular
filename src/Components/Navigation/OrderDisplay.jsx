@@ -83,6 +83,7 @@ function OrderDisplay() {
               <div className="order-item-content">
                 <div className="order-details">
                   <p><strong>Order #{order.orderID}</strong></p>
+                  <p>Ordered by: {order.name}</p>
                   <p>Status: {order.orderStatus}</p>
                   <p>Total: R{order.totalAmount}</p>
                   <p>Date: {new Date(order.orderDateTime).toLocaleString()}</p>
