@@ -243,6 +243,7 @@ function ProductAdmin() {
             setPopup({ message: `Failed to add product: ${errorMessage}`, type: 'error' });
         }
     };
+    
 
     const handleDeleteProduct = async (productId) => {
         const response = await fetch(`http://localhost:5279/api/Product/${productId}`, {

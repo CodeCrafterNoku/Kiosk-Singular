@@ -44,6 +44,7 @@ function Nav() {
   const dropdownRef = useRef();
   const drawerRef = useRef(null);  
   const [showConfirmation, setShowConfirmation] = useState(false);
+  
 
 useEffect(() => {
   const handleClickOutside = (event) => {
@@ -665,7 +666,16 @@ const confirmOrder = async () => {
                         <button onClick={toggleFundUserModal}>Fund User</button>
                     )}
                     
-{showFundModal && (
+
+
+                </div>
+            )}
+
+            <a href="#" className="menu-icon" onClick={toggleDrawer}>
+                <FiMenu className="nav-icons" />
+            </a>
+        </div>
+        {showFundModal && (
     <div className="modal-overlay">
         <div className="modal-content">
             {showConfetti && <Confetti width={windowWidth} height={windowHeight} />}
@@ -695,14 +705,6 @@ const confirmOrder = async () => {
     </div>
 )}
 <ToastContainer />
-
-                </div>
-            )}
-
-            <a href="#" className="menu-icon" onClick={toggleDrawer}>
-                <FiMenu className="nav-icons" />
-            </a>
-        </div>
 
         <ToastContainer />
         {showCart && (
@@ -755,10 +757,15 @@ const confirmOrder = async () => {
                   </div>
                         {isBalanceExceeded && (
                           <>
-                            <p style={{ color: 'red', fontWeight: '600' }}>
+                            <p style={{ color: 'red', fontWeight: '400' }}>
                                 You have exceeded your wallet balance.
                             </p>
-                              <button onClick={() => { toggleFundModal(); setShowCart(false); }}>Fund Your Wallet</button>
+                              <button onClick={() => {
+                              setShowFundModal(true);   // ✅ opens modal directly
+                              setShowCart(false);       // ✅ closes cart if needed
+                            }}>
+                              Fund Your Wallet
+                            </button>
                           </>
                         )}
                 
@@ -779,24 +786,24 @@ const confirmOrder = async () => {
             </div>
 )}
 {showOrderSummary && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <button className="close-btn" onClick={() => setShowOrderSummary(false)}>×</button>
+  <div className="order-summary-modal-overlay">
+    <div className="order-summary-modal-content">
+      <button className=".order-summary-close-btn" onClick={() => setShowOrderSummary(false)}>×</button>
       <h2>Your Orders</h2>
       {orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
-        <ul className="order-list">
+        <ul className="order-summary-order-list">
           {orders
             .sort((a, b) => new Date(b.orderDateTime) - new Date(a.orderDateTime)) // Sort by date
             .map((order) => (
-              <li key={order.orderID} className="order-item">
+              <li key={order.orderID} className="order-summary-order-item">
                 <p><strong>Order #{order.orderID}</strong></p>
                 <p>Status: <span className={`status ${order.orderStatus.toLowerCase()}`}>{order.orderStatus}</span></p>
                 <p>Total: R{order.totalAmount.toFixed(2)}</p>
                 <p>Date: {new Date(order.orderDateTime).toLocaleString()}</p>
                 <h4>Items:</h4>
-                <ul className="item-list">
+                <ul className="order-summary-item-list">
                   {order.orderItems.map(item => (
                     <li key={item.orderItemID} className="item">
                       {item.quantity} x {item.productName} @ R{item.unitPrice.toFixed(2)} (Total: R{item.totalPrice.toFixed(2)})
