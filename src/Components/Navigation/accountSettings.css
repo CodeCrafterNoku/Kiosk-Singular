@@ -1,72 +1,68 @@
 html, body {
-    margin: 0; /* Remove default body margin */
-    height: 100%; /* Ensure body takes full height */
+  margin: 0;
+  height: 100%;
 }
 
 .account-settings {
-    background-color: #f9f9f9; /* Light background color */
-    padding: 20px; /* Padding around the content */
-    border-radius: 0; /* No rounded corners */
-    box-shadow: none; /* No shadow */
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    display: flex; /* Use flexbox for layout */
-    flex-direction: column; /* Stack elements vertically */
-    justify-content: center; /* Center content vertically */
-    align-items: center; /* Center content horizontally */
-    overflow: auto; /* Allow scrolling if content overflows */
+  background-color: #f9f9f9;
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
 }
 
-/* Label styles */
-.account-settings label {
-    margin-bottom: 8px; /* Space below the label */
-    font-weight: bold; /* Make label bold */
-}
-
-/* Header style */
 .account-settings h2 {
-    color: #097a73; /* Heading color */
-    margin-bottom: 20px; /* Space below the header */
+  color: #097a73;
+  margin-bottom: 20px;
 }
 
-/* Error message style */
 .error-message {
-    color: red; /* Red color for error messages */
-    font-weight: 600; /* Bold text */
-    margin-bottom: 15px; /* Space below the error message */
+  color: red;
+  font-weight: 600;
+  margin-bottom: 15px;
 }
 
-/* Form styles */
 .account-settings form {
-    display: flex; /* Flexbox for layout */
-    flex-direction: column; /* Stack elements vertically */
-    width: 100%; /* Full width for the form */
-    max-width: 400px; /* Optional: Set a max width for form */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
 }
 
-/* Input field styles */
+/* 🔧 Add spacing between label and input */
+.account-settings form div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.account-settings label {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
 .account-settings input {
-    padding: 10px; /* Padding inside the input */
-    margin-bottom: 15px; /* Space below each input */
-    margin-top: 8px; /* Space between label and input */
-    border: 1px solid #ccc; /* Light border */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 14px; /* Font size */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-/* Button styles */
 .account-settings button {
-    background-color: #00a69b; /* Primary button color */
-    color: white; /* Text color */
-    border: none; /* No border */
-    padding: 10px; /* Padding for buttons */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer on hover */
-    transition: background-color 0.3s ease; /* Smooth transition */
-    width: 100%; /* Full width for buttons */
+  background-color: #00a69b;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
 }
 
-/* Button hover effect */
 .account-settings button:hover {
-    background-color: #007e76; /* Darker on hover */
+  background-color: #007e76;
 }
