@@ -1,42 +1,42 @@
 .order-display-container {
-  max-width: 1200px; /* Set a maximum width for the container */
-  margin: 20px auto; /* Center the container horizontally */
-  padding: 20px; /* Add padding inside the container */
-  background-color: #f9f9f9; /* Light background color */
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  max-width: 1200px; 
+  margin: 20px auto; 
+  padding: 20px; 
+  background-color: #f9f9f9; 
+  border-radius: 8px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 }
 
 .order-display-container h2 {
-  text-align: center; /* Center the heading */
-  color: #00a69b; /* Header color */
+  text-align: center; 
+  color: #00a69b; 
 }
 
 .order-display-container ul {
-  list-style-type: none; /* Remove default list styles */
-  padding: 0; /* Remove padding */
+  list-style-type: none; 
+  padding: 0; 
 }
 
 .order-display-container li {
-  border: 1px solid #ccc; /* Border for each order item */
-  padding: 10px; /* Padding inside the item */
-  margin: 10px 0; /* Margin between items */
-  border-radius: 6px; /* Rounded corners for items */
-  background-color: #fff; /* White background for items */
-  transition: background-color 0.3s; /* Smooth transition for hover effect */
+  border: 1px solid #ccc; 
+  padding: 10px; 
+  margin: 10px 0; 
+  border-radius: 6px; 
+  background-color: #fff;
+  transition: background-color 0.3s; 
 }
 
 .order-display-container li:hover {
-  background-color: #f1f1f1; /* Highlight order item on hover */
+  background-color: #f1f1f1; 
 }
 
 .order-display-container p {
-  margin: 5px 0; /* Margin for paragraphs */
-  color: #797f88; /* Text color */
+  margin: 5px 0; 
+  color: #797f88; 
 }
 
 .order-display-container strong {
-  color: #00a69b; /* Strong text color */
+  color: #00a69b; 
 }
 .button {
   padding: 5px 10px;
@@ -46,7 +46,7 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-top: 10px; /* Space above buttons */
+  margin-top: 10px; 
 }
 
 .button:hover {
@@ -54,21 +54,21 @@
 }
 
 .button.cancel {
-  background-color: #dc3545; /* Red for cancel button */
+  background-color: #dc3545; 
 }
 
 .button.cancel:hover {
-  background-color: #b21f28; /* Darker on hover */
+  background-color: #b21f28; 
 }.order-item-content {
   display: flex;
-  justify-content: space-between; /* Details on left, buttons on right */
-  align-items: center;            /* Vertically center content */
+  justify-content: space-between; 
+  align-items: center;            
 }
 
 .card-buttons {
   display: flex;
-  flex-direction: column; /* Stack buttons vertically */
-  gap: 10px;              /* Space between buttons */
+  flex-direction: column; 
+  gap: 10px;              
 }
 .pagination-button {
   padding: 8px 12px;
