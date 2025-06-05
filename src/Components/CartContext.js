@@ -1,52 +1,112 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+// CartContext.js
+import React, { createContext, useState, useEffect } from "react";
 
-const CartContext = createContext();
-
-export const useCart = () => {
-    return useContext(CartContext);
-};
+export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-    const [cartItems, setCartItems] = useState([]);
-    const [totalAmount, setTotalAmount] = useState(0);
+  const [cartItems, setCartItems] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
 
-    useEffect(() => {
-        const userId = localStorage.getItem("userId");
-        if (userId) {
-            fetchCartByUser(userId);
-        }
-    }, []);
+  const userId = localStorage.getItem("userId");
 
-    const fetchCartByUser = async (userId) => {
-        try {
-            const response = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
-            if (!response.ok) throw new Error("Failed to fetch cart");
+  const fetchCartItems = async () => {
+    if (!userId) return;
 
-            const cartData = await response.json();
-            setCartItems(cartData.cartItems);
-            setTotalAmount(cartData.totalAmount);
-        } catch (error) {
-            console.error("Error fetching cart:", error);
-        }
-    };
+    try {
+      const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
+      if (!cartResponse.ok) return;
 
-    const addToCart = (product) => {
-        const existingItem = cartItems.find(item => item.productID === product.productID);
-        if (existingItem) {
-            setCartItems(cartItems.map(item =>
-                item.productID === product.productID
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
-            ));
-        } else {
-            setCartItems([...cartItems, { ...product, quantity: 1 }]);
-        }
-        setTotalAmount(prev => prev + product.price);
-    };
+      const cartData = await cartResponse.json();
 
-    return (
-        <CartContext.Provider value={{ cartItems, totalAmount, setCartItems, setTotalAmount, addToCart }}>
-            {children}
-        </CartContext.Provider>
-    );
+      const itemsResponse = await fetch(`http://localhost:5279/api/cart/${cartData.cartID}/items`);
+      const items = await itemsResponse.json();
+
+      setCartItems(items);
+
+      const total = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+      setTotalAmount(total);
+    } catch (error) {
+      console.error("Failed to fetch cart items:", error);
+    }
+  };
+
+  const addToCart = async (productId, updateProductQuantityUI) => {
+    try {
+      const cartResponse = await fetch(`http://localhost:5279/api/cart/user/${userId}`);
+      let cartData = cartResponse.status === 404 ? await createCart(userId) : await cartResponse.json();
+
+      const requestBody = {
+        cartItemID: 0,
+        cartID: cartData.cartID,
+        productID: productId,
+        quantity: 1,
+        unitPrice: 0,
+        productName: "Product Name", // You can fetch the actual name if needed
+      };
+
+      const response = await fetch(`http://localhost:5279/api/cart/${cartData.cartID}/items`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Failed to add item to cart: ${errorData.message || response.statusText}`);
+        return;
+      }
+
+      if (typeof updateProductQuantityUI === "function") {
+        updateProductQuantityUI(productId);
+      }
+
+      fetchCartItems();
+    } catch (error) {
+      console.error("Add to cart failed:", error);
+    }
+  };
+
+  const createCart = async (userId) => {
+    const response = await fetch(`http://localhost:5279/api/cart`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userID: userId }),
+    });
+    return await response.json();
+  };
+
+  const deleteCartItem = async (cartItemID) => {
+    await fetch(`http://localhost:5279/api/cart/items/${cartItemID}`, {
+      method: "DELETE",
+    });
+    fetchCartItems();
+  };
+
+  const updateCartItemQuantity = async (cartItemID, quantity) => {
+    await fetch(`http://localhost:5279/api/cart/items/${cartItemID}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ quantity }),
+    });
+    fetchCartItems();
+  };
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
+  return (
+    <CartContext.Provider
+      value={{
+        cartItems,
+        totalAmount,
+        addToCart,
+        deleteCartItem,
+        updateCartItemQuantity,
+        fetchCartItems,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 };

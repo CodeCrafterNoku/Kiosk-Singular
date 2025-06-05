@@ -44,6 +44,8 @@ function Nav() {
   const dropdownRef = useRef();
   const drawerRef = useRef(null);  
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+  
   
 
 useEffect(() => {
@@ -500,13 +502,15 @@ const createTransaction = async (totalAmount) => {
     }
 };
 
-    const handleMenuItemClick = (action) => {
-        setDrawerOpen(false);
+ const handleMenuItemClick = (action) => {
+        setDrawerOpen(false); // Close the drawer
         if (action === 'View Orders') {
             fetchOrdersByUser(userId); // Fetch user orders
             setShowOrderSummary(true); // Show the order modal
         } else if (action === 'Logout') {
-            navigate('/');
+            navigate('/'); // Navigate to home or login
+        } else if (action === 'Account Settings') {
+            navigate('/user/account-settings'); // Navigate to Account Settings
         }
     };
 

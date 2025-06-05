@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './accountSettings.css';
 import { toast } from 'react-toastify';
 
 const AccountSettings = ({ userId }) => {
@@ -16,12 +17,10 @@ const AccountSettings = ({ userId }) => {
         const fetchUserData = async () => {
             try {
                 const response = await fetch(`http://localhost:5279/api/user/${userId}`);
-                console.log('Response Status:', response.status); // Log response status
                 if (!response.ok) {
                     throw new Error('Failed to fetch user data');
                 }
                 const data = await response.json();
-                console.log('Fetched User Data:', data); // Log fetched data
                 setUserData({
                     name: data.name,
                     email: data.email,
@@ -31,7 +30,7 @@ const AccountSettings = ({ userId }) => {
                 });
             } catch (error) {
                 console.error('Error fetching user data:', error);
-                setErrorMessage('Could not load user data.'); // Display error message
+                setErrorMessage('Could not load user data.');
             }
         };
 
@@ -43,38 +42,38 @@ const AccountSettings = ({ userId }) => {
         setUserData({ ...userData, [name]: value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (userData.password !== userData.confirmPassword) {
-            setErrorMessage("Passwords do not match.");
-            return;
-        }
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (userData.password !== userData.confirmPassword) {
+        setErrorMessage("Passwords do not match.");
+        return;
+    }
 
-        const updatedUser = {
-            ...userData,
-            userID: userId
-        };
-
-        try {
-            const response = await fetch(`http://localhost:5279/api/user/${userId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedUser)
-            });
-
-            if (response.ok) {
-                toast.success("User updated successfully!");
-            } else {
-                const errorData = await response.json();
-                setErrorMessage(errorData.message || "Failed to update user.");
-            }
-        } catch (error) {
-            console.error('Error updating user data:', error);
-            setErrorMessage('Failed to update user.');
-        }
+    const updatedUser = {
+        userID: userId, // Ensure the user ID is included
+        password: userData.password, // New password
     };
+
+    try {
+        const response = await fetch(`http://localhost:5279/api/user/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedUser) // Send updated data
+        });
+
+        if (response.ok) {
+            toast.success("Password updated successfully!");
+        } else {
+            const errorData = await response.json();
+            setErrorMessage(errorData.message || "Failed to update user.");
+        }
+    } catch (error) {
+        console.error('Error updating user data:', error);
+        setErrorMessage('Failed to update user.');
+    }
+};
 
     return (
         <div className="account-settings">
@@ -87,7 +86,7 @@ const AccountSettings = ({ userId }) => {
                         type="text"
                         name="name"
                         value={userData.name}
-                        onChange={handleInputChange}
+                        readOnly // Prevent editing
                     />
                 </div>
                 <div>
@@ -96,7 +95,7 @@ const AccountSettings = ({ userId }) => {
                         type="email"
                         name="email"
                         value={userData.email}
-                        readOnly
+                        readOnly // Prevent editing
                     />
                 </div>
                 <div>
@@ -105,7 +104,7 @@ const AccountSettings = ({ userId }) => {
                         type="text"
                         name="phoneNumber"
                         value={userData.phoneNumber}
-                        onChange={handleInputChange}
+                        readOnly // Prevent editing
                     />
                 </div>
                 <div>
@@ -126,7 +125,7 @@ const AccountSettings = ({ userId }) => {
                         onChange={handleInputChange}
                     />
                 </div>
-                <button type="submit">Update</button>
+                <button type="submit">Update Password</button>
             </form>
         </div>
     );
