@@ -604,7 +604,7 @@ body.dark-mode .drawer li:hover {
 .order-summary-close-btn {
   position: absolute;
   top: 10px;
-  left: 15px; 
+  right: 15px !important;
   background: transparent;
   border: none;
   font-size: 1.8rem;

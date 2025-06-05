@@ -341,12 +341,12 @@ const handleCheckout = async () => {
         if (!response.ok) {
             const errorText = await response.text();
             console.error('Checkout failed:', errorText);
-            toast.error(`Checkout failed: ${errorText}`, {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeButton: false,
-            });
+            // toast.error(`Checkout failed: ${errorText}`, {
+            //     position: "top-right",
+            //     autoClose: 3000,
+            //     hideProgressBar: true,
+            //     closeButton: false,
+            // });
             return;
         }
 
@@ -811,7 +811,7 @@ const confirmOrder = async () => {
 {showOrderSummary && (
   <div className="order-summary-modal-overlay">
     <div className="order-summary-modal-content">
-      <button className=".order-summary-close-btn" onClick={() => setShowOrderSummary(false)}>×</button>
+     <button className="order-summary-close-btn" onClick={() => setShowOrderSummary(false)}>×</button>
       <h2>Your Orders</h2>
       {orders.length === 0 ? (
         <p>No orders found.</p>
