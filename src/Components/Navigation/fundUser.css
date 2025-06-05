@@ -1,118 +1,117 @@
 .fund-user-modal {
-    max-width: 500px; /* Max width for modal */
-    margin: 20px auto; /* Center the modal */
-    padding: 20px; /* Padding inside modal */
-    background-color: #f9f9f9; /* Light background color */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    position: relative; /* Position for absolute elements */
+    max-width: 500px; 
+    margin: 20px auto; 
+    padding: 20px; 
+    background-color: #f9f9f9; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    position: relative; 
 }
 
 .fund-user-modal h3 {
-    color: #097a73; /* Header color */
-    margin-bottom: 20px; /* Space below header */
-    text-align: center; /* Center header text */
+    color: #097a73;
+    margin-bottom: 20px; 
+    text-align: center; 
 }
 
 .fund-user-modal input[type="text"],
 .fund-user-modal input[type="number"] {
-    width: 100%; /* Full width */
-    padding: 10px; /* Padding inside input */
-    margin-bottom: 10px; /* Space below input */
-    border: 1px solid #00a69b; /* Change border color */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 16px; /* Font size */
+    width: 100%; 
+    padding: 10px; 
+    margin-bottom: 10px;
+    border: 1px solid #00a69b; 
+    border-radius: 4px; 
+    font-size: 16px; 
 }
 
 .fund-user-modal .user-list {
-    max-height: 150px; /* Limit height */
-    overflow-y: auto; /* Scroll if too many items */
-    background-color: white; /* Background color */
-    border: 1px solid #00a69b; /* Change border color */
-    border-radius: 4px; /* Rounded corners */
+    max-height: 150px; 
+    overflow-y: auto; 
+    background-color: white; 
+    border: 1px solid #00a69b; 
+    border-radius: 4px; 
 }
 
 .fund-user-modal .user-list li {
-    padding: 10px; /* Padding for list items */
-    cursor: pointer; /* Pointer cursor */
-    transition: background-color 0.3s; /* Smooth transition */
+    padding: 10px; 
+    cursor: pointer; 
+    transition: background-color 0.3s; 
 }
 
 .fund-user-modal .user-list li:hover {
-    background-color: #e0f7f5; /* Lighter hover color */
+    background-color: #e0f7f5; 
 }
 
 .fund-user-modal button {
-    width: 100%; /* Full width */
-    padding: 10px; /* Padding inside button */
-    margin-top: 10px; /* Space above button */
-    background-color: #00a69b; /* Button color */
-    color: white; /* Text color */
-    border: none; /* No border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor */
-    transition: background-color 0.3s; /* Smooth background transition */
+    width: 100%; 
+    padding: 10px;
+    margin-top: 10px; 
+    background-color: #00a69b; 
+    color: white; 
+    border: none; 
+    border-radius: 5px;
+    cursor: pointer; 
+    transition: background-color 0.3s; 
 }
 
 .fund-user-modal button:hover {
-    background-color: #007e76; /* Darker shade on hover */
+    background-color: #007e76; 
 }
 .action-button.close {
-    background-color: #dc3545; /* Red background */
-    color: white; /* Text color */
-    border: none; /* No border */
-    padding: 10px; /* Padding for button */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor */
-    transition: background-color 0.3s; /* Smooth transition */
+    background-color: #dc3545; 
+    color: white; 
+    border: none; 
+    padding: 10px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    transition: background-color 0.3s; 
 }
 
 .action-button.close:hover {
-    background-color: #c82333; /* Darker red on hover */
+    background-color: #c82333; 
 }
 
 .fund-user-modal .close-btn {
-    background: #dc3545 !important; /* No background */
-    border: none; /* No border */
-    font-size: 24px; /* Font size */
-    color: #333; /* Close button color */
-    position: absolute; /* Position for close button */
-    top: 10px; /* Position from top */
-    right: 15px; /* Position from right */
-    cursor: pointer; /* Pointer cursor */
+    background: #dc3545 !important; 
+    border: none; 
+    font-size: 24px; 
+    color: #333;
+    position: absolute; 
+    top: 10px;
+    right: 15px; 
+    cursor: pointer; 
 }
 
 .fund-user-modal .close-btn:hover {
-    color: #dc3545; /* Change color on hover */
+    color: #dc3545; 
 }
 .action-button {
-  background-color: #00a69b; /* Base background color for buttons */
-  color: white; /* Text color */
+  background-color: #00a69b; 
+  color: white; 
   border: none;
-  padding: 8px 12px; /* Button padding */
-  border-radius: 4px; /* Rounded corners */
+  padding: 8px 12px; 
+  border-radius: 4px; 
   cursor: pointer;
-  transition: background-color 0.3s ease; /* Smooth transition */
-  width: 100%; /* Full width */
-  margin-top: 10px; /* Space between buttons */
+  transition: background-color 0.3s ease; 
+  width: 100%; 
+  margin-top: 10px;
 }
 
 .action-button:hover {
-  background-color: #115f5a; /* Background color on hover for Fund button */
+  background-color: #115f5a;
 }
 
-/* Specific styles for Close button */
 .action-button.close {
-  background-color: #00a69b; /* Same as Fund button */
+  background-color: #00a69b;
 }
 
 .action-button.close:hover {
-  background-color: #ff4c4c; /* Change to red on hover for Close button */
+  background-color: #ff4c4c; 
 }
 .input-container {
-  width: 300px;           /* fixed width */
-  height: 40px;           /* fixed height */
-  box-sizing: border-box; /* include padding/border in size */
+  width: 300px;           
+  height: 40px;           
+  box-sizing: border-box; 
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -120,15 +119,15 @@
 }
 
 .user-list {
-  width: 300px;           /* same fixed width */
-  height: 40px;           /* same fixed height */
+  width: 300px;           
+  height: 40px;           
   margin: 0;
   padding: 0;
   list-style: none;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  overflow-y: auto;       /* scroll if content exceeds height */
+  overflow-y: auto;       
   font-size: 16px;
 }
 
@@ -141,45 +140,44 @@
   background-color: #007BFF;
   color: white;
 }.confirmation-popup {
-    position: fixed; /* Full screen overlay */
+    position: fixed; 
     top: 0; 
     left: 0;
     width: 100%; 
     height: 100%;
-    background: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    background: rgba(0, 0, 0, 0.8); 
     display: flex; 
     justify-content: center; 
     align-items: center;
-    z-index: 2000; /* Ensure it's on top */
+    z-index: 2000; 
 }
 
 .confirmation-box {
-    background: white; /* White background for the box */
-    padding: 30px; /* Padding around the text */
-    border-radius: 10px; /* Rounded corners */
-    text-align: center; /* Center text */
+    background: white; 
+    padding: 30px; 
+    border-radius: 10px; 
+    text-align: center; 
 }
 
-/* Button styles */
 .action-button {
-    background-color: #00a69b; /* Primary button color */
-    color: white; /* Text color */
-    border: none; /* No border */
-    padding: 10px; /* Padding for buttons */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor */
-    width: 100%; /* Full width */
-    margin-top: 10px; /* Space above buttons */
+    background-color: #00a69b; 
+    color: white; 
+    border: none; 
+    padding: 10px; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    width: 100%; 
+    margin-top: 10px; 
 }
 
 .action-button:hover {
-    background-color: #007e76; /* Darker on hover */
+    background-color: #007e76; 
 }
 
 .action-button.close {
-    background-color: #dc3545; /* Red background for close button */
+    background-color: #dc3545; 
 }
 
 .action-button.close:hover {
-    background-color: #c82333; /* Darker red on hover */
+    background-color: #c82333; 
 }
