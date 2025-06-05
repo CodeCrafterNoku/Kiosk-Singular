@@ -564,7 +564,7 @@ function ProductAdmin() {
                                 <th>Available</th>
                                 <th>Add to Cart</th>
                                 <th>Edit</th>
-                                {/* <th>Delete</th> */}
+                                <th>Delete</th>
                             </tr>
                        </thead>
                         <tbody>
@@ -600,9 +600,9 @@ function ProductAdmin() {
                                     <td>
                                         <button className="button" onClick={() => handleEditProduct(product)}>Edit</button>
                                     </td>
-                                    {/* <td>
+                                    <td>
                                         <button className="button delete" onClick={() => handleConfirmDelete(product.productID)}>Delete</button>
-                                    </td> */}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

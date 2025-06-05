@@ -77,7 +77,7 @@ const handleSubmit = async (e) => {
 
     return (
         <div className="account-settings">
-            <h2>Account Settings</h2>
+            <h2>Change Password</h2>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
             <form onSubmit={handleSubmit}>
                 <div>

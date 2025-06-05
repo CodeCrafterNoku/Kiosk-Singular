@@ -10,6 +10,38 @@ nav {
   overflow: hidden;
   background-color: #f0f0f5
 }
+.profile-container {
+    display: flex;
+    align-items: center; /* Align items vertically in the center */
+}
+
+
+/* Add !important temporarily for debugging - remove after fixing */
+.welcome-container {
+    display: flex !important;
+    flex-direction: column !important;
+    margin-right: auto !important;
+    gap: 4px;
+    align-items: flex-start;
+    border: 1px solid transparent; /* Temporary debug border */
+}
+
+.welcome-text {
+    font-size: 15px !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    
+}
+
+.user-name {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #00a69b !important;
+    margin: 0 !important;
+    
+}
+
 
 .profile-container {
   display: flex;
@@ -19,8 +51,8 @@ nav {
 }
 
 .nav-icons {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.8rem;
+  height: 1.8rem;
   margin-left: 2rem;
   color: #494949;
 }

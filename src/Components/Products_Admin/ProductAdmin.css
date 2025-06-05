@@ -2,7 +2,7 @@
   display: flex;
   gap: 1rem;
   padding: 1rem 2rem;
-  background-color: #f5f5f5; /* Adjust as needed */
+  background-color: #f5f5f5; 
   border-bottom: 1px solid #ddd;
   flex-wrap: wrap;
   
@@ -23,7 +23,7 @@
 }
 
 .category-buttons-container button.active {
-  background-color: #00a69b; /* Active button color */
+  background-color: #00a69b; 
   color: white;
   border-color: #00a69b;
 }
@@ -40,29 +40,28 @@
 }
 
 .add-product-button:hover {
-  background-color: #007e76; /* Slightly darker teal on hover */
+  background-color: #007e76; 
 }
 .product-search-container {
   display: flex;
   align-items: center;
-  margin-left: 10px !important; /* Pushes the search input to the far right */
+  margin-left: 10px !important; 
 }
 
-/* Add styles for the popup overlay */
+
 .delete-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Transparent background */
+  background-color: rgba(0, 0, 0, 0.5); 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Make sure it's on top of other elements */
+  z-index: 1000; 
 }
 
-/* Style for the actual pop-up box */
 .delete-popup {
   background-color: white;
   padding: 20px;
@@ -83,7 +82,7 @@
 }
 
 .delete-popup button:hover {
-  background-color: #b21f28; /* Darker on hover */
+  background-color: #b21f28; 
 }
 
 .delete-popup button:first-of-type {
@@ -92,61 +91,58 @@
 }
 
 .delete-popup button:first-of-type:hover {
-  background-color: #008b7a; /* Darker on hover */
+  background-color: #008b7a; 
 }
 .card img {
-  width: 100%; /* Ensure the image fills the card width */
-  height: 200px; /* Set a fixed height for uniformity */
-  object-fit: cover; /* Ensures the image covers the area without distortion */
+  width: 100%; 
+  height: 200px; 
+  object-fit: cover; 
 }
 .card {
   position: relative;
   border: 1px solid #ccc;
   border-radius: 10px;
   overflow: hidden;
-  width: calc(20% - 1rem); /* Adjust for the desired number of cards per row */
-  min-width: 150px; /* Minimum width */
-  max-width: 200px; /* Maximum width */
-  margin: 0.5rem; /* Space around each card */
+  width: calc(20% - 1rem); 
+  min-width: 150px; 
+  max-width: 200px; 
+  margin: 0.5rem; 
   
 }
 .card-container {
   display: flex;
-  flex-wrap: wrap; /* Allow cards to wrap to the next line */
-  padding: 1rem; /* Container padding */
+  flex-wrap: wrap; 
+  padding: 1rem; 
   
 }
-/* Product Name */
 .card .product-name {
-  font-size: 1.0em;         /* Slightly larger font size */
-  font-weight: bold;        /* Bold text for product name */
-  color: #333;              /* Dark color for readability */
-  margin: 0.5rem 0;         /* Margin for spacing */
-  overflow: hidden;         /* Prevent text overflow */
-  text-overflow: ellipsis;  /* Ellipsis for overflow text */
+  font-size: 1.0em;         
+  font-weight: bold;       
+  color: #333;             
+  margin: 0.5rem 0;         
+  overflow: hidden;         
+  text-overflow: ellipsis;  
   white-space: nowrap; 
   justify-content: center ;
   align-items: center;
   text-align: center;
-     /* Prevent wrapping of the product name */
 }
 
-/* Product Description */
+
 .card .product-description {
-  font-size: 0.7em;         /* Smaller font size for the description */
-  color: #666;              /* Lighter color for description */
-  margin: 0.2rem 0;        /* Margin for spacing */
-  line-height: 1.4;         /* Line height for readability */
-  text-overflow: ellipsis;  /* Ellipsis for overflow text */
-  overflow: hidden;         /* Prevent text overflow */
-  height: 50px;             /* Set a height limit for the description */
-  display: -webkit-box;     /* Create a box to limit the description */
-  -webkit-line-clamp: 3;    /* Limit description to 3 lines */
+  font-size: 0.7em;        
+  color: #666;              
+  margin: 0.2rem 0;       
+  line-height: 1.4;         
+  text-overflow: ellipsis;  
+  overflow: hidden;         
+  height: 50px;            
+  display: -webkit-box;     
+  -webkit-line-clamp: 3;   
   -webkit-box-orient: vertical;
   justify-content: center ;
   align-items: center;
   text-align: center;
-
 
 }
 .product-price {
@@ -159,24 +155,18 @@
   font-size: 0.8rem;
   margin: 0.4rem 0;  
 }
-
-
-
-/* Overlay background for the popup */
 .popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Transparent background */
+  background-color: rgba(0, 0, 0, 0.5); 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Make sure it's on top of other elements */
+  z-index: 1000; 
 }
-
-/* Style for the actual popup box */
 .popup {
   background-color: white;
   padding: 20px;
@@ -205,7 +195,7 @@
 }
 
 .popup button:first-of-type:hover {
-  background-color: #008b7a; /* Darker on hover */
+  background-color: #008b7a; 
 }
 .card {
   position: relative;
@@ -217,14 +207,11 @@
   display: block;
   border-radius: 8px;
 }
-
-/* Apply the overlay only over the image height */
 .out-of-stock-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  /* Use aspect-ratio matching or set fixed height */
   height: auto;
   background: rgba(164, 225, 230, 0.6);
   color: white;
@@ -238,23 +225,20 @@
   pointer-events: none;
 }
 
-/* Match the height of the image using this trick */
 .card .out-of-stock-overlay {
   height: 100%;
-  max-height: 200px; /* Adjust this to match your image height */
+  max-height: 200px; 
 }
-
-/* Image styling when out of stock */
 .out-of-stock-image {
   filter: grayscale(100%) blur(1px);
 }
 .popup form input,
 .popup form textarea,
 .popup form select {
-  width: 100%;            /* Makes all inputs take full width of the container */
-  padding: 10px;          /* Adds inner spacing */
-  margin-bottom: 2px;    /* Adds space between fields */
-  box-sizing: border-box; /* Ensures padding doesn't increase total width */
+  width: 100%;            
+  padding: 10px;         
+  margin-bottom: 2px;    
+  box-sizing: border-box; 
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
@@ -265,30 +249,24 @@
   justify-content: flex-end;
   margin-top: 16px;
 }
-
-/* Container for card buttons */
 .card-buttons {
   display: flex;
   gap: 12px;
-  justify-content: flex-start; /* Align buttons horizontally */
+  justify-content: flex-start; 
 }
-
-/* Button styles */
 .card-buttons button {
-  background-color: #9ae2dd; /* Initial background color */
-  color: white;              /* Text color */
-  padding: 10px 20px;        /* Add some padding for size */
-  border: none;              /* Remove the border */
-  border-radius: 5px;        /* Rounded corners */
-  cursor: pointer;          /* Pointer cursor for interaction */
-  transition: transform 0.3s ease, background-color 0.3s ease; /* Smooth transition for hover */
-  flex-grow: 1;              /* Make buttons the same size */
+  background-color: #9ae2dd; 
+  color: white;             
+  padding: 10px 20px;       
+  border: none;             
+  border-radius: 5px;        
+  cursor: pointer;         
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  flex-grow: 1;             
 }
-
-/* Hover effect */
 .card-buttons button:hover {
-  background-color: #008b7a; /* Change background color on hover */
-  transform: scale(1.05);     /* Slightly expand the button */
+  background-color: #008b7a; 
+  transform: scale(1.05);     
 }
 .spinner {
   position: fixed;
@@ -299,13 +277,11 @@
   font-weight: bold;
   color: #008b7a;
 }
-
 .product-table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
 }
-
 .product-table th, .product-table td {
   border: 1px solid #ccc;
   padding: 10px;
@@ -315,10 +291,9 @@
 .product-table th {
   background-color: #f4f4f4;
 }
-
 .product-table img {
-  width: 50px; /* Adjust image width */
-  height: auto; /* Maintain aspect ratio */
+  width: 50px;
+  height: auto; 
 }
 
 .button {
@@ -340,73 +315,72 @@
 }
 
 .button.delete:hover {
-  background-color: #b21f28; /* Darker on hover */
+  background-color: #b21f28; 
 }
 .product-table-container {
-  max-width: 1200px; /* Set a maximum width for the container */
-  margin: 20px auto; /* Center the container horizontally */
-  padding: 20px; /* Add padding inside the container */
-  background-color: #f9f9f9; /* Light background color */
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  max-width: 1200px; 
+  margin: 20px auto; 
+  padding: 20px; 
+  background-color: #f9f9f9; 
+  border-radius: 8px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 }
 
 
 .product-table {
-  width: 93%; /* Set a specific width for the table */
-  margin: 0 auto; /* Center the table within the container */
-  border-collapse: collapse; /* Remove space between cells */
+  width: 93%; 
+  margin: 0 auto; 
+  border-collapse: collapse; 
   border-radius: 6px;
   overflow: hidden;
 }
 
 .product-table th, .product-table td {
-  border: 1px solid #777c833a; /* Light border for cells */
-  padding: 6px; /* Padding inside cells */
-  text-align: left; /* Align text to the left */
-  font-size: 12px; /* Font size */
+  border: 1px solid #777c833a; 
+  padding: 6px; 
+  text-align: left; 
+  font-size: 12px;
   color: #797f88;
   font-weight: bold;
 
 }
 
 .product-table th {
-  background-color: #00a69b; /* Header background color */
-  color: white; /* Text color for header */
+  background-color: #00a69b; 
+  color: white; 
 }
 
 .product-table tr:hover {
-  background-color: #f1f1f1; /* Highlight row on hover */
+  background-color: #f1f1f1; 
 }
 
 .product-table img {
-  width: 40px; /* Adjust image size */
-  height: auto; /* Maintain aspect ratio */
+  width: 40px; 
+  height: auto; 
 }
 .popup .button-container {
   display: flex;
-  justify-content: center; /* Center the buttons */
-  gap: 20px; /* Space between buttons */
+  justify-content: center; 
+  gap: 20px; 
 }
 .main-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensure the container takes full height */
+    min-height: 100vh; 
 }
 
 .content {
-    flex: 1; /* This allows the content to grow and push the footer down */
-    padding-bottom: 60px; /* Prevent overlap with pagination */
+    flex: 1; 
+    padding-bottom: 60px;
 }
 
 .pagination {
-    position: fixed; /* Fixes the position of pagination */
-    bottom: 0; /* Positions it at the bottom */
+    position: fixed; 
+    bottom: 0; 
     left: 0;
-    right: 0; /* Full width */
+    right: 0;
     display: flex;
-    justify-content: center; /* Center the pagination buttons */
-    padding: 10px; /* Add some padding */
-    background-color: red; /* Background color for pagination */
-   
+    justify-content: center;
+    padding: 10px; 
+    background-color: red; 
 }

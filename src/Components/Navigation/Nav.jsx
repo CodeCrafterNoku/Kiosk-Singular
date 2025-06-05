@@ -45,8 +45,25 @@ function Nav() {
   const drawerRef = useRef(null);  
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [userName, setUserName] = useState(''); 
   
-  
+
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch(`http://localhost:5279/api/user/${userId}`);
+                if (!response.ok) throw new Error("Failed to fetch user data");
+                const data = await response.json();
+                setUserName(data.name); // Set the user's name
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+
+        fetchUserData();
+    }, [userId]);
+
 
 useEffect(() => {
   const handleClickOutside = (event) => {
@@ -509,7 +526,7 @@ const createTransaction = async (totalAmount) => {
             setShowOrderSummary(true); // Show the order modal
         } else if (action === 'Logout') {
             navigate('/'); // Navigate to home or login
-        } else if (action === 'Account Settings') {
+        } else if (action === 'Change Password') {
             navigate('/user/account-settings'); // Navigate to Account Settings
         }
     };
@@ -620,8 +637,6 @@ const confirmOrder = async () => {
     }
 };
 
-
-
   return (
  <nav>
         <div className="logo-container">
@@ -629,7 +644,11 @@ const confirmOrder = async () => {
         </div>
 
         <div className="profile-container">
-                   {userRole === '8' ? (
+          <div className="welcome-container">
+                    <span className="welcome-text">Welcome,</span>
+                    <span className="user-name">{userName}!</span>
+                </div>
+         {userRole === '8' ? (
             <Link to="/admin/products" className="home-icon" aria-label="Home">
                 <AiFillHome className="nav-icons" />
             </Link>
@@ -827,7 +846,7 @@ const confirmOrder = async () => {
   <div className={`drawer ${drawerOpen ? 'open' : ''}`} ref={drawerRef}>
     <ul>
       <li onClick={() => handleMenuItemClick('View Orders')}>View Orders</li>
-      <li onClick={() => handleMenuItemClick('Account Settings')}>Account Settings</li>
+      <li onClick={() => handleMenuItemClick('Change Password')}>Change Password</li>
       <li onClick={() => handleMenuItemClick('Logout')}>Logout</li>
     </ul>
   </div>
