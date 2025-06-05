@@ -49,31 +49,47 @@ const handleSubmit = async (e) => {
         return;
     }
 
-    const updatedUser = {
-        userID: userId, // Ensure the user ID is included
-        password: userData.password, // New password
-    };
-
     try {
+        // First fetch the current user data
+        const currentUserResponse = await fetch(`http://localhost:5279/api/user/${userId}`);
+        if (!currentUserResponse.ok) {
+            throw new Error('Failed to fetch current user data');
+        }
+        const currentUser = await currentUserResponse.json();
+
+        // Prepare the update with all required fields
+        const updatedUser = {
+            userID: userId,
+            name: currentUser.name,
+            email: currentUser.email,
+            phoneNumber: currentUser.phoneNumber,
+            accountBalance: currentUser.accountBalance,
+            accountActive: currentUser.accountActive,
+            isEmailVerified: currentUser.isEmailVerified,
+            roleID: currentUser.roleID,
+            password: userData.password // Only the password changes
+        };
+
         const response = await fetch(`http://localhost:5279/api/user/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(updatedUser) // Send updated data
+            body: JSON.stringify(updatedUser)
         });
 
         if (response.ok) {
             toast.success("Password updated successfully!");
         } else {
             const errorData = await response.json();
-            setErrorMessage(errorData.message || "Failed to update user.");
+            setErrorMessage(errorData.message || "Failed to update password.");
         }
     } catch (error) {
-        console.error('Error updating user data:', error);
-        setErrorMessage('Failed to update user.');
+        console.error('Error updating password:', error);
+        setErrorMessage('Failed to update password.');
     }
 };
+
 
     return (
         <div className="account-settings">
@@ -95,7 +111,7 @@ const handleSubmit = async (e) => {
                         type="email"
                         name="email"
                         value={userData.email}
-                        readOnly // Prevent editing
+                        readOnly 
                     />
                 </div>
                 <div>
@@ -104,7 +120,7 @@ const handleSubmit = async (e) => {
                         type="text"
                         name="phoneNumber"
                         value={userData.phoneNumber}
-                        readOnly // Prevent editing
+                        readOnly 
                     />
                 </div>
                 <div>
