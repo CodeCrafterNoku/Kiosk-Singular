@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './ProductAdmin.css';
-import { toast } from 'react-toastify'; // Ensure you import toast
-import { AiOutlineCheck } from 'react-icons/ai'; // Import the icon
+import { toast } from 'react-toastify'; 
+import { AiOutlineCheck } from 'react-icons/ai'; 
 import { MdAddBox } from "react-icons/md";
 
 function ProductAdmin() {
